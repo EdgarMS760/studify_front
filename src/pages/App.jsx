@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import '@styles/App.css'
+import MainLayout from '@components/templates/MainLayout'
 
 function App() {
 
 
   return (
     <>
-      <p class="text-5xl font-bold underline">
-        ola
-      </p>
+     <MainLayout/>
     </>
   )
 }
