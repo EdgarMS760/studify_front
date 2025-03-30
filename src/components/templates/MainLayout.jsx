@@ -79,6 +79,25 @@ const MainLayout = () => {
             icon: <CalendarMonthIcon />,
         },
     ];
+    const demoTheme = createTheme({
+        cssVariables: {
+          colorSchemeSelector: 'data-toolpad-color-scheme',
+        },
+        colorSchemes: { light: true, dark: true },
+        breakpoints: {
+          values: {
+            xs: 0,
+            sm: 600,
+            md: 600,
+            lg: 1200,
+            xl: 1536,
+          },
+        },
+        typography: {
+            fontFamily: '"Montserrat", "Roboto", "Arial", sans-serif', // Fuente personalizada primero
+            fontSize: 16,
+          },
+      });
 
 
     return (
@@ -86,6 +105,7 @@ const MainLayout = () => {
             navigation={NAVIGATION}
             session={session}
             authentication={wrappedAuthentication}
+            theme={demoTheme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
                 title: '',
