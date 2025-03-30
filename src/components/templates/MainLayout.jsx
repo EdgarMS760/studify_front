@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -11,81 +11,91 @@ import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import GroupsIcon from '@mui/icons-material/Groups';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import logo from '@assets/Logo.png'
+import UserPreview from '@components/molecules/UserPreview';
+import { useAuth } from '@libs/hooks/UseAuth';
+import { useNavigate } from 'react-router';
 const MainLayout = () => {
-
+    const navigate = useNavigate();
+    const { session, authentication } = useAuth();
+  
+    const wrappedAuthentication = {
+      ...authentication,
+      signOut: () => {
+        authentication.signOut();
+        navigate('/login');
+      }
+    };
     const NAVIGATION = [
+        // {
+        //     kind: 'header',
+        //     title: 'Main items',
+        // },
+        // {
+        //     segment: 'dashboard',
+        //     title: 'Dashboard',
+        //     icon: <DashboardIcon />,
+        // },
         {
-            kind: 'header',
-            title: 'Main items',
-        },
-        {
-            segment: 'dashboard',
-            title: 'Dashboard',
-            icon: <DashboardIcon />,
-        },
-        {
-            segment: 'orders',
-            title: 'Orders',
-            icon: <ShoppingCartIcon />,
+            segment: 'groups',
+            title: 'Grupos',
+            icon: <GroupsIcon />,
         },
         {
             kind: 'divider',
         },
         {
-            kind: 'header',
-            title: 'Analytics',
-        },
-        {
             segment: 'reports',
-            title: 'Reports',
+            title: 'Reportes',
             icon: <BarChartIcon />,
             children: [
                 {
-                    segment: 'sales',
-                    title: 'Sales',
+                    segment: 'attendance',
+                    title: 'Asistencia',
+                    icon: <Diversity3Icon />,
+                },
+                {
+                    segment: 'homework',
+                    title: 'Tareas',
                     icon: <DescriptionIcon />,
                 },
                 {
-                    segment: 'traffic',
-                    title: 'Traffic',
-                    icon: <DescriptionIcon />,
+                    segment: 'performance',
+                    title: 'desempeño',
+                    icon: <AutoGraphIcon />,
                 },
             ],
         },
         {
-            segment: 'integrations',
-            title: 'Integrations',
-            icon: <LayersIcon />,
+            kind: 'divider',
+        },
+        {
+            segment: 'calendar',
+            title: 'calendario',
+            icon: <CalendarMonthIcon />,
         },
     ];
-    const demoTheme = createTheme({
-        cssVariables: {
-            colorSchemeSelector: 'data-toolpad-color-scheme',
-        },
-        colorSchemes: { light: true, dark: true },
-        breakpoints: {
-            values: {
-                xs: 0,
-                sm: 600,
-                md: 600,
-                lg: 1200,
-                xl: 1536,
-            },
-        },
-    });
+
+
     return (
         <AppProvider
             navigation={NAVIGATION}
-            //router={router}
-            //theme={demoTheme}
+            session={session}
+            authentication={wrappedAuthentication}
             branding={{
-                logo: <img src="https://mui.com/static/logo.png" alt="Logo" />,
+                logo: <img src={logo} alt="Logo" />,
                 title: '',
                 homeUrl: '/toolpad/core/introduction',
-              }}
+            }}
+
         >
             <DashboardLayout>
-                {/* <DemoPageContent pathname={router.pathname} /> */}
+                aquí va el contenido de la pagina
+
             </DashboardLayout>
         </AppProvider>
     )
