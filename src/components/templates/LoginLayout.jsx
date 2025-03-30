@@ -1,8 +1,13 @@
 import React from 'react'
+import { Outlet } from 'react-router'
 
 const LoginLayout = () => {
   return (
-    <div>LoginLayout</div>
+    <>LoginLayout
+      <Outlet/>
+
+      
+    </>
   )
 }
 
