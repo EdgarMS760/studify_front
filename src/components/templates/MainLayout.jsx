@@ -18,17 +18,19 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import logo from '@assets/Logo.png'
 import UserPreview from '@components/molecules/UserPreview';
 import { useAuth } from '@libs/hooks/UseAuth';
-import { useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import theme from '@styles/Theme';
 const MainLayout = () => {
     const navigate = useNavigate();
     const { session, authentication } = useAuth();
-  
+
     const wrappedAuthentication = {
-      ...authentication,
-      signOut: () => {
-        authentication.signOut();
-        navigate('/login');
-      }
+        ...authentication,
+        signOut: () => {
+            authentication.signOut();
+            navigate('/login');
+        }
     };
     const NAVIGATION = [
         // {
@@ -78,43 +80,31 @@ const MainLayout = () => {
             title: 'calendario',
             icon: <CalendarMonthIcon />,
         },
+        {
+            kind: 'divider',
+        },
+        {
+            segment: 'homework',
+            title: 'Tareas',
+            icon: <HomeWorkIcon />,
+        },
     ];
-    const demoTheme = createTheme({
-        cssVariables: {
-          colorSchemeSelector: 'data-toolpad-color-scheme',
-        },
-        colorSchemes: { light: true, dark: true },
-        breakpoints: {
-          values: {
-            xs: 0,
-            sm: 600,
-            md: 600,
-            lg: 1200,
-            xl: 1536,
-          },
-        },
-        typography: {
-            fontFamily: '"Montserrat", "Roboto", "Arial", sans-serif', // Fuente personalizada primero
-            fontSize: 16,
-          },
-      });
-
 
     return (
         <AppProvider
             navigation={NAVIGATION}
             session={session}
             authentication={wrappedAuthentication}
-            theme={demoTheme}
+            theme={theme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
                 title: '',
-                homeUrl: '/toolpad/core/introduction',
+                homeUrl: '/',
             }}
 
         >
             <DashboardLayout>
-                aquí va el contenido de la pagina
+                <Outlet />
 
             </DashboardLayout>
         </AppProvider>
