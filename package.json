@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.8",
     "@tailwindcss/vite": "^4.0.15",
     "@toolpad/core": "^0.13.0",
+    "clsx": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.4.0",
