@@ -3,7 +3,7 @@ import React from 'react'
 const FormLogin = () => {
     return (
         <div className='flex justify-center' >
-            <h1 className='text-3xl font-bold underline text-secondary'>Registro</h1>
+            <h1 className='text-3xl font-bold underline text-secondary'>Login</h1>
         </div>
     )
 }
