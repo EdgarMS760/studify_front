@@ -1,5 +1,5 @@
 import React from 'react';
-import CardFeedMessage from '../molecules/CardFeedMessage';
+import CardFeedMessage from '@components/molecules/CardFeedMessage';
 import { TextField, Tooltip, useTheme } from '@mui/material';
 import clsx from 'clsx';
 import SendIcon from '@mui/icons-material/Send';

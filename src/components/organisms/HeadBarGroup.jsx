@@ -1,12 +1,9 @@
 
 import React from 'react'
-import PhoneIcon from '@mui/icons-material/Phone';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
 
-import TextCardAtom from '../atoms/TextCardAtom';
-import ItemsToHeadBarDesktop from '../molecules/ItemsToHeadBarDesktop';
-import ItemsToHeadBarMobile from '../molecules/ItemsToHeadBarMobile';
+import TextCardAtom from '@components/atoms/TextCardAtom';
+import ItemsToHeadBarDesktop from '@components/molecules/ItemsToHeadBarDesktop';
+import ItemsToHeadBarMobile from '@components/molecules/ItemsToHeadBarMobile';
 import { useTheme } from '@emotion/react';
 import clsx from 'clsx';
 const HeadBarGroup = () => {

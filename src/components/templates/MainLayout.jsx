@@ -1,22 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useDemoRouter } from '@toolpad/core/internal';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import logo from '@assets/Logo.png'
-import UserPreview from '@components/molecules/UserPreview';
 import { useAuth } from '@libs/hooks/UseAuth';
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
