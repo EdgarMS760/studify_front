@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import clsx from "clsx";
 import { useInView } from "react-intersection-observer";
-import CardSideBarGroup from "../molecules/CardSideBarGroup";
+import CardSideBarGroup from "@components/molecules/CardSideBarGroup";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 
 const SideBarGroup = ({ items }) => {

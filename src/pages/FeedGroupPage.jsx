@@ -1,9 +1,9 @@
 import React from "react";
-import SideBarGroup from "../components/organisms/SideBarGroup";
-import HeadBarGroup from "../components/organisms/HeadBarGroup";
+import SideBarGroup from "@components/organisms/SideBarGroup";
+import HeadBarGroup from "@components/organisms/HeadBarGroup";
 import { TextField, useTheme } from "@mui/material";
 import clsx from "clsx";
-import MessagesFeed from "../components/organisms/MessagesFeed";
+import MessagesFeed from "@components/organisms/MessagesFeed";
 
 const mockData = [
     { id: 1, image: "https://placehold.co/600x400", text: "grupo 1" },
