@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import MainLayout from '@components/templates/MainLayout'
-import TestLayout from '@components/templates/TestLayout'
-import Router from '@routes/Router'
+import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '@styles/theme';
+import Router from '@routes/Router';
 
 function App() {
-
-
   return (
-    <>
-       <Router />
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <Router />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
