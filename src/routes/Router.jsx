@@ -14,14 +14,15 @@ export default function Router() {
             <Route path="/" element={<MainLayout />} >
                 <Route index element={<TestPage />} />
                 <Route path="group/:id" element={<FeedGroupPage />} />
-                {/* <Route path="report/:id" element={<ReportPage />} /> */}
             </Route>
             
             <Route path="/login" element={<LoginLayout />}>
-                <Route index element={<AuthGate/>} />
+                <Route index element={<AuthGate />} />
             </Route>
 
-            
+            <Route path="/register" element={<LoginLayout />}>
+                <Route index element={<FormRegister />} />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
         </Routes>
