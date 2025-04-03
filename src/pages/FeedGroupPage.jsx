@@ -1,11 +1,52 @@
-import React from 'react'
+import React from "react";
+import SideBarGroup from "../components/organisms/SideBarGroup";
+
+const mockData = [
+    { id: 1, image: "https://placehold.co/600x400", text: "grupo 1" },
+    { id: 2, image: "https://placehold.co/600x400", text: "grupo 2" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
+];
 
 const FeedGroupPage = () => {
     return (
-        <div className='flex justify-center' >
-            <h1 className='text-3xl font-bold underline text-secondary'>FeedGroup</h1>
-        </div>
-    )
-}
+        <div className="">
+            <div className="flex hidden lg:block ">
+                <SideBarGroup items={mockData} />
+            </div>
 
-export default FeedGroupPage
+            <main className="flex justify-center items-center ">
+                <h1>Contenido Principal</h1>
+            </main>
+        </div>
+    );
+};
+
+export default FeedGroupPage;
