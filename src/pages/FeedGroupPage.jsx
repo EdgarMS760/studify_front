@@ -5,11 +5,7 @@ import { TextField, useTheme } from "@mui/material";
 import clsx from "clsx";
 import MessagesFeed from "@components/organisms/MessagesFeed";
 
-const mockData = [
-    { id: 1, image: "https://placehold.co/600x400", text: "grupo 1" },
-    { id: 2, image: "https://placehold.co/600x400", text: "grupo 2" },
-    { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
-];
+
 const dummyMessages = [
     {
         time: "10:30 AM",
@@ -68,25 +64,16 @@ const FeedGroupPage = () => {
     return (
         <div
             className={clsx(
-                "h-screen flex [@media(min-width:1348px)]:flex-row overflow-hidden",
+                "max-h-[90vh]", // Permite que se ajuste al espacio disponible
                 theme.palette.mode === "dark" ? "bg-black" : "bg-secondary"
             )}
         >
-            {/* este se oculta si pantalla es >= 1348px */}
-            <div className="hidden [@media(min-width:1348px)]:block h-full">
-                <SideBarGroup items={mockData} />
-            </div>
-
-            <div className="flex flex-col flex-1 h-full">
-                <HeadBarGroup />
-
-                <div className="flex-1 overflow-y-auto">
-                    <MessagesFeed messages={dummyMessages} />
-                </div>
-            </div>
+            {/* Asegura que MessagesFeed ocupe todo el espacio sin causar scroll innecesario */}
+            <MessagesFeed messages={dummyMessages} />
         </div>
     );
 };
 
 export default FeedGroupPage;
+
 

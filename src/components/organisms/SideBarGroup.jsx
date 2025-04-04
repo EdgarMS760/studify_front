@@ -26,7 +26,7 @@ const SideBarGroup = ({ items }) => {
         <aside
             className={clsx(
                 "p-4 ml-3 mt-3 mb-3 rounded-md",
-                "h-[90vh] overflow-y-auto ",
+                "h-fit overflow-y-auto ",
                 theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
             )}
         >
