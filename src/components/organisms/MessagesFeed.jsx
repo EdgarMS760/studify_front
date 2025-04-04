@@ -5,15 +5,18 @@ import clsx from 'clsx';
 import SendIcon from '@mui/icons-material/Send';
 const MessagesFeed = ({ messages = [] }) => {
     const theme = useTheme();
+
     return (
-        <div className="h-[95vh] flex flex-col rounded-lg m-3">
-            <div className="flex-1 overflow-hidden p-3 space-y-3">
+        <div className="h-screen flex flex-col rounded-lg m-3">
+            {/* Contenedor de Mensajes con Scroll */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
                 {messages.map((msg, index) => (
                     <CardFeedMessage key={index} msgObj={msg} />
                 ))}
             </div>
 
-            <div className={clsx("p-3 sticky bottom-0", theme.palette.mode === 'dark' ? 'bg-black' : 'bg-secondary')}>
+            {/* Input para Enviar Mensajes */}
+            <div className={clsx("p-3", theme.palette.mode === 'dark' ? 'bg-black' : 'bg-secondary')}>
                 <TextField
                     fullWidth
                     id="outlined-multiline-flexible"
@@ -33,7 +36,7 @@ const MessagesFeed = ({ messages = [] }) => {
                         endAdornment: (
                             <Tooltip title="Enviar" arrow>
                                 <SendIcon
-                                    className="cursor-pointer text-gray-500 hover:text-black transition-transform duration-500 ease-in-out hover:scale-130"
+                                    className="cursor-pointer text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-110"
                                 />
                             </Tooltip>
                         )
