@@ -12,27 +12,27 @@ const GroupLayout = () => {
         { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
     ];
     return (
-        <div className="flex flex-col overflow-hidden max-h-[90vh] max-w-screen">
+        <div className="flex flex-col overflow-hidden ">
 
             <div
                 className={clsx(
-                    "h-full flex [@media(min-width:<1348px>)]:flex-rown",
+                    "h-full flex [@media(min-width:<1348px>)]:flex-row",
                     theme.palette.mode === "dark" ? "bg-black" : "bg-secondary"
                 )}
             >
-                {/* este se oculta si pantalla es >= 1348px */}
+                {/* este se oculta si pantalla es <= 1348px */}
                 <div className="hidden [@media(min-width:1348px)]:block h-full">
                     <SideBarGroup items={mockData} />
                 </div>
-
-                <div className="flex flex-col h-full">
+                
+                <div className="flex flex-col h-full w-full">
                     <HeadBarGroup />
 
-                    {/* Aseguramos que Outlet tenga espacio y sea scrollable si es necesario */}
-                    <div className="max-h-[80vh] overflow-y-auto">
+                    <div className="flex-1 overflow-y-auto">
                         <Outlet />
                     </div>
                 </div>
+
             </div>
 
         </div>

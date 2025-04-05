@@ -20,9 +20,7 @@ const HeadBarGroup = () => {
                     <ItemsToHeadBarDesktop />
                 </div>
 
-                {/* Espacio vacio a la derecha para balancear
-                hidden [@media(min-width:1420px)]:block
-                */}
+                {/* Espacio vacio a la derecha para balancear*/}
                 <div></div>
             </div>
 

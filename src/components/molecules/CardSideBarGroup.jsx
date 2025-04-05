@@ -8,7 +8,7 @@ const CardSideBarGroup = ({ imageSrc, text }) => {
     const theme= useTheme();
     return (
         <Tooltip title={text} arrow placement="left">
-            <div className={clsx("rounded-lg p-3 flex items-center justify-between w-full",  theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary" )}>
+            <div className={clsx("rounded-lg p-3 flex items-center justify-between w-full cursor-pointer",  theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary" )}>
                 
                 <MiniImg 
                     src={imageSrc} 
