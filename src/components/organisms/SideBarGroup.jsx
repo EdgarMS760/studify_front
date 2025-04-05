@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import clsx from "clsx";
 import { useInView } from "react-intersection-observer";
-import CardSideBarGroup from "../molecules/CardSideBarGroup";
-import TextCardAtom from "../atoms/TextCardAtom";
+import CardSideBarGroup from "@components/molecules/CardSideBarGroup";
+import TextCardAtom from "@components/atoms/TextCardAtom";
 
 const SideBarGroup = ({ items }) => {
     const theme = useTheme();
@@ -25,8 +25,8 @@ const SideBarGroup = ({ items }) => {
     return (
         <aside
             className={clsx(
-                "w-1/6 p-4 m-3 rounded-md",
-                "h-[94vh] overflow-y-auto ",
+                "p-4 ml-3 mt-3 mb-3 rounded-md",
+                "h-fit overflow-y-auto ",
                 theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
             )}
         >
