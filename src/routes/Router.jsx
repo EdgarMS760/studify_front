@@ -25,13 +25,16 @@ export default function Router() {
                 </Route>
                 {/* <Route path="subpage" element={<SubPage />} /> */}
                 {/* <Route path="report/:id" element={<ReportPage />} /> */}
+
             </Route>
 
             <Route path="/login" element={<LoginLayout />}>
                 <Route index element={<AuthGate />} />
             </Route>
 
-
+            <Route path="/register" element={<LoginLayout />}>
+                <Route index element={<FormRegister />} />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
         </Routes>

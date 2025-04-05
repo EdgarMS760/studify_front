@@ -12,6 +12,8 @@ import { useAuth } from '@libs/hooks/UseAuth';
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '@styles/Theme';
+
+
 const MainLayout = () => {
     const navigate = useNavigate();
     const { session, authentication } = useAuth();
