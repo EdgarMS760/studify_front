@@ -4,15 +4,23 @@ import FolderIcon from '@mui/icons-material/Folder';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router';
 const ItemsToHeadBarMobile = () => {
-    const [value, setValue] = React.useState(0);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const tabRoutes = ["/group/:id", "/group/:id/tasks", "/group/:id/material", "/group/:id/students"];
+
+    // Encuentra el índice actual basado en la ruta
+    const currentTab = tabRoutes.indexOf(location.pathname);
+
+    // Función para manejar cambios de pestaña
+    const handleChange = (_, newValue) => {
+        navigate(tabRoutes[newValue]); // Navega a la ruta correspondiente
     };
     return (
         <Tabs
-            value={value}
+            value={currentTab !== -1 ? currentTab : 0}
             onChange={handleChange}
             aria-label="icon label tabs example"
             textColor="inherit"
