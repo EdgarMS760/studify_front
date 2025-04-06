@@ -6,7 +6,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 const ItemsToHeadBarDesktop = () => {
-    const [value, setValue] = React.useState(0);
     const navigate = useNavigate();
     const location = useLocation();
     const tabRoutes = ["/group/:id", "/group/:id/tasks", "/group/:id/material", "/group/:id/students"];
