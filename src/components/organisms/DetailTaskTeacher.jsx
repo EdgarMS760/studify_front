@@ -2,31 +2,77 @@ import React, { useState } from 'react'
 import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
 import CardStudentTask from '../molecules/CardStudentTask';
+import FullscreenFileModal from './FullscreenFileModal';
+import FilePreview from './FilePreview';
 const DetailTaskTeacher = () => {
-
     const [selected, setSelected] = useState('');
     const options = [
         { value: "asc", label: 'Mas Recientes primero' },
         { value: "desc", label: 'Mas Antiguos primero' }
     ];
+    const students = [
+        {
+            id: 1, name: "Juan perez perez", status: "notDelivered", fileUrl: '/Logo.png',
+            fileType: 'image'
+        },
+        {
+            id: 2, name: "Pedro perez perez", status: "delivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 5, name: "Ana perez perez", status: "delivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 6, name: "Luis perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 7, name: "Laura perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 8, name: "Carlos perez perez", status: "delivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 9, name: "Sofia perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+        {
+            id: 10, name: "Andres perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            fileType: 'video'
+        },
+    ];
     const handleSelectChange = (event) => {
         setSelected(event.target.value);
     };
-    const students = [
-        { id: 1, name: "Juan perez perez", status: "notDelivered" },
-        { id: 2, name: "Pedro perez perez", status: "delivered" },
-        { id: 3, name: "Maria perez perez", status: "reviewed" },
-        { id: 4, name: "Jose perez perez", status: "notDelivered" },
-    ];
 
     const [selectedStudentId, setSelectedStudentId] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
 
-    const handleSelect = (id) => {
-      setSelectedStudentId(id);
+    const selectedStudent = students.find((s) => s.id === selectedStudentId);
+
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileType, setFileType] = useState(null);
+
+    const handleSelect = (student) => {
+        setSelectedStudentId(student.tudentId);
+        setSelectedFile(student.fileUrl);
+        setFileType(student.fileType);
+        console.log('files', student.fileUrl, student.fileType)
     };
     return (
         <>
-            <div className='m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4'>
+            <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
                 <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
                 <SelectAtom
                     items={options}
@@ -35,17 +81,28 @@ const DetailTaskTeacher = () => {
                     onChange={handleSelectChange}
                 />
             </div>
-            <div>
-                {students.map((student) => (
-                    <CardStudentTask
-                        key={student.id}
-                        data={student}
-                        isSelected={selectedStudentId === student.id}
-                        onSelect={() => handleSelect(student.id)}
-                    />
-                ))}
-                componente extra
+
+            <div className="flex flex-col lg:flex-row">
+                <div className="w-full lg:w-2/3">
+                    {students.map((student) => (
+                        <CardStudentTask
+                            key={student.id}
+                            data={student}
+                            isSelected={selectedStudentId === student.id}
+                            onSelect={() => handleSelect(student)}
+                        />
+                    ))}
+                </div>
+
+                <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
+                    {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
+                </div>
             </div>
+            {/* <FullscreenFileModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                fileUrl={selectedStudent?.file}
+            /> */}
         </>
     );
 }
