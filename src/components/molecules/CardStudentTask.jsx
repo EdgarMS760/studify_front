@@ -5,7 +5,6 @@ import clsx from 'clsx'
 import { useTheme } from '@emotion/react'
 import { IconButton, Tooltip } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
 const CardStudentTask = ({ data, onSelect, isSelected }) => {
     const theme = useTheme();
 
@@ -21,7 +20,6 @@ const CardStudentTask = ({ data, onSelect, isSelected }) => {
                 return "text-gray-500";
         }
     };
-
     return (
         <div
             onClick={onSelect}
