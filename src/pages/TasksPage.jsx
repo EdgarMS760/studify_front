@@ -1,8 +1,12 @@
 import React from 'react'
+import TaskTabs from '@components/molecules/TaskTabs'
 
 const TasksPage = () => {
   return (
-    <div>TasksPage</div>
+    <div>TasksPage
+
+      <TaskTabs/>
+    </div>
   )
 }
 
