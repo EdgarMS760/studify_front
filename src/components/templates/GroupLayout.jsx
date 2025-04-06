@@ -12,7 +12,7 @@ const GroupLayout = () => {
         { id: 3, image: "https://placehold.co/600x400", text: "grupo 3" },
     ];
     return (
-        <div className="flex flex-col overflow-hidden ">
+        <div className="flex flex-col overflow-hidden min-h-full">
 
             <div
                 className={clsx(

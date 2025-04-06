@@ -14,7 +14,7 @@ const ButtonAtom = ({
   children,
   onClick,
   type = 'button',
-  className = '!bg-primary hover:!bg-primaryHover',
+  className = '!bg-primary hover:!bg-primaryHover text-white',
   disabled = false,
   icon = null,
 }) => {
