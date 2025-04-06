@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@libs/hooks/UseAuth';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
 
-const AuthGate = () => {
+const FormGroups = () => {
     const navigate = useNavigate();
     const { authentication } = useAuth();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -39,4 +39,4 @@ const AuthGate = () => {
     );
 };
 
-export default AuthGate;
+export default FormGroups;
