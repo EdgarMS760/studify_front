@@ -3,13 +3,17 @@ import clsx from 'clsx';
 import React from 'react'
 import TextCardAtom from '../atoms/TextCardAtom';
 
-const CardTask = ({ taskData }) => {
+const CardTask = ({ taskData, onClickCard }) => {
     const theme = useTheme();
-
+    const handleClick = () => {
+        if (onClickCard) {
+            onClickCard(taskData.id);
+        }
+    }
     return (
-        <div className={clsx(
-            "p-4 rounded-lg shadow-sm mx-3",
-            theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white'
+        <div onClick={handleClick} className={clsx(
+            "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer",
+            theme.palette.mode === 'dark' ? 'bg-neutral-800 hover:bg-neutral-700' : 'bg-white hover:bg-primary'
         )}>
             <div className="grid grid-cols-3 items-center">
 

@@ -6,7 +6,7 @@ import ButtonAtom from '@components/atoms/ButtonAtom';
 import clsx from 'clsx';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
-import TextCardAtom from '../atoms/TextCardAtom';
+import TextCardAtom from '@components/atoms/TextCardAtom';
 import { TimePicker } from '@mui/x-date-pickers';
 const TaskTabs = ({ visibleCreateTask = true, onStatusChange }) => {
   const [selected, setSelected] = useState('');
