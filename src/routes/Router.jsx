@@ -1,26 +1,34 @@
 import { Routes, Route } from "react-router-dom";
 import NotFound from "@components/templates/NotFound";
 import MainLayout from "@components/templates/MainLayout";
-import LoginLayout from "@components/templates/LoginLayout";
 import TestPage from "@pages/TestPage";
 import FeedGroupPage from "@pages/FeedGroupPage";
-import FormRegister from "@components/organisms/FormRegister";
+
+import LoginLayout from "@components/templates/LoginLayout";
 import FormLogin from "@components/organisms/FormLogin";
-import AuthGate from "@components/organisms/AuthGate";
+
+import RegisterLayout from "@components/templates/RegisterLayout";
+import FormRegister from "@components/organisms/FormRegister";
+
+import FormGroups from "@components/organisms/FormGroups";
+
+
 
 export default function Router() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />} >
-                <Route index element={<TestPage />} />
+            
+                <Route path="grupos" index element={<FormGroups />} />
+
                 <Route path="group/:id" element={<FeedGroupPage />} />
             </Route>
             
             <Route path="/login" element={<LoginLayout />}>
-                <Route index element={<AuthGate />} />
+                <Route index element={<FormLogin />} />
             </Route>
 
-            <Route path="/register" element={<LoginLayout />}>
+            <Route path="/register" element={<RegisterLayout />}>
                 <Route index element={<FormRegister />} />
             </Route>
 
