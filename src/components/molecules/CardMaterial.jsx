@@ -36,9 +36,9 @@ const CardMaterial = ({ data }) => {
                 <IconButton aria-label="download" color="secondary">
                     <DownloadIcon />
                 </IconButton>
-                {isTeacher ??
+                {isTeacher &&
 
-                    (<IconButton aria-label="download" color="secondary">
+                    (<IconButton aria-label="delete" color="secondary">
                         <DeleteForeverIcon />
                     </IconButton>)
                 }
