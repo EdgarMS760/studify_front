@@ -5,10 +5,10 @@ import DownloadIcon from '@mui/icons-material/Download';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TextCardAtom from '../atoms/TextCardAtom';
 import clsx from 'clsx';
-const CardMaterial = ({ data }) => {
+const CardMaterial = ({ data, isTeacher }) => {
 
     const theme = useTheme()
-    const isTeacher = true;
+
     return (
         <div className={clsx('flex flex-row justify-between items-center rounded-lg shadow-md p-4 w-full h-20',
             theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"

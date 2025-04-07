@@ -32,7 +32,7 @@ const FormGroups = () => {
   };
 
   const handleEntrarGrupo = () => {
-    navigate(`/grupo/${grupoSeleccionado.nombre.toLowerCase()}`);
+    navigate(`/group/${grupoSeleccionado.id}`);
     setModalOpciones(false);
   };
 

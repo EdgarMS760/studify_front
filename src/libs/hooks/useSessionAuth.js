@@ -35,6 +35,7 @@ export const useSessionAuth = () => {
     localStorage.removeItem('user_studify');
     localStorage.removeItem('token_studify');
     setSession(null);
+    window.location.reload();
   };
 
   return {
