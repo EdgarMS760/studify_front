@@ -12,6 +12,7 @@ import TasksPage from "@pages/TasksPage";
 import MaterialPage from "@pages/MaterialPage";
 import StudentsPage from "@pages/StudentsPage";
 import DetailTaskPage from "@pages/DetailTaskPage";
+import CalendarPage from "@pages/CalendarPage";
 
 export default function Router() {
     return (
@@ -27,6 +28,8 @@ export default function Router() {
                     <Route path="material" element={<MaterialPage />} />
                     <Route path="students" element={<StudentsPage />} />
                 </Route>
+                <Route path="calendar" element={<CalendarPage />} />
+                <Route path="homework" element={<TasksPage />} />
             </Route>
 
             <Route path="/login" element={<LoginLayout />}>
