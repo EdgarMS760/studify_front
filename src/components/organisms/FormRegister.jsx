@@ -19,29 +19,30 @@ const FormRegister = () => {
     };
 
     return (
-        <Box sx={{ width: 700, margin: 'auto', mt: 5, textAlign: 'center', padding: 3, boxShadow: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
-            <img src="/Logo.png" alt="Studify Logo" style={{textAlign: 'center' ,width: 250, marginBottom: 10 }} />
-            <Typography variant="h5" sx={{ mb: 3, fontFamily: 'Montserrat', color: 'black'}}>Registro</Typography>
+        <Box sx={{ width: 600, margin: 'auto', mt: 5, textAlign: 'center', padding: 3, boxShadow: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
+            
+            <Typography variant="h5" sx={{ mb: 3, color: 'black'}}>Registro</Typography>
             <Grid container spacing={3}>
-                <Grid item xs={6}>
-                    <TextField fullWidth label="Nombre Completo" name="name" margin="normal" variant="outlined" onChange={handleChange} />
-                    <TextField fullWidth label="E-mail" name="email" margin="normal" variant="outlined" onChange={handleChange} />
-                    <TextField fullWidth label="Contraseña" name="password" type="password" margin="normal" variant="outlined" onChange={handleChange} />
-                    <TextField fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" margin="normal" variant="outlined" onChange={handleChange} />
-                    <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>Seleccione su rol</Typography>
+                <Grid item xs={6} InputProps={{ style: { color: 'black' } }}>
+                    <TextField fullWidth label="Nombre Completo" name="name" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
+                    <TextField fullWidth label="E-mail" name="email" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
+                    <TextField fullWidth label="Contraseña" name="password" type="password" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
+                    <TextField fullWidth label="Confirmar Contraseña" name="confirmPassword" type="password" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
+                    
+                    <Typography variant="body2" sx={{ mt: 2, color: 'black' }}>Seleccione su rol</Typography>
                     <RadioGroup row name="role" value={user.role} onChange={handleChange} sx={{ justifyContent: 'center', fontFamily: 'Montserrat', color: 'black' }}>
                         <FormControlLabel value="Alumno" control={<Radio />} label="Alumno" />
-                        <FormControlLabel value="Maestro" control={<Radio />} label="Maestro" />
+                        <FormControlLabel value="Maestro" control={<Radio />} label="Maestro" />    
                     </RadioGroup>
                 </Grid>
+
+                
                 <Grid item xs={6} textAlign="center">
-                    <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>Imagen de Perfil</Typography>
                     <Avatar sx={{ width: 100, height: 100, margin: 'auto' }} src={user.avatar} />
-                    <Button variant="contained" component="label" sx={{ mt: 1, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019' }}>
-                        Upload Image
+                    <Button variant="contained" component="label" sx={{ mt: 1, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019' }}>Upload Image
                         <input type="file" hidden onChange={(e) => setUser({ ...user, avatar: URL.createObjectURL(e.target.files[0]) })} />
                     </Button>
-                    <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>Seleccione su Avatar</Typography>
+                    
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
                         {["/avatar1.png", "/avatar2.png", "/avatar3.png"].map((src) => (
                             <IconButton key={src} onClick={() => setUser({ ...user, avatar: src })}>
@@ -51,7 +52,7 @@ const FormRegister = () => {
                     </Box>
                 </Grid>
             </Grid>
-            <Button type="submit" variant="contained" color="warning" fullWidth sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black' }}>Registrarse</Button>
+            <Button type="submit" variant="contained" color="warning" fullWidth sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019'}}>Registrarse</Button>
             <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black'}}>¿Ya tienes una cuenta? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/login')}>Inicia Sesión</span></Typography>
         </Box>
     );
