@@ -4,6 +4,7 @@ import { InputAdornment, Pagination, TextField } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonAtom from '../components/atoms/ButtonAtom';
 const MaterialPage = () => {
+  const isTeacher = true;
   const dummy = [
     {
       id: 1,
@@ -77,12 +78,13 @@ const MaterialPage = () => {
 
         <Pagination count={10} showFirstButton showLastButton color="primary" />
       </div>
-      <div className="flex justify-center m-4">
-
-        <ButtonAtom >
-          Subir Archivo
-        </ButtonAtom>
-      </div>
+      {isTeacher && (
+        <div className="flex justify-center m-4">
+          <ButtonAtom >
+            Subir Material
+          </ButtonAtom>
+        </div>
+      )}
 
     </>
   )
