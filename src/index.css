@@ -67,3 +67,14 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* Números de los días */
+.fc .fc-daygrid-day-number {
+  color: #FD841F;
+  font-weight: 600;
+}
+
+/* Nombres de los días*/
+.fc .fc-col-header-cell-cushion {
+  color: #FD841F;
+  font-weight: 600;
+}
