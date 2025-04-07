@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const reportes = [
@@ -50,6 +50,15 @@ const FormReports = () => {
       columnas: 6,
     }
   };
+
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') cerrarModalReporte();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 relative">
@@ -114,14 +123,17 @@ const FormReports = () => {
   );
 };
 
-// Modal Reusable
+// Modal actualizado: más estrecho y a la derecha con animación
 const ModalReporte = ({ titulo, onClose, children }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" onClick={onClose}>
+  <div
+    className="fixed inset-0 bg-black bg-opacity-40 flex justify-end items-center z-50"
+    onClick={onClose}
+  >
     <div
-      className="bg-white border border-black rounded-lg px-10 py-8 w-full max-w-6xl"
+      className="bg-white border border-black rounded-lg px-8 py-6 w-full max-w-4xl mr-60 transform transition-all duration-300 scale-100 translate-x-0 shadow-xl"
       onClick={(e) => e.stopPropagation()}
     >
-      <h2 className="text-3xl font-bold text-center mb-8">{titulo}</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">{titulo}</h2>
       {children}
       <div className="text-center my-6">
         <button className="bg-[#F25019] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#e03f0c] transition">
@@ -137,7 +149,7 @@ const ModalReporte = ({ titulo, onClose, children }) => (
   </div>
 );
 
-// Reusable Table
+// Tabla reusable
 const TablaReporte = ({ headers, columnas }) => (
   <div className="overflow-x-auto">
     <table className="w-full border border-black text-sm text-center">
