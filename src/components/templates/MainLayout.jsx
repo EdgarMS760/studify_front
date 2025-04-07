@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { AppProvider } from '@toolpad/core/AppProvider';
@@ -8,24 +8,16 @@ import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import logo from '@assets/Logo.png'
-import { useAuth } from '@libs/hooks/UseAuth';
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '@styles/Theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useSessionAuth } from '@libs/hooks/useSessionAuth';
 
 const MainLayout = () => {
     const navigate = useNavigate();
-    const { session, authentication } = useAuth();
 
-    const wrappedAuthentication = {
-        ...authentication,
-        signOut: () => {
-            authentication.signOut();
-            navigate('/login');
-        }
-    };
     const NAVIGATION = [
         // {
         //     kind: 'header',
@@ -84,11 +76,13 @@ const MainLayout = () => {
         },
     ];
 
+    const { session, authentication } = useSessionAuth();
+
     return (
         <AppProvider
             navigation={NAVIGATION}
             session={session}
-            authentication={wrappedAuthentication}
+            authentication={authentication}
             theme={theme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
