@@ -4,15 +4,19 @@ import SelectAtom from '@components/atoms/SelectAtom'
 import CardStudentTask from '../molecules/CardStudentTask';
 import FullscreenFileModal from './FullscreenFileModal';
 import FilePreview from './FilePreview';
+import SliderGrades from '../atoms/SliderGrades';
+import ButtonAtom from '../atoms/ButtonAtom';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
         { value: "asc", label: 'Mas Recientes primero' },
         { value: "desc", label: 'Mas Antiguos primero' }
     ];
+
+
     const students = [
         {
-            id: 1, name: "Juan perez perez", status: "notDelivered", fileUrl: '/Logo.png',
+            id: 1, name: "Juan perez perez", status: "notDelivered", fileUrl: '/imageTest.jpg',
             fileType: 'image'
         },
         {
@@ -65,11 +69,12 @@ const DetailTaskTeacher = () => {
     const [fileType, setFileType] = useState(null);
 
     const handleSelect = (student) => {
-        setSelectedStudentId(student.tudentId);
+        setSelectedStudentId(student.id);
         setSelectedFile(student.fileUrl);
         setFileType(student.fileType);
         console.log('files', student.fileUrl, student.fileType)
     };
+
     return (
         <>
             <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
@@ -95,7 +100,19 @@ const DetailTaskTeacher = () => {
                 </div>
 
                 <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
+                
                     {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
+                    <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
+                    <SliderGrades />
+                    
+                    <div className='flex justify-center mt-4'>
+
+                        <ButtonAtom
+                            onClick={() => alert("Calificado")}
+                        >
+                            Calificar
+                        </ButtonAtom>
+                    </div>
                 </div>
             </div>
             {/* <FullscreenFileModal

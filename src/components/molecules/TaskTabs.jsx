@@ -8,6 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import TextCardAtom from '@components/atoms/TextCardAtom';
 import { TimePicker } from '@mui/x-date-pickers';
+import SliderGrades from '../atoms/SliderGrades';
 const TaskTabs = ({ visibleCreateTask = true, onStatusChange }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
@@ -178,6 +179,8 @@ const TaskTabs = ({ visibleCreateTask = true, onStatusChange }) => {
                       value={valueTime}
                       onChange={(newValue) => setValueTime(newValue)}
                     />
+                    <TextCardAtom text="Valor de la tarea" className="text-lg" />
+                    <SliderGrades/>
                   </div>
                 </DialogContent>
 
