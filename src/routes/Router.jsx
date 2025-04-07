@@ -18,10 +18,14 @@ export default function Router() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />} >
+            <Route path="groups" index element={<FormGroups />} />
+                <Route path="reports" index element={<FormReports/>}/>
                 <Route index element={<TestPage />} />
                 <Route path="group/:id" element={<GroupLayout />}>
                     <Route index element={<FeedGroupPage />} />
                     <Route path="tasks">
+                        
+
                         <Route index element={<TasksPage />} />
                         <Route path=":taskId" element={<DetailTaskPage />} />
                     </Route>
