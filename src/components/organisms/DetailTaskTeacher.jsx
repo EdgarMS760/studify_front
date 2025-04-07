@@ -6,6 +6,10 @@ import FullscreenFileModal from './FullscreenFileModal';
 import FilePreview from './FilePreview';
 import SliderGrades from '../atoms/SliderGrades';
 import ButtonAtom from '../atoms/ButtonAtom';
+import EditIcon from '@mui/icons-material/Edit';
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
@@ -62,11 +66,14 @@ const DetailTaskTeacher = () => {
 
     const [selectedStudentId, setSelectedStudentId] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
-
+    const [openModalEdit, setOpenModalEdit] = useState(false);
     const selectedStudent = students.find((s) => s.id === selectedStudentId);
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileType, setFileType] = useState(null);
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
     const handleSelect = (student) => {
         setSelectedStudentId(student.id);
@@ -74,11 +81,30 @@ const DetailTaskTeacher = () => {
         setFileType(student.fileType);
         console.log('files', student.fileUrl, student.fileType)
     };
+    const handleCloseModalEdit = () => {
+        setOpenModalEdit(false);
+        setTitle("");
+        setDescription("");
+    };
+    const handleEditTask = () => {
+        console.log("Tarea editada:", { title, description });
+        handleCloseModalEdit();
+    };
+
+    const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
+    const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
+    const theme = useTheme()
+    const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
 
     return (
         <>
             <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
-                <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
+                <div className='flex items-center justify-between'>
+                    <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
+                    <IconButton onClick={() => setOpenModalEdit(true)} aria-label="editTask" color="primary" size="large">
+                        <EditIcon fontSize="inherit" />
+                    </IconButton>
+                </div>
                 <SelectAtom
                     items={options}
                     placeholder="Ordenar"
@@ -100,11 +126,11 @@ const DetailTaskTeacher = () => {
                 </div>
 
                 <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
-                
+
                     {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
                     <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
                     <SliderGrades />
-                    
+
                     <div className='flex justify-center mt-4'>
 
                         <ButtonAtom
@@ -120,6 +146,57 @@ const DetailTaskTeacher = () => {
                 onClose={() => setModalOpen(false)}
                 fileUrl={selectedStudent?.file}
             /> */}
+            <Dialog open={openModalEdit} onClose={handleCloseModalEdit} fullWidth maxWidth="sm">
+                <DialogTitle>Editar Tarea</DialogTitle>
+
+                <DialogContent>
+                    <div className='flex flex-col gap-4 mt-2'>
+
+                        <TextField
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            fullWidth
+                            id="filled-basic"
+                            label="Titulo de la tarea..."
+                            multiline
+                            maxRows={4}
+                            variant="outlined"
+
+                        />
+                        <TextField
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            fullWidth
+                            id="outlined-basic"
+                            label="Descripción de la tarea..."
+                            multiline
+                            rows={4}
+                            maxRows={4}
+                            variant="outlined"
+
+                        />
+
+                        <TextCardAtom text="Fecha de entrega" className="text-lg" />
+                        <DatePicker
+                            label="Selecciona una fecha"
+                            value={valueCalendar}
+                            onChange={(newValue) => setValueCalendar(newValue)}
+                        />
+                        <TimePicker
+                            label="Selecciona una hora"
+                            value={valueTime}
+                            onChange={(newValue) => setValueTime(newValue)}
+                        />
+                        <TextCardAtom text="Valor de la tarea" className="text-lg" />
+                        <SliderGrades />
+                    </div>
+                </DialogContent>
+
+                <DialogActions>
+                    <ButtonAtom onClick={handleEditTask}>Crear</ButtonAtom>
+                    <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
