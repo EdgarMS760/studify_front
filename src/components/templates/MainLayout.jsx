@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -7,20 +8,18 @@ import Diversity3Icon from '@mui/icons-material/Diversity3';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import logo from '@assets/Logo.png';
-import { useAuth } from '@libs/hooks/UseAuth';
+import logo from '@assets/Logo.png'
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '@styles/Theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useSessionAuth } from '@libs/hooks/useSessionAuth';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 
 const MainLayout = () => {
     const navigate = useNavigate();
-    const { session, authentication } = useAuth();
-
     const [openModal, setOpenModal] = useState(false);
     const [userData, setUserData] = useState({
         name: session?.user?.name || '',
@@ -132,11 +131,13 @@ const MainLayout = () => {
         },
     ];
 
+    const { session, authentication } = useSessionAuth();
+
     return (
         <AppProvider
             navigation={NAVIGATION}
             session={session}
-            authentication={wrappedAuthentication}
+            authentication={authentication}
             theme={theme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
