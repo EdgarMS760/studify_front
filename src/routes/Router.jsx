@@ -11,6 +11,7 @@ import GroupLayout from "@components/templates/GroupLayout";
 import TasksPage from "@pages/TasksPage";
 import MaterialPage from "@pages/MaterialPage";
 import StudentsPage from "@pages/StudentsPage";
+import DetailTaskPage from "@pages/DetailTaskPage";
 
 export default function Router() {
     return (
@@ -19,13 +20,13 @@ export default function Router() {
                 <Route index element={<TestPage />} />
                 <Route path="group/:id" element={<GroupLayout />}>
                     <Route index element={<FeedGroupPage />} />
-                    <Route path="tasks" element={<TasksPage />} />
+                    <Route path="tasks">
+                        <Route index element={<TasksPage />} />
+                        <Route path=":taskId" element={<DetailTaskPage />} />
+                    </Route>
                     <Route path="material" element={<MaterialPage />} />
                     <Route path="students" element={<StudentsPage />} />
                 </Route>
-                {/* <Route path="subpage" element={<SubPage />} /> */}
-                {/* <Route path="report/:id" element={<ReportPage />} /> */}
-
             </Route>
 
             <Route path="/login" element={<LoginLayout />}>

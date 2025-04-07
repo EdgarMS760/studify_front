@@ -12,7 +12,8 @@ import { useAuth } from '@libs/hooks/UseAuth';
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '@styles/Theme';
-
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const MainLayout = () => {
     const navigate = useNavigate();
@@ -97,7 +98,9 @@ const MainLayout = () => {
 
         >
             <DashboardLayout>
-                <Outlet />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Outlet />
+                </LocalizationProvider>
 
             </DashboardLayout>
         </AppProvider>
