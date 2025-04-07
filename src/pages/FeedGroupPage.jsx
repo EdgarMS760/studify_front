@@ -15,42 +15,42 @@ const dummyMessages = [
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:30 AM",
-        message: "ewe",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:30 AM",
-        message: "ewe",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {

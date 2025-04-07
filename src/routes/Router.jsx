@@ -17,6 +17,7 @@ import FormGroups from "@components/organisms/FormGroups";
 import FormReports from "@components/organisms/FormReports";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicOnlyRoute from "./PublicOnlyRoute";
+import SettingsPage from "../pages/SettingsPage";
 
 export default function Router() {
     return (
@@ -43,6 +44,7 @@ export default function Router() {
                 </Route>
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="homework" element={<TasksPage />} />
+                <Route path="settings" element={<SettingsPage />} />
             </Route>
 
             <Route
