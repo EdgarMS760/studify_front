@@ -2,11 +2,18 @@ import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '@styles/theme';
 import Router from '@routes/Router';
+import { SnackbarProvider } from '@libs/store/SnackbarContext';
+import { AuthProvider } from '@libs/store/AuthProvider';
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-        <Router />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider>
+
+          <Router />
+        </SnackbarProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

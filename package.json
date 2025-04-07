@@ -20,6 +20,7 @@
     "@mui/x-date-pickers": "^7.28.3",
     "@tailwindcss/vite": "^4.0.15",
     "@toolpad/core": "^0.13.0",
+    "axios": "^1.8.4",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "react": "^19.0.0",

@@ -1,22 +1,41 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@libs/hooks/UseAuth';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
+import { loginUser } from '@services/auth/authService';
+import { useSnackbar } from '@libs/store/SnackbarContext';
+import { useAuth } from '@libs/store/AuthProvider';
 
 const FormLogin = ({ onToggle }) => {
     const navigate = useNavigate();
-    const { authentication } = useAuth();
+    const { login } = useAuth();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
-
+    const { showSnackbar } = useSnackbar();
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const success = await authentication.signIn(credentials.email, credentials.password);
-        if (success) navigate('/');
+
+
+        try {
+            // setLoading(true);
+            const response = await loginUser({
+                email: credentials.email,
+                password: credentials.password,
+            });
+            showSnackbar(response.message, 'success');
+            login(response.user, response.token);
+            navigate('/')
+            // onToggle();
+        } catch (err) {
+            console.error("Error al registrar:", err);
+            const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
+            showSnackbar(message, 'error');
+        } finally {
+            // setLoading(false);
+        }
     };
 
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, IconButton } from '@mui/material';
 import { Form, useNavigate } from 'react-router-dom';
-import { useAuth } from '@libs/hooks/UseAuth';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
 import FormLogin from '@components/organisms/FormLogin';
 import FormRegister from '@components/organisms/FormRegister';
@@ -13,7 +12,7 @@ const AuthGate = () => {
 
     return (
         <div className="w-screen h-screen flex flex-col items-center justify-center bg-white dark:bg-neutral-900">
-            <Typography variant="h5" sx={{ mb: 3, color: 'black' }}>
+            <Typography variant="h5" sx={{ mt: 4, color: 'black' }}>
                 {isRegistering ? 'Registro' : 'Inicio de sesión'}
             </Typography>
             {isRegistering ? (
