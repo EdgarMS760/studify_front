@@ -26,7 +26,7 @@ const ButtonAtom = ({
       disabled={disabled}
       className={clsx(
         // Estilos base
-        'font-medium transition duration-300 ease-in-out flex items-center gap-2',
+        'font-medium transition duration-300 ease-in-out flex items-center gap-2 text-center justify-center',
 
         // Tamaño responsivo
         'px-4 py-2 text-sm',                // base
