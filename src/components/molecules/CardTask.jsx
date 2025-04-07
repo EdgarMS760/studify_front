@@ -10,6 +10,7 @@ const CardTask = ({ taskData, onClickCard }) => {
             onClickCard(taskData.id);
         }
     }
+    const isGeneral = false;
     return (
         <div onClick={handleClick} className={clsx(
             "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer",
@@ -18,7 +19,7 @@ const CardTask = ({ taskData, onClickCard }) => {
             <div className="grid grid-cols-3 items-center">
 
                 <div className="flex justify-start">
-                    <TextCardAtom text={taskData.date} className="text-lg" isHighlighted={true} />
+                    <TextCardAtom text={isGeneral ? taskData.groupName : taskData.date} className="text-lg" isHighlighted={true} />
                 </div>
 
                 <div className="flex justify-center text-center">
