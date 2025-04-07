@@ -20,39 +20,39 @@ const DetailTaskTeacher = () => {
             fileType: 'image'
         },
         {
-            id: 2, name: "Pedro perez perez", status: "delivered", fileUrl: '/video.mp4',
+            id: 2, name: "Pedro perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 5, name: "Ana perez perez", status: "delivered", fileUrl: '/video.mp4',
+            id: 5, name: "Ana perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 6, name: "Luis perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            id: 6, name: "Luis perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 7, name: "Laura perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            id: 7, name: "Laura perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 8, name: "Carlos perez perez", status: "delivered", fileUrl: '/video.mp4',
+            id: 8, name: "Carlos perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 9, name: "Sofia perez perez", status: "reviewed", fileUrl: '/video.mp4',
+            id: 9, name: "Sofia perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
         {
-            id: 10, name: "Andres perez perez", status: "notDelivered", fileUrl: '/video.mp4',
+            id: 10, name: "Andres perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
             fileType: 'video'
         },
     ];

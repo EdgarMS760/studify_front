@@ -7,7 +7,19 @@ const DetailTaskPage = () => {
     // const isTeacher = user.role === "teacher";
     const isTeacher = true;
 
-    if (isTeacher) return <DetailTaskTeacher />;
-    return <DetailTaskStudent />;
+    if (isTeacher) {
+        return (
+        <div className='flex flex-col h-full'>
+
+            <DetailTaskTeacher />
+        </div>
+        );
+    }
+    return (
+        <div className='flex flex-col h-full'>
+
+            <DetailTaskStudent />
+        </div>
+        );
 };
 export default DetailTaskPage
