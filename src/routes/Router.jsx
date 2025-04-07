@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import NotFound from "@components/templates/NotFound";
 import MainLayout from "@components/templates/MainLayout";
-import TestPage from "@pages/TestPage";
+//import TestPage from "@pages/TestPage";
 import FeedGroupPage from "@pages/FeedGroupPage";
 
 import LoginLayout from "@components/templates/LoginLayout";
@@ -11,6 +11,7 @@ import RegisterLayout from "@components/templates/RegisterLayout";
 import FormRegister from "@components/organisms/FormRegister";
 
 import FormGroups from "@components/organisms/FormGroups";
+import FormReports from "../components/organisms/FormReports";
 
 
 
@@ -19,8 +20,8 @@ export default function Router() {
         <Routes>
             <Route path="/" element={<MainLayout />} >
             
-                <Route path="grupos" index element={<FormGroups />} />
-
+                <Route path="groups" index element={<FormGroups />} />
+                <Route path="reports" index element={<FormReports/>}/>
                 <Route path="group/:id" element={<FeedGroupPage />} />
             </Route>
             
