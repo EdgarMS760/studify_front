@@ -3,7 +3,7 @@ import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@libs/hooks/UseAuth';
 
-const FormRegister = () => {
+const FormRegister = ({onToggle }) => {
     const navigate = useNavigate();
     const { authentication } = useAuth();
     const [user, setUser] = useState({ email: '', password: '', name: '', role: 'Alumno', avatar: '' });
@@ -21,7 +21,6 @@ const FormRegister = () => {
     return (
         <Box sx={{ width: 600, margin: 'auto', mt: 5, textAlign: 'center', padding: 3, boxShadow: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
             
-            <Typography variant="h5" sx={{ mb: 3, color: 'black'}}>Registro</Typography>
             <Grid container spacing={3}>
                 <Grid item xs={6} InputProps={{ style: { color: 'black' } }}>
                     <TextField fullWidth label="Nombre Completo" name="name" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
@@ -53,7 +52,7 @@ const FormRegister = () => {
                 </Grid>
             </Grid>
             <Button type="submit" variant="contained" color="warning" fullWidth sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019'}}>Registrarse</Button>
-            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black'}}>¿Ya tienes una cuenta? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/login')}>Inicia Sesión</span></Typography>
+            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black'}}>¿Ya tienes una cuenta? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={onToggle}>Inicia Sesión</span></Typography>
         </Box>
     );
 };

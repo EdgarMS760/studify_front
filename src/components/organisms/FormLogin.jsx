@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@libs/hooks/UseAuth';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
 
-const AuthGate = () => {
+const FormLogin = ({ onToggle }) => {
     const navigate = useNavigate();
     const { authentication } = useAuth();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -19,24 +19,64 @@ const AuthGate = () => {
         if (success) navigate('/');
     };
 
+
     return (
-        <Box sx={{ width: 400, margin: 'auto', mt: 5, textAlign: 'center', padding: 3, boxShadow: 3, borderRadius: 2 }}>
-        <Typography variant="h4" sx={{ mb: 3, color:"black" }}>Login</Typography>
-        <form onSubmit={handleSubmit}>
-            <TextField fullWidth label="E-mail" name="email" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
-            <TextField fullWidth label="Contraseña" name="password" type="password" margin="normal" variant="outlined" onChange={handleChange} InputProps={{ style: { color: 'black' } }} InputLabelProps={{ style: { color: 'black' } }} />
-            <Typography variant="body2" sx={{ textAlign: 'right', mt: 1, cursor: 'pointer', color: 'blue' }}>Olvidaste tu contraseña?</Typography>
-            <Button type="submit" variant="contained" color="warning" fullWidth sx={{ mt: 2, py: 1.5, backgroundColor:'#F25019'}}>Iniciar</Button>
-        </form>
-        <Typography variant="body2" sx={{ mt: 2, color: "black"}}>O puedes iniciar con</Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-            <IconButton sx={{color: "black"}}><Google /></IconButton>
-            <IconButton sx={{color: "black"}}><GitHub /></IconButton>
-            <IconButton sx={{color: "black"}}><Facebook /></IconButton>
-        </Box>
-        <Typography variant="body2" sx={{ mt: 2, color:"black" }}>No tienes cuenta todavía? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/register')}>Regístrate Aquí</span></Typography>
-    </Box>
+        <div className="bg-white flex flex-col overflow-hidden min-h-full">
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    fullWidth
+                    label="E-mail"
+                    name="email"
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange}
+                />
+                <TextField
+                    fullWidth
+                    label="Contraseña"
+                    name="password"
+                    type="password"
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange}
+                />
+                <Typography
+                    variant="body2"
+                    sx={{ textAlign: 'right', mt: 1, cursor: 'pointer', color: 'blue' }}
+                >
+                    ¿Olvidaste tu contraseña?
+                </Typography>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="warning"
+                    fullWidth
+                    sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black' }}
+                >
+                    Iniciar
+                </Button>
+            </form>
+
+            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>
+                O puedes iniciar con
+            </Typography>
+            <div className="flex justify-center mt-2">
+                <IconButton><Google /></IconButton>
+                <IconButton><GitHub /></IconButton>
+                <IconButton><Facebook /></IconButton>
+            </div>
+
+            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>
+                ¿No tienes cuenta todavía?{' '}
+                <span
+                    onClick={onToggle}
+                    className="text-blue-500 cursor-pointer hover:underline"
+                >
+                    Regístrate aquí
+                </span>
+            </Typography>
+        </div>
     );
 };
 
-export default AuthGate;
+export default FormLogin;

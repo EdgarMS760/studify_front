@@ -13,6 +13,8 @@ import MaterialPage from "@pages/MaterialPage";
 import StudentsPage from "@pages/StudentsPage";
 import DetailTaskPage from "@pages/DetailTaskPage";
 import CalendarPage from "@pages/CalendarPage";
+import FormGroups from "@components/organisms/FormGroups";
+import FormReports from "@components/organisms/FormReports";
 
 export default function Router() {
     return (
@@ -36,7 +38,7 @@ export default function Router() {
                 <Route path="homework" element={<TasksPage />} />
             </Route>
 
-            <Route path="/login" element={<LoginLayout />}>
+            <Route path="/Auth" element={<LoginLayout />}>
                 <Route index element={<AuthGate />} />
             </Route>
 
