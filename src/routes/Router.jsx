@@ -13,19 +13,28 @@ import MaterialPage from "@pages/MaterialPage";
 import StudentsPage from "@pages/StudentsPage";
 import DetailTaskPage from "@pages/DetailTaskPage";
 import CalendarPage from "@pages/CalendarPage";
+import FormGroups from "@components/organisms/FormGroups";
+import FormReports from "@components/organisms/FormReports";
+import ProtectedRoute from "./ProtectedRoute";
+import PublicOnlyRoute from "./PublicOnlyRoute";
 
 export default function Router() {
     return (
         <Routes>
-            <Route path="/" element={<MainLayout />} >
-            <Route path="groups" index element={<FormGroups />} />
-                <Route path="reports" index element={<FormReports/>}/>
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute>
+                        <MainLayout />
+                    </ProtectedRoute>
+                }
+            >
                 <Route index element={<TestPage />} />
+                <Route path="groups" index element={<FormGroups />} />
+                <Route path="reports" index element={<FormReports />} />
                 <Route path="group/:id" element={<GroupLayout />}>
                     <Route index element={<FeedGroupPage />} />
                     <Route path="tasks">
-                        
-
                         <Route index element={<TasksPage />} />
                         <Route path=":taskId" element={<DetailTaskPage />} />
                     </Route>
@@ -36,14 +45,16 @@ export default function Router() {
                 <Route path="homework" element={<TasksPage />} />
             </Route>
 
-            <Route path="/login" element={<LoginLayout />}>
+            <Route
+                path="/auth"
+                element={
+                    <PublicOnlyRoute>
+                        <LoginLayout />
+                    </PublicOnlyRoute>
+                }
+            >
                 <Route index element={<AuthGate />} />
             </Route>
-
-            <Route path="/register" element={<LoginLayout />}>
-                <Route index element={<FormRegister />} />
-            </Route>
-
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
