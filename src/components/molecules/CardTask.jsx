@@ -3,14 +3,13 @@ import clsx from 'clsx';
 import React from 'react'
 import TextCardAtom from '../atoms/TextCardAtom';
 
-const CardTask = ({ taskData, onClickCard }) => {
+const CardTask = ({ taskData, onClickCard, isGeneral=false}) => {
     const theme = useTheme();
     const handleClick = () => {
         if (onClickCard) {
             onClickCard(taskData.id);
         }
     }
-    const isGeneral = false;
     return (
         <div onClick={handleClick} className={clsx(
             "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer",
