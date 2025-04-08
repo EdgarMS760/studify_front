@@ -2,7 +2,7 @@ import React from 'react'
 import TaskTabs from '@components/molecules/TaskTabs'
 import CardTask from '@components/molecules/CardTask'
 import { Pagination } from '@mui/material';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useAuth } from '../libs/store/AuthProvider';
 
 const TasksPage = () => {
@@ -45,18 +45,18 @@ const TasksPage = () => {
   }
   const navigate = useNavigate();
   const { id: groupId } = useParams();
-
+const location = useLocation();
   const handleCardClick = (taskId) => {
     navigate(`/group/${groupId}/tasks/${taskId}`);
   };
-
+  const isGeneralPage=location.pathname === '/homework'
   return (
     <div>
-      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} />
+      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} isGeneralPage={isGeneralPage} />
 
       {tasks.map((task, index) => (
         <div key={index} className="m-2">
-          <CardTask taskData={task} onClickCard={() => handleCardClick(task.id)} />
+          <CardTask taskData={task} onClickCard={() => handleCardClick(task.id)} isGeneral={isGeneralPage} />
         </div>
       ))}
 
