@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+
+import React, { useState } from 'react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { AppProvider } from '@toolpad/core/AppProvider';
@@ -8,100 +9,126 @@ import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import GroupsIcon from '@mui/icons-material/Groups';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import logo from '@assets/Logo.png'
-import { useAuth } from '@libs/hooks/UseAuth';
 import { Outlet, useNavigate } from 'react-router';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import theme from '@styles/Theme';
-
-
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { useSessionAuth } from '@libs/hooks/useSessionAuth';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { useAuth } from '../../libs/store/AuthProvider';
 const MainLayout = () => {
-    const navigate = useNavigate();
-    const { session, authentication } = useAuth();
 
-    const wrappedAuthentication = {
-        ...authentication,
-        signOut: () => {
-            authentication.signOut();
-            navigate('/login');
-        }
-    };
-    const NAVIGATION = [
-        // {
-        //     kind: 'header',
-        //     title: 'Main items',
-        // },
-        // {
-        //     segment: 'dashboard',
-        //     title: 'Dashboard',
-        //     icon: <DashboardIcon />,
-        // },
-        {
-            segment: 'groups',
-            title: 'Grupos',
+    const { session, authentication } = useSessionAuth();
+
+
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
+
+
+    const NAVIGATION = isTeacher ?
+        [
+            // {
+            //     kind: 'header',
+            //     title: 'Main items',
+            // },
+            // {
+            //     segment: 'dashboard',
+            //     title: 'Dashboard',
+            //     icon: <DashboardIcon />,
+            // },
+
+            {
+                segment: 'groups',
+                title: 'Grupos',
+                icon: <GroupsIcon />,
+            },
+            {
+                segment: 'reports',
+                title: 'Reportes',
+                icon: <BarChartIcon />,
+                // children: [
+                //     {
+                //         segment: 'attendance',
+                //         title: 'Asistencia',
+                //         icon: <Diversity3Icon />,
+                //     },
+                //     {
+                //         segment: 'homework',
+                //         title: 'Tareas',
+                //         icon: <DescriptionIcon />,
+                //     },
+                //     {
+                //         segment: 'performance',
+                //         title: 'Desempeño',
+                //         icon: <AutoGraphIcon />,
+                //     },
+                // ],
+            },
+            {
+                segment: 'calendar',
+                title: 'Calendario',
+                icon: <CalendarMonthIcon />,
+            },
+            {
+                segment: 'homework',
+                title: 'Tareas',
+                icon: <HomeWorkIcon />,
+            },
+            {
+                kind: 'header',
+                title: 'Configuración',
+            },
+            {
+                segment: 'settings',
+                title: 'Datos de usuario',
+                icon: <ManageAccountsIcon />,
+            },
+        ] : [{
+            segment: 'group/1',
+            title: 'Grupo',
             icon: <GroupsIcon />,
-        },
-        {
-            kind: 'divider',
-        },
-        {
-            segment: 'reports',
-            title: 'Reportes',
-            icon: <BarChartIcon />,
-            children: [
-                {
-                    segment: 'attendance',
-                    title: 'Asistencia',
-                    icon: <Diversity3Icon />,
-                },
-                {
-                    segment: 'homework',
-                    title: 'Tareas',
-                    icon: <DescriptionIcon />,
-                },
-                {
-                    segment: 'performance',
-                    title: 'desempeño',
-                    icon: <AutoGraphIcon />,
-                },
-            ],
-        },
-        {
-            kind: 'divider',
-        },
-        {
+        }, {
             segment: 'calendar',
-            title: 'calendario',
+            title: 'Calendario',
             icon: <CalendarMonthIcon />,
+        }, {
+            kind: 'header',
+            title: 'Configuración',
         },
         {
-            kind: 'divider',
-        },
-        {
-            segment: 'homework',
-            title: 'Tareas',
-            icon: <HomeWorkIcon />,
-        },
-    ];
+            segment: 'settings',
+            title: 'Datos de usuario',
+            icon: <ManageAccountsIcon />,
+        },];
+
 
     return (
         <AppProvider
             navigation={NAVIGATION}
             session={session}
-            authentication={wrappedAuthentication}
+            authentication={authentication}
             theme={theme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
                 title: '',
                 homeUrl: '/',
             }}
-
         >
             <DashboardLayout>
-                <Outlet />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem', position: 'fixed', transform: 'translate(0%, -95%)', zIndex: '5000', right: 100 }}>
+                    {/* */}
+                </div>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Outlet />
+                </LocalizationProvider>
+
 
             </DashboardLayout>
         </AppProvider>
-    )
-}
+    );
+};
 
-export default MainLayout
+export default MainLayout;

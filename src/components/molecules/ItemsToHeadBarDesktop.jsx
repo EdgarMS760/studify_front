@@ -4,23 +4,38 @@ import FolderIcon from '@mui/icons-material/Folder';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
+import { useAuth } from '@libs/store/AuthProvider';
 const ItemsToHeadBarDesktop = () => {
-    const [value, setValue] = React.useState(0);
     const navigate = useNavigate();
     const location = useLocation();
-    const tabRoutes = ["/group/:id", "/group/:id/tasks", "/group/:id/material", "/group/:id/students"];
+    const { id } = useParams();
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
+    const base = `/group/${id}`;
 
-    // Encuentra el índice actual basado en la ruta
-    const currentTab = tabRoutes.indexOf(location.pathname);
-
-    // Función para manejar cambios de pestaña
+    const tabRoutes = [
+      `${base}`,
+      `${base}/tasks`,
+      `${base}/material`,
+      `${base}/students`,
+    ];
+  
+    const patterns = [
+      new RegExp(`^${base}$`),            
+      new RegExp(`^${base}/tasks`),     
+      new RegExp(`^${base}/material`),
+      new RegExp(`^${base}/students`),
+    ];
+  
+    const currentTab = patterns.findIndex((regex) => regex.test(location.pathname));
+  
     const handleChange = (_, newValue) => {
-        navigate(tabRoutes[newValue]); // Navega a la ruta correspondiente
+      navigate(tabRoutes[newValue]);
     };
     return (
         <Tabs
-            value={currentTab !== -1 ? currentTab : 0}
+        value={currentTab !== -1 ? currentTab : false} 
             onChange={handleChange}
             aria-label="icon label tabs example"
             textColor="inherit"
@@ -71,7 +86,7 @@ const ItemsToHeadBarDesktop = () => {
             <Tab icon={<HomeIcon />} iconPosition="start" label="MURO" />
             <Tab icon={<HomeWorkIcon />} iconPosition="start" label="TAREAS" />
             <Tab icon={<FolderIcon />} iconPosition="start" label="MATERIAL" />
-            <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />
+           {isTeacher && <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />}
         </Tabs>
     )
 }
