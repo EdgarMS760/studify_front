@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import TextCardAtom from '@components/atoms/TextCardAtom';
 import { TimePicker } from '@mui/x-date-pickers';
 import SliderGrades from '../atoms/SliderGrades';
-const TaskTabs = ({ visibleCreateTask, onStatusChange }) => {
+const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
   const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
@@ -133,7 +133,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange }) => {
             onChange={handleSelectChange}
           />
 
-          {visibleCreateTask && (
+          {visibleCreateTask && !isGeneralPage && (
             <>
               <ButtonAtom onClick={handleOpen} className={bgButtonDarkMode + " !rounded-full"}>
                 Crear Tarea
