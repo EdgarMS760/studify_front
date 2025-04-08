@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import {
   Box, Typography, Grid, Card, CardContent, CardMedia, Modal, TextField,
-  Button, Avatar, ButtonBase
+  Button, Avatar, ButtonBase,
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import { useNavigate } from 'react-router-dom';
+import clsx from 'clsx';
 
 const FormGroups = () => {
   const navigate = useNavigate();
@@ -64,9 +70,11 @@ const FormGroups = () => {
       reader.readAsDataURL(file);
     }
   };
-
+  const theme = useTheme()
   return (
-    <Box sx={{ padding: 4, backgroundColor: '#e0e0e0', minHeight: '100vh' }}>
+    <div className={clsx('p-4 min-h-full',
+      theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-secondary'
+    )}>
       <Typography variant="h6" sx={{ fontFamily: 'Montserrat', mb: 2 }}>Tus Grupos</Typography>
       <Grid container spacing={2}>
         {grupos.map((grupo) => (
@@ -91,19 +99,49 @@ const FormGroups = () => {
       </Grid>
 
       {/* Modal Opciones */}
-      <Modal open={modalOpciones} onClose={() => setModalOpciones(false)}>
-        <Box sx={{ width: 300, p: 4, backgroundColor: '#fff', borderRadius: 2, mx: 'auto', my: '20vh', textAlign: 'center' }}>
-          <Typography variant="h6" fontFamily="Montserrat" mb={2}>Opciones del Grupo</Typography>
-          <Button fullWidth variant="contained" sx={{ backgroundColor: '#f97316', mb: 1 }} onClick={handleEntrarGrupo}>Entrar al Grupo</Button>
-          <Button fullWidth variant="outlined" sx={{ mb: 1 }} onClick={handleAbrirEditar}>Editar Grupo</Button>
-          <Button fullWidth variant="outlined" color="error" onClick={handleArchivarGrupo}>Archivar Grupo</Button>
-        </Box>
-      </Modal>
+      <Dialog open={modalOpciones} onClose={() => setModalOpciones(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ textAlign: 'center', fontFamily: 'Montserrat' }}>
+          <Typography variant="h6">Opciones del Grupo</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center', padding: 2 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ backgroundColor: '#f97316', mb: 1 }}
+            onClick={handleEntrarGrupo}
+          >
+            Entrar al Grupo
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 1 }}
+            onClick={handleAbrirEditar}
+          >
+            Editar Grupo
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="error"
+            onClick={handleArchivarGrupo}
+          >
+            Archivar Grupo
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModalOpciones(false)} color="primary">
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Modal Editar */}
-      <Modal open={modalEditar} onClose={() => setModalEditar(false)}>
-        <Box sx={{ width: 300, p: 4, backgroundColor: '#e5e5e5', borderRadius: 2, mx: 'auto', my: '10vh', textAlign: 'center' }}>
-          <Typography variant="subtitle2" fontFamily="Montserrat" mb={1}>Nuevo Grupo</Typography>
+      <Dialog open={modalEditar} onClose={() => setModalEditar(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ textAlign: 'center', fontFamily: 'Montserrat' }}>
+          <Typography variant="subtitle2">Editar Grupo</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center', padding: 2 }}>
           {imagenPreview && (
             <Box mb={2}>
               <Avatar src={imagenPreview} sx={{ width: 120, height: 120, mx: 'auto' }} />
@@ -130,13 +168,17 @@ const FormGroups = () => {
             onChange={(e) => setGrupoSeleccionado({ ...grupoSeleccionado, nombre: e.target.value })}
             sx={{ mb: 2 }}
           />
+        </DialogContent>
 
-          <Box display="flex" justifyContent="space-between">
-            <Button variant="outlined" onClick={handleGuardarEdicion}>Guardar</Button>
-            <Button variant="outlined" color="error" onClick={() => setModalEditar(false)}>Cancelar</Button>
-          </Box>
-        </Box>
-      </Modal>
+        <DialogActions sx={{ justifyContent: 'space-between' }}>
+          <Button variant="outlined" onClick={handleGuardarEdicion}>
+            Guardar
+          </Button>
+          <Button variant="outlined" color="error" onClick={() => setModalEditar(false)}>
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Grupos Archivados */}
       <Box mt={4}>
@@ -161,7 +203,7 @@ const FormGroups = () => {
           ))}
         </Grid>
       </Box>
-    </Box>
+    </div>
   );
 };
 

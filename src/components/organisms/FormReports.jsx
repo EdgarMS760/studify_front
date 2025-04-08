@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography, Box, IconButton, Select, MenuItem, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import clsx from 'clsx';
+import CardTask from '../molecules/CardTask';
 
 const reportes = [
   { id: 1, nombre: 'Asistencia', color: 'bg-green-500', icono: '✅' },
@@ -8,10 +12,9 @@ const reportes = [
 ];
 
 const tareas = [
-  { id: 1, titulo: 'Entregar ensayo de literatura', fecha: '2025-04-05' },
-  { id: 2, titulo: 'Resolver guía de matemáticas', fecha: '2025-04-04' },
-  { id: 3, titulo: 'Estudiar para el examen de ciencias', fecha: '2025-04-03' },
-  { id: 4, titulo: 'Subir actividad de inglés', fecha: '2025-04-01' },
+  { id: 1, date: "2025-04-06", name: "Tarea activa 1", points: "10", time: "09:00", expired: false,groupName: "Grupo 1" },
+  { id: 2, date: "2025-04-07", name: "Tarea activa 2", points: "10", time: "10:00", expired: false,groupName: "Grupo 2" },
+  { id: 3, date: "2025-04-08", name: "Tarea activa 3", points: "10", time: "11:00", expired: false,groupName: "Grupo 3" },
 ];
 
 const FormReports = () => {
@@ -19,18 +22,18 @@ const FormReports = () => {
   const [modalAbierto, setModalAbierto] = useState(null);
 
   const irATarea = (id) => {
-    navigate(`/tarea/${id}`);
+    navigate(`/group/1/tasks/${id}`);
   };
 
-  const abrirModalReporte = (nombre) => {
+  const abrirDialogReporte = (nombre) => {
     setModalAbierto(nombre);
   };
 
-  const cerrarModalReporte = () => {
+  const cerrarDialogReporte = () => {
     setModalAbierto(null);
   };
 
-  const modalProps = {
+  const dialogProps = {
     Asistencia: {
       titulo: "Asistencia",
       fields: ['Grupo', 'Alumno', 'Fecha Inicio', 'Fecha Fin'],
@@ -54,23 +57,24 @@ const FormReports = () => {
   // Cerrar con tecla Escape
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') cerrarModalReporte();
+      if (e.key === 'Escape') cerrarDialogReporte();
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
-
+const theme = useTheme()
+  const bgDarkMode = theme.palette.mode === 'dark' ? 'bg-secondaryHover' : 'bg-white';
   return (
-    <div className="min-h-screen bg-gray-100 p-6 relative">
-      <h1 className="text-3xl font-bold font-mono mb-10 text-center">Mis Reportes</h1>
+    <div className={clsx(theme.palette.mode === 'dark' ? 'bg-black' : 'bg-secondary',"min-h-screen  p-6 relative")}>
+      <h1 className="text-3xl font-bold font-mono mb-10 text-center">Reportes</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         <div className="space-y-6">
           {reportes.map(({ id, nombre, color, icono }) => (
             <div
               key={id}
-              onClick={() => abrirModalReporte(nombre)}
-              className="bg-white shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer"
+              onClick={() => abrirDialogReporte(nombre)}
+              className={clsx(bgDarkMode," shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
             >
               <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl ${color}`}>
                 {icono}
@@ -80,74 +84,80 @@ const FormReports = () => {
           ))}
         </div>
 
-        <div className="lg:col-span-2 bg-white shadow-lg rounded-2xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Últimas Tareas</h2>
-          <div className="space-y-4">
-            {tareas.map(({ id, titulo, fecha }) => (
-              <button
-                key={id}
-                onClick={() => irATarea(id)}
-                className="w-full text-white hover:bg-[#F25019] hover:text-white text-left rounded-lg p-4 shadow transition-colors duration-200 bg-[#333]"
-              >
-                <p className="text-lg font-medium">{titulo}</p>
-                <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
-              </button>
+        <div className={clsx(theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white',"lg:col-span-2 shadow-lg rounded-2xl p-6")}>
+          <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
+          <div className="space-y-4 border rounded-xl py-2">
+            {tareas.map((item) => (
+              // <button
+              //   key={id}
+              //   onClick={() => irATarea(id)}
+              //   className="w-full text-black hover:bg-[#F25019] hover:text-white text-left rounded-lg p-4 shadow transition-colors duration-200 bg-[#333]"
+              // >
+              //   <p className="text-lg font-medium">{titulo}</p>
+              //   <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
+              // </button>
+              <CardTask taskData={item} onClickCard={irATarea}/>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Modales */}
+      {/* Dialogs */}
       {modalAbierto && (
-        <ModalReporte
-          titulo={modalProps[modalAbierto].titulo}
-          onClose={cerrarModalReporte}
+        <Dialog
+          open={!!modalAbierto}
+          onClose={cerrarDialogReporte}
+          fullWidth
+          maxWidth="md"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {modalProps[modalAbierto].fields.map((label) => (
-              <div key={label}>
-                <label className="block font-semibold mb-1">{label}</label>
-                <select className="w-full bg-gray-300 px-4 py-2 rounded">
-                  <option>Seleccionar...</option>
-                </select>
-              </div>
-            ))}
-          </div>
-          <TablaReporte
-            headers={modalProps[modalAbierto].headers}
-            columnas={modalProps[modalAbierto].columnas}
-          />
-        </ModalReporte>
+          <DialogTitle>
+            {dialogProps[modalAbierto].titulo}
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={cerrarDialogReporte}
+              aria-label="close"
+              sx={{ position: 'absolute', right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              {dialogProps[modalAbierto].fields.map((label) => (
+                <div key={label}>
+                  <label className="block font-semibold mb-1">{label}</label>
+                  <Select className="w-full bg-gray-300 px-4 py-2 rounded">
+                    <MenuItem>Seleccionar...</MenuItem>
+                  </Select>
+                </div>
+              ))}
+            </div>
+            <TablaReporte
+              headers={dialogProps[modalAbierto].headers}
+              columnas={dialogProps[modalAbierto].columnas}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={cerrarDialogReporte}
+              color="primary"
+            >
+              Cerrar
+            </Button>
+            <Button
+              onClick={() => console.log('Generar reporte')}
+              variant="contained"
+              color="primary"
+            >
+              Generar Reporte
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
     </div>
   );
 };
-
-// Modal actualizado: más estrecho y a la derecha con animación
-const ModalReporte = ({ titulo, onClose, children }) => (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-40 flex justify-end items-center z-50"
-    onClick={onClose}
-  >
-    <div
-      className="bg-white border border-black rounded-lg px-8 py-6 w-full max-w-4xl mr-60 transform transition-all duration-300 scale-100 translate-x-0 shadow-xl"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h2 className="text-2xl font-bold text-center mb-6">{titulo}</h2>
-      {children}
-      <div className="text-center my-6">
-        <button className="bg-[#F25019] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#e03f0c] transition">
-          Generar Reporte
-        </button>
-      </div>
-      <div className="text-right">
-        <button onClick={onClose} className="text-gray-600 hover:underline font-medium">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-);
 
 // Tabla reusable
 const TablaReporte = ({ headers, columnas }) => (

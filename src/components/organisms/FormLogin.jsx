@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, IconButton } from '@mui/material';
+import { TextField, Button, Box, Typography, IconButton, Backdrop, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
 import { loginUser } from '@services/auth/authService';
@@ -10,7 +10,7 @@ const FormLogin = ({ onToggle }) => {
     const navigate = useNavigate();
     const { login } = useAuth();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
-
+    const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
@@ -20,7 +20,7 @@ const FormLogin = ({ onToggle }) => {
 
 
         try {
-            // setLoading(true);
+             setLoading(true);
             const response = await loginUser({
                 email: credentials.email,
                 password: credentials.password,
@@ -34,13 +34,19 @@ const FormLogin = ({ onToggle }) => {
             const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
             showSnackbar(message, 'error');
         } finally {
-            // setLoading(false);
+             setLoading(false);
         }
     };
 
 
     return (
         <div className="bg-white flex flex-col overflow-hidden min-h-full">
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <form onSubmit={handleSubmit}>
                 <TextField
                     fullWidth

@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import TextCardAtom from '@components/atoms/TextCardAtom';
 import { TimePicker } from '@mui/x-date-pickers';
 import SliderGrades from '../atoms/SliderGrades';
-const TaskTabs = ({ visibleCreateTask = true, onStatusChange }) => {
+const TaskTabs = ({ visibleCreateTask, onStatusChange }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
   const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
@@ -28,7 +28,7 @@ const TaskTabs = ({ visibleCreateTask = true, onStatusChange }) => {
     { value: "desc", label: 'Mas Antiguos primero' }
   ];
   const theme = useTheme()
-  const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
+  const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
