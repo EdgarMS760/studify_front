@@ -1,11 +1,12 @@
 import React from 'react'
 import DetailTaskTeacher from '@components/organisms/DetailTaskTeacher';
 import DetailTaskStudent from '@components/organisms/DetailTaskStudent';
+import { useAuth } from '../libs/store/AuthProvider';
 
 const DetailTaskPage = () => {
-    // const user = useUser();
-    // const isTeacher = user.role === "teacher";
-    const isTeacher = true;
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
+
 
     if (isTeacher) {
         return (

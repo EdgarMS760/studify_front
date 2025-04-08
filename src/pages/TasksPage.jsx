@@ -3,9 +3,11 @@ import TaskTabs from '@components/molecules/TaskTabs'
 import CardTask from '@components/molecules/CardTask'
 import { Pagination } from '@mui/material';
 import { useNavigate, useParams } from 'react-router';
+import { useAuth } from '../libs/store/AuthProvider';
 
 const TasksPage = () => {
-
+  const { user } = useAuth();
+      const isTeacher = user?.rol === "maestro";
   const expiredTrueArray = [
     { id: 1, date: "2025-04-05", name: "Tarea vencida 1", points: "10", time: "12:00", expired: true, groupName: "Grupo 1" },
     { id: 2, date: "2025-04-04", name: "Tarea vencida 2", points: "10", time: "13:00", expired: true, groupName: "Grupo 2" },
@@ -50,7 +52,7 @@ const TasksPage = () => {
 
   return (
     <div>
-      <TaskTabs onStatusChange={handleStatusTask} />
+      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} />
 
       {tasks.map((task, index) => (
         <div key={index} className="m-2">

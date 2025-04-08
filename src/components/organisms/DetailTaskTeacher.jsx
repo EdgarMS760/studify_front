@@ -10,6 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import { useNavigate } from 'react-router';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
@@ -94,12 +96,18 @@ const DetailTaskTeacher = () => {
     const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
     const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
     const theme = useTheme()
-    const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
-
+    const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
+    const navigate = useNavigate();
+    const returnToTask = () =>{
+        navigate(`/group/1/tasks`)
+    }
     return (
         <>
             <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
                 <div className='flex items-center justify-between'>
+                    <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
+                        <KeyboardReturnIcon fontSize="inherit" />
+                    </IconButton>
                     <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
                     <IconButton onClick={() => setOpenModalEdit(true)} aria-label="editTask" color="primary" size="large">
                         <EditIcon fontSize="inherit" />

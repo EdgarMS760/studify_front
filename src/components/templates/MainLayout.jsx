@@ -18,60 +18,83 @@ import { useSessionAuth } from '@libs/hooks/useSessionAuth';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { useAuth } from '../../libs/store/AuthProvider';
 const MainLayout = () => {
 
     const { session, authentication } = useSessionAuth();
 
 
-    const NAVIGATION = [
-        // {
-        //     kind: 'header',
-        //     title: 'Main items',
-        // },
-        // {
-        //     segment: 'dashboard',
-        //     title: 'Dashboard',
-        //     icon: <DashboardIcon />,
-        // },
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
 
-        {
-            segment: 'groups',
-            title: 'Grupos',
+
+    const NAVIGATION = isTeacher ?
+        [
+            // {
+            //     kind: 'header',
+            //     title: 'Main items',
+            // },
+            // {
+            //     segment: 'dashboard',
+            //     title: 'Dashboard',
+            //     icon: <DashboardIcon />,
+            // },
+
+            {
+                segment: 'groups',
+                title: 'Grupos',
+                icon: <GroupsIcon />,
+            },
+            {
+                segment: 'reports',
+                title: 'Reportes',
+                icon: <BarChartIcon />,
+                // children: [
+                //     {
+                //         segment: 'attendance',
+                //         title: 'Asistencia',
+                //         icon: <Diversity3Icon />,
+                //     },
+                //     {
+                //         segment: 'homework',
+                //         title: 'Tareas',
+                //         icon: <DescriptionIcon />,
+                //     },
+                //     {
+                //         segment: 'performance',
+                //         title: 'Desempeño',
+                //         icon: <AutoGraphIcon />,
+                //     },
+                // ],
+            },
+            {
+                segment: 'calendar',
+                title: 'Calendario',
+                icon: <CalendarMonthIcon />,
+            },
+            {
+                segment: 'homework',
+                title: 'Tareas',
+                icon: <HomeWorkIcon />,
+            },
+            {
+                kind: 'header',
+                title: 'Configuración',
+            },
+            {
+                segment: 'settings',
+                title: 'Datos de usuario',
+                icon: <ManageAccountsIcon />,
+            },
+        ] : [{
+            segment: 'group/1',
+            title: 'Grupo',
             icon: <GroupsIcon />,
-        },
-        {
-            segment: 'reports',
-            title: 'Reportes',
-            icon: <BarChartIcon />,
-            // children: [
-            //     {
-            //         segment: 'attendance',
-            //         title: 'Asistencia',
-            //         icon: <Diversity3Icon />,
-            //     },
-            //     {
-            //         segment: 'homework',
-            //         title: 'Tareas',
-            //         icon: <DescriptionIcon />,
-            //     },
-            //     {
-            //         segment: 'performance',
-            //         title: 'Desempeño',
-            //         icon: <AutoGraphIcon />,
-            //     },
-            // ],
-        },
-        {
+        }, {
             segment: 'calendar',
             title: 'Calendario',
             icon: <CalendarMonthIcon />,
-        },
-        {
-            segment: 'homework',
-            title: 'Tareas',
-            icon: <HomeWorkIcon />,
-        },
-        {
+        }, {
             kind: 'header',
             title: 'Configuración',
         },
@@ -79,8 +102,7 @@ const MainLayout = () => {
             segment: 'settings',
             title: 'Datos de usuario',
             icon: <ManageAccountsIcon />,
-        },
-    ];
+        },];
 
 
     return (

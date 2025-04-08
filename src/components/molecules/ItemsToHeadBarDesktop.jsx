@@ -5,11 +5,13 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
+import { useAuth } from '@libs/store/AuthProvider';
 const ItemsToHeadBarDesktop = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
     const base = `/group/${id}`;
 
     const tabRoutes = [
@@ -84,7 +86,7 @@ const ItemsToHeadBarDesktop = () => {
             <Tab icon={<HomeIcon />} iconPosition="start" label="MURO" />
             <Tab icon={<HomeWorkIcon />} iconPosition="start" label="TAREAS" />
             <Tab icon={<FolderIcon />} iconPosition="start" label="MATERIAL" />
-            <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />
+           {isTeacher && <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />}
         </Tabs>
     )
 }
