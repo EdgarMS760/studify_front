@@ -133,7 +133,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
             onChange={handleSelectChange}
           />
 
-          {visibleCreateTask & !isGeneralPage && (
+          {visibleCreateTask && !isGeneralPage && (
             <>
               <ButtonAtom onClick={handleOpen} className={bgButtonDarkMode + " !rounded-full"}>
                 Crear Tarea
