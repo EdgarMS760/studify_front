@@ -15,42 +15,42 @@ const dummyMessages = [
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:30 AM",
-        message: "ewe",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:30 AM",
-        message: "ewe",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q we",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
         time: "10:45 AM",
-        message: "q roio",
+        message: "test",
         user: { name: "edgar", img: "https://via.placeholder.com/50" }
     },
     {
@@ -98,7 +98,7 @@ const FeedGroupPage = () => {
                         endAdornment: (
                             <Tooltip title="Enviar" arrow>
                                 <SendIcon
-                                    className="cursor-pointer text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-110"
+                                    className="cursor-pointer mb-5 text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-150"
                                 />
                             </Tooltip>
                         )
