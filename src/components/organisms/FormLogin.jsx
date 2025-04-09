@@ -40,7 +40,10 @@ const FormLogin = ({ onToggle }) => {
 
 
     return (
-        <div className="bg-white flex flex-col overflow-hidden min-h-full">
+        <div className=" flex flex-col overflow-hidden min-h-full"  style={{
+            backgroundColor: 'var(--palette-background-default)',
+            color: 'var(--palette-text-primary)',
+          }}>
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading}
