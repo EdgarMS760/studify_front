@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio, Avatar, IconButton, Grid, Snackbar, Alert, Backdrop, CircularProgress } from '@mui/material';
+import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio, Avatar, IconButton, Grid, Snackbar, Alert, Backdrop, CircularProgress, styled } from '@mui/material';
 import { registerUser } from '@services/auth/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { fileToBase64 } from '@libs/helpers/fileToBase64';
@@ -65,19 +65,23 @@ const FormRegister = ({ onToggle }) => {
         }
     };
 
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
+
     return (
         <Box
             component="form"
-            onSubmit={handleSubmit}
-            sx={{
-                width: 600,
-                margin: 'auto',
-                textAlign: 'center',
-                padding: 3,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: '#ffffff',
-            }}
+
+
         >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -86,7 +90,49 @@ const FormRegister = ({ onToggle }) => {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <Grid container spacing={3}>
-                <Grid item xs={6}>
+                <Grid item
+                    xs={12}
+                    md={6}
+                    order={{ xs: 1, md: 2 }}
+                    textAlign="center">
+                    <Avatar sx={{ width: 100, height: 100, margin: 'auto' }} src={user.avatar} />
+
+                    <Button
+                        component="label"
+                        variant="contained"
+                        sx={[
+                            (theme) => ({
+                                color: 'white',
+                                fontWeight: 'bold',
+                                marginTop: '1rem',
+                                maxWidth: '33%',
+                            }),
+                            (theme) =>
+                                theme.applyStyles('dark', {
+                                    color: 'black',
+                                }),
+                        ]}
+
+                    >
+                        <VisuallyHiddenInput
+                            type="file"
+                            onChange={handleFileChange}
+                            multiple
+                        />
+                        Subir Imagen
+                    </Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                        {["/avatar1.png", "/avatar2.png", "/avatar3.png"].map((src) => (
+                            <IconButton key={src} onClick={() => setUser({ ...user, avatar: src })}>
+                                <Avatar src={src} sx={{ width: 50, height: 50 }} />
+                            </IconButton>
+                        ))}
+                    </Box>
+                </Grid>
+                <Grid  item
+        xs={12}
+        md={6}
+        order={{ xs: 2, md: 1 }}>
                     <TextField
                         fullWidth
                         label="Nombre Completo"
@@ -136,7 +182,17 @@ const FormRegister = ({ onToggle }) => {
                         name="role"
                         value={user.role}
                         onChange={handleChange}
-                        sx={{ justifyContent: 'center', fontFamily: 'Montserrat', color: 'black' }}
+
+                        sx={[
+                            (theme) => ({
+                                color: 'black',
+                                justifyContent: 'center',
+                            }),
+                            (theme) =>
+                                theme.applyStyles('dark', {
+                                    color: "white",
+                                }),
+                        ]}
                     >
                         <FormControlLabel value="Alumno" control={<Radio />} label="Alumno" />
                         <FormControlLabel value="Maestro" control={<Radio />} label="Maestro" />
@@ -146,40 +202,55 @@ const FormRegister = ({ onToggle }) => {
                     )}
                 </Grid>
 
-                <Grid item xs={6} textAlign="center">
-                    <Avatar sx={{ width: 100, height: 100, margin: 'auto' }} src={user.avatar} />
-                    <Button
-                        variant="contained"
-                        component="label"
-                        sx={{ mt: 1, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019' }}
-                    >
-                        Subir Imagen
-                        <input type="file" hidden onChange={handleFileChange} />
-                    </Button>
 
-
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                        {["/avatar1.png", "/avatar2.png", "/avatar3.png"].map((src) => (
-                            <IconButton key={src} onClick={() => setUser({ ...user, avatar: src })}>
-                                <Avatar src={src} sx={{ width: 50, height: 50 }} />
-                            </IconButton>
-                        ))}
-                    </Box>
-                </Grid>
             </Grid>
+
 
             <Button
                 type="submit"
                 variant="contained"
                 color="warning"
                 fullWidth
-                sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black', backgroundColor: '#f25019' }}
+                sx={[
+                    (theme) => ({
+                        color: 'white',
+                        fontWeight: 'bold',
+                        padding: '1rem',
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            color: 'black',
+                        }),
+                ]}
             >
                 Registrarse
             </Button>
-            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>
-                ¿Ya tienes una cuenta? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={onToggle}>Inicia Sesión</span>
+
+            <Typography variant="body2"
+                sx={[
+                    (theme) => ({
+                        color: 'black',
+                        marginTop: '1rem',
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            color: "white",
+                        }),
+                ]}>
+                ¿Ya tienes una cuenta?{' '}
             </Typography>
+            <Button onClick={onToggle} variant='text' sx={[
+                (theme) => ({
+                    color: 'blue',
+                    fontWeight: 'bold',
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        color: theme.vars.palette.text.primary,
+                        fontWeight: 'bold',
+                        textDecoration: 'underline',
+                    }),
+            ]} >Inicia sesión aquí</Button>
         </Box>
     );
 

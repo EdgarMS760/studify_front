@@ -13,10 +13,16 @@ const AuthGate = () => {
     const theme = useTheme();
     const bgColor = theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white';
     return (
-        <div className="w-screen h-screen flex flex-col items-center justify-center"   style={{
-            backgroundColor: 'var(--palette-background-default)',
-            color: 'var(--palette-text-primary)',
-          }}>
+        <Box className="w-screen h-screen flex flex-col items-center"
+            sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}>
             <Typography variant="h5" sx={[
                 (theme) => ({
                     color: theme.vars.palette.text.primary,
@@ -33,7 +39,7 @@ const AuthGate = () => {
             ) : (
                 <FormLogin onToggle={() => setIsRegistering(true)} />
             )}
-        </div>
+        </Box>
     );
 };
 
