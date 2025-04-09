@@ -61,7 +61,7 @@ const TasksPage = () => {
         }),
         (theme) =>
           theme.applyStyles('dark', {
-            backgroundColor: theme.vars.palette.secondary.main,
+            backgroundColor: "black",
           }),
       ]}>
         {tasks.map((task, index) => (
