@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { AppProvider } from '@toolpad/core/AppProvider';
@@ -15,17 +15,79 @@ import theme from '@styles/Theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useSessionAuth } from '@libs/hooks/useSessionAuth';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Avatar, Typography, Tooltip, Popover, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuth } from '../../libs/store/AuthProvider';
-const MainLayout = () => {
+import { createTheme, styled, useColorScheme } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
 
+const MainLayout = () => {
+    const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+        width: 62,
+        height: 34,
+        padding: 7,
+        '& .MuiSwitch-switchBase': {
+            margin: 1,
+            padding: 0,
+            transform: 'translateX(6px)',
+            '&.Mui-checked': {
+                color: '#fff',
+                transform: 'translateX(22px)',
+                '& .MuiSwitch-thumb:before': {
+                    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                        '#fff',
+                    )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
+                },
+                '& + .MuiSwitch-track': {
+                    opacity: 1,
+                    backgroundColor: '#aab4be',
+                    ...theme.applyStyles('dark', {
+                        backgroundColor: '#8796A5',
+                    }),
+                },
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            backgroundColor: '#ffc532',//001e3c
+            width: 32,
+            height: 32,
+            '&::before': {
+                content: "''",
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                left: 0,
+                top: 0,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                    '#fff',
+                )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
+            },
+            ...theme.applyStyles('dark', {
+                backgroundColor: '#003892',
+            }),
+        },
+        '& .MuiSwitch-track': {
+            opacity: 1,
+            backgroundColor: '#aab4be',
+            borderRadius: 20 / 2,
+            ...theme.applyStyles('dark', {
+                backgroundColor: '#8796A5',
+            }),
+        },
+    }));
     const { session, authentication } = useSessionAuth();
 
 
     const { user } = useAuth();
     const isTeacher = user?.rol === "maestro";
+
+    const userData = {
+        name: session?.user?.name || 'Usuario',
+        avatar: session?.user?.image || '',
+    };
 
 
     const NAVIGATION = isTeacher ?
@@ -105,11 +167,104 @@ const MainLayout = () => {
         },];
 
 
+
+    function userSessionLayout() {
+        const { mode, setMode } = useColorScheme();
+
+        const handleThemeChange = useCallback(
+            (event) => {
+                setMode(event.target.value);
+            },
+            [setMode],
+        );
+
+        const [isDarkMode, setIsDarkMode] = useState(mode === 'dark');
+        const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+        const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+
+        const toggleMenu = React.useCallback(
+            (event) => {
+                setMenuAnchorEl(isMenuOpen ? null : event.currentTarget);
+                setIsMenuOpen((previousIsMenuOpen) => !previousIsMenuOpen);
+            },
+            [isMenuOpen],
+        );
+        useEffect(() => {
+            setIsDarkMode(mode === 'dark');
+        }, [mode]);
+
+        const handleToggle = useCallback((event) => {
+            const newMode = event.target.checked ? 'dark' : 'light';
+            setMode(newMode);
+            setIsDarkMode(event.target.checked);
+        }, [setMode]);
+
+        const [anchorEl, setAnchorEl] = useState(null);
+
+        const handlePopoverOpen = (event) => {
+            setAnchorEl(event.currentTarget);
+        };
+
+        const handlePopoverClose = () => {
+            setAnchorEl(null);
+        };
+        const onLogout = () => {
+            alert("Cerrando sesión...");
+        }
+        const open = Boolean(anchorEl);
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FormControlLabel
+                    control={<MaterialUISwitch checked={isDarkMode} onChange={handleToggle} sx={{ m: 1 }} />}
+                />
+                <div
+                    onClick={handlePopoverOpen}
+                    style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }}
+                >
+                    <Avatar src={userData.avatar} alt={userData.name} sx={{ width: 32, height: 32 }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {userData.name}
+                    </Typography>
+                </div>
+
+                <Popover
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handlePopoverClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    PaperProps={{
+                        sx: { p: 2, width: 220 },
+                    }}
+                >
+                    <Typography variant="subtitle1" fontWeight={600}>
+                        {userData.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {userData.email}
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        fullWidth
+                        onClick={onLogout}
+                    >
+                        Cerrar sesión
+                    </Button>
+                </Popover>
+            </div>
+        );
+    }
     return (
         <AppProvider
             navigation={NAVIGATION}
-            session={session}
-            authentication={authentication}
             theme={theme}
             branding={{
                 logo: <img src={logo} alt="Logo" />,
@@ -117,15 +272,17 @@ const MainLayout = () => {
                 homeUrl: '/',
             }}
         >
-            <DashboardLayout>
+            <DashboardLayout
+                slots={{
+                    toolbarActions: userSessionLayout
+                }}
+            >
                 <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem', position: 'fixed', transform: 'translate(0%, -95%)', zIndex: '5000', right: 100 }}>
                     {/* */}
                 </div>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <Outlet />
                 </LocalizationProvider>
-
-
             </DashboardLayout>
         </AppProvider>
     );

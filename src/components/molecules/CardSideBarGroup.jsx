@@ -1,14 +1,25 @@
 import React from "react";
 import TextCardAtom from "../atoms/TextCardAtom";
 import MiniImg from "../atoms/MiniImg";
-import { Tooltip, useTheme } from "@mui/material";
+import { Box, Tooltip, useTheme } from "@mui/material";
 import clsx from "clsx";
 
 const CardSideBarGroup = ({ imageSrc, text }) => {  
     const theme= useTheme();
+
     return (
         <Tooltip title={text} arrow placement="left">
-            <div className={clsx("rounded-lg p-3 flex items-center justify-between w-full cursor-pointer",  theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary" )}>
+            <Box className={clsx("rounded-lg p-3 flex items-center justify-between w-full cursor-pointer")}
+             sx={[
+                (theme) => ({
+                    backgroundColor: theme.vars.palette.secondary.main,
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.light,
+                    }),
+            ]}
+            >
                 
                 <MiniImg 
                     src={imageSrc} 
@@ -19,7 +30,7 @@ const CardSideBarGroup = ({ imageSrc, text }) => {
                 <div className="ml-3 flex-1 min-w-0">
                     <TextCardAtom text={text} className="truncate" />
                 </div>
-            </div>
+            </Box>
         </Tooltip>
     );
 };
