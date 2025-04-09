@@ -209,7 +209,7 @@ const MainLayout = () => {
             setAnchorEl(null);
         };
         const onLogout = () => {
-            alert("Cerrando sesión...");
+            authentication.signOut();
         }
         const open = Boolean(anchorEl);
         return (

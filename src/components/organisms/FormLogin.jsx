@@ -20,7 +20,7 @@ const FormLogin = ({ onToggle }) => {
 
 
         try {
-             setLoading(true);
+            setLoading(true);
             const response = await loginUser({
                 email: credentials.email,
                 password: credentials.password,
@@ -34,16 +34,23 @@ const FormLogin = ({ onToggle }) => {
             const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
             showSnackbar(message, 'error');
         } finally {
-             setLoading(false);
+            setLoading(false);
         }
     };
 
 
     return (
-        <div className=" flex flex-col overflow-hidden min-h-full"  style={{
-            backgroundColor: 'var(--palette-background-default)',
-            color: 'var(--palette-text-primary)',
-          }}>
+        <Box className=" flex flex-col overflow-hidden min-h-full"
+            sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}
+        >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading}
@@ -52,13 +59,34 @@ const FormLogin = ({ onToggle }) => {
             </Backdrop>
             <form onSubmit={handleSubmit}>
                 <TextField
+                    margin='normal'
+                    required
+                    name="email"
                     fullWidth
                     label="E-mail"
-                    name="email"
-                    margin="normal"
-                    variant="outlined"
                     onChange={handleChange}
-                />
+                    sx={
+                        [
+                            (theme) => ({
+                                "& .MuiFilledInput-root": {
+                                    backgroundColor: "#FFFFFF",
+                                    "&:hover": {
+                                        backgroundColor: "#e5e7eb",
+                                    }
+                                }
+                            }),
+                            (theme) =>
+                                theme.applyStyles('dark', {
+                                    "& .MuiFilledInput-root": {
+                                        backgroundColor: "#262626",
+                                        "&:hover": {
+                                            backgroundColor: "#334155",
+                                        }
+                                    },
+                                }),
+                        ]
+
+                    } />
                 <TextField
                     fullWidth
                     label="Contraseña"
@@ -68,24 +96,50 @@ const FormLogin = ({ onToggle }) => {
                     variant="outlined"
                     onChange={handleChange}
                 />
-                <Typography
-                    variant="body2"
-                    sx={{ textAlign: 'right', mt: 1, cursor: 'pointer', color: 'blue' }}
-                >
-                    ¿Olvidaste tu contraseña?
-                </Typography>
+                <div className="flex justify-end mt-2">
+                    <Button variant='text' sx={[
+                        (theme) => ({
+                            color: 'blue',
+                            fontWeight: 'bold',
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                color: theme.vars.palette.text.primary,
+                                fontWeight: 'bold',
+                            }),
+                    ]} >¿Olvidaste tu contraseña?</Button>
+                </div>
                 <Button
                     type="submit"
                     variant="contained"
                     color="warning"
                     fullWidth
-                    sx={{ mt: 2, py: 1.5, fontFamily: 'Montserrat', color: 'black' }}
+                    sx={[
+                        (theme) => ({
+                            color: 'white',
+                            fontWeight: 'bold',
+                            padding: '1rem',
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                color: 'black',
+                            }),
+                    ]}
                 >
-                    Iniciar
+                    Iniciar Sesion
                 </Button>
             </form>
 
-            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>
+            <Typography variant="body2" sx={[
+                (theme) => ({
+                    color: "black",
+                    marginTop: '1rem',
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        color: 'white',
+                    }),
+            ]}>
                 O puedes iniciar con
             </Typography>
             <div className="flex justify-center mt-2">
@@ -94,16 +148,31 @@ const FormLogin = ({ onToggle }) => {
                 <IconButton><Facebook /></IconButton>
             </div>
 
-            <Typography variant="body2" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'black' }}>
+            <Typography variant="body2"
+                sx={[
+                    (theme) => ({
+                        color: 'black',
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            color: "white",
+                        }),
+                ]}>
                 ¿No tienes cuenta todavía?{' '}
-                <span
-                    onClick={onToggle}
-                    className="text-blue-500 cursor-pointer hover:underline"
-                >
-                    Regístrate aquí
-                </span>
             </Typography>
-        </div>
+            <Button onClick={onToggle} variant='text' sx={[
+                (theme) => ({
+                    color: 'blue',
+                    fontWeight: 'bold',
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        color: theme.vars.palette.text.primary,
+                        fontWeight: 'bold',
+                        textDecoration: 'underline',
+                    }),
+            ]} >Registrate aquí</Button>
+        </Box>
     );
 };
 
