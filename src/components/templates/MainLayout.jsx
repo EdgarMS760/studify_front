@@ -87,6 +87,7 @@ const MainLayout = () => {
     const userData = {
         name: session?.user?.name || 'Usuario',
         avatar: session?.user?.image || '',
+        email: session?.user?.email || '',
     };
 
 
@@ -250,7 +251,17 @@ const MainLayout = () => {
                         {userData.email}
                     </Typography>
                     <Button
-                        variant="outlined"
+                        variant="contained"
+                        color="info"
+                        size="small"
+                        fullWidth
+                        sx={{ mb: 1 }}
+                        onClick={() => location.href = "/settings"}
+                    >
+                        Configuracion
+                    </Button>
+                    <Button
+                        variant="contained"
                         color="error"
                         size="small"
                         fullWidth
