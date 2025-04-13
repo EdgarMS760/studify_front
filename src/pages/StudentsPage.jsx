@@ -3,7 +3,7 @@ import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import clsx from "clsx";
-import { IconButton, InputAdornment, useTheme } from "@mui/material";
+import { Box, IconButton, InputAdornment, useTheme } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
@@ -70,11 +70,19 @@ const StudentsPage = () => {
 
 
   return (
-    <div
+    <Box
       className={clsx(
-        "m-3 p-4 space-y-4",
-        theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
+        "m-3 p-4 space-y-4"
       )}
+      sx={[
+        (theme) => ({
+          backgroundColor: "white",
+        }),
+        (theme) =>
+          theme.applyStyles('dark', {
+            backgroundColor: theme.vars.palette.secondary.main,
+          }),
+      ]}
     >
 
       <div className="flex flex-wrap justify-between items-center gap-4">
@@ -160,7 +168,7 @@ const StudentsPage = () => {
         </DialogActions>
       </Dialog>
 
-    </div>
+    </Box>
   );
 };
 

@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import HeadBarGroup from "@components/organisms/HeadBarGroup";
 import clsx from "clsx";
-import { useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import SideBarGroup from "@components/organisms/SideBarGroup";
 
 const GroupLayout = () => {
@@ -14,11 +14,19 @@ const GroupLayout = () => {
     return (
         <div className="flex flex-col overflow-hidden min-h-full">
 
-            <div
+            <Box
                 className={clsx(
-                    "h-full flex [@media(min-width:<1348px>)]:flex-row",
-                    theme.palette.mode === "dark" ? "bg-black" : "bg-secondary"
+                    "h-full flex [@media(min-width:<1348px>)]:flex-row"
                 )}
+                sx={[
+                    (theme) => ({
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            backgroundColor: "black",
+                        }),
+                ]}
             >
                 {/* este se oculta si pantalla es <= 1348px */}
                 <div className="hidden [@media(min-width:1348px)]:block h-full">
@@ -33,7 +41,7 @@ const GroupLayout = () => {
                     </div>
                 </div>
 
-            </div>
+            </Box>
 
         </div>
     );

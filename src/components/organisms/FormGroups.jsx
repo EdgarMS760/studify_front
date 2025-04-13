@@ -70,11 +70,18 @@ const FormGroups = () => {
       reader.readAsDataURL(file);
     }
   };
-  const theme = useTheme()
   return (
-    <div className={clsx('p-4 min-h-full',
-      theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-secondary'
-    )}>
+    <Box className={clsx('p-4 min-h-full'
+    )}
+      sx={[
+        (theme) => ({
+          backgroundColor: theme.vars.palette.secondary.main,
+        }),
+        (theme) =>
+          theme.applyStyles('dark', {
+            backgroundColor: theme.vars.palette.secondary.main,
+          }),
+      ]}>
       <Typography variant="h6" sx={{ fontFamily: 'Montserrat', mb: 2 }}>Tus Grupos</Typography>
       <Grid container spacing={2}>
         {grupos.map((grupo) => (
@@ -203,7 +210,7 @@ const FormGroups = () => {
           ))}
         </Grid>
       </Box>
-    </div>
+    </Box>
   );
 };
 
