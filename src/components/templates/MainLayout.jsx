@@ -218,15 +218,29 @@ const MainLayout = () => {
                 <FormControlLabel
                     control={<MaterialUISwitch checked={isDarkMode} onChange={handleToggle} sx={{ m: 1 }} />}
                 />
-                <div
+                <Box
                     onClick={handlePopoverOpen}
+                    className='hover:bg-secondary p-1 rounded-md'
                     style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }}
+                    sx={[
+                        (theme) => ({
+                            '&:hover': {
+                                backgroundColor: theme.vars.palette.secondary.main,
+                            },
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                '&:hover': {
+                                backgroundColor: theme.vars.palette.secondary.main,
+                            },
+                            }),
+                    ]}
                 >
                     <Avatar src={userData.avatar} alt={userData.name} sx={{ width: 32, height: 32 }} />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         {userData.name}
                     </Typography>
-                </div>
+                </Box>
 
                 <Popover
                     open={open}
