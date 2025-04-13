@@ -70,10 +70,8 @@ const FormGroups = () => {
       reader.readAsDataURL(file);
     }
   };
-  const theme = useTheme()
   return (
-    <Box className={clsx('p-4 min-h-full',
-      theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-secondary'
+    <Box className={clsx('p-4 min-h-full'
     )}
       sx={[
         (theme) => ({
