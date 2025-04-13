@@ -9,17 +9,25 @@ import clsx from 'clsx';
  * @param {style} className - en caso de necesitar un estilo mas personalizado se usa este prop"
  */
 const TextCardAtom = ({ text, isHighlighted = false, className = '' }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
 
-  const textColorClass = theme.palette.mode === 'dark' ? 'text-white' : 'text-black'; //para cuando el tema cambie
+  // const textColorClass = theme.palette.mode === 'dark' ? 'text-white' : 'text-black'; //para cuando el tema cambie
   
   return (
     <p
       className={clsx(
         isHighlighted ? 'font-bold' : 'font-normal', // para cuando es un titulo o algo que se necesite resaltar
-        textColorClass, // Color según el tema claro o oscurio
         className // estilo personalizado
       )}
+      sx={[
+        (theme) => ({
+            color: theme.vars.palette.primary.text,
+        }),
+        (theme) =>
+            theme.applyStyles('dark', {
+                color: theme.vars.palette.primary.text,
+            }),
+    ]}
     >
       {text}
     </p>

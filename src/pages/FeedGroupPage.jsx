@@ -1,7 +1,7 @@
 import React from "react";
 import SideBarGroup from "@components/organisms/SideBarGroup";
 import HeadBarGroup from "@components/organisms/HeadBarGroup";
-import { TextField, Tooltip, useTheme } from "@mui/material";
+import { Box, TextField, Tooltip, useTheme } from "@mui/material";
 import clsx from "clsx";
 import MessagesFeed from "@components/organisms/MessagesFeed";
 
@@ -63,22 +63,37 @@ const FeedGroupPage = () => {
     const theme = useTheme();
 
     return (
-        <div
+        <Box
             className={clsx(
-                "flex flex-col h-full",
-                theme.palette.mode === "dark" ? "bg-black" : "bg-secondary"
+                "flex flex-col h-full"
             )}
+            sx={[
+                (theme) => ({
+                    backgroundColor: theme.vars.palette.secondary.main,
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: "black",
+                    }),
+            ]}
         >
             <div className="flex-1 overflow-hidden">
                 <MessagesFeed messages={dummyMessages} />
             </div>
 
-            <div className={clsx(
-                "p-3 border-t",
-                theme.palette.mode === 'dark'
-                    ? 'bg-black border-gray-700'
-                    : 'bg-secondary border-gray-300'
-            )}>
+            <Box className={clsx(
+                "p-3"
+            )}
+            sx={[
+                (theme) => ({
+                    backgroundColor:  theme.vars.palette.secondary.main,
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: "black",
+                    }),
+            ]}
+            >
                 <TextField
                     fullWidth
                     id="outlined-multiline-flexible"
@@ -86,26 +101,41 @@ const FeedGroupPage = () => {
                     multiline
                     maxRows={4}
                     variant="filled"
-                    sx={{
-                        "& .MuiFilledInput-root": {
-                            backgroundColor: theme.palette.mode === "dark" ? "#262626" : "#FFFFFF",
-                            "&:hover": {
-                                backgroundColor: theme.palette.mode === "dark" ? "#334155" : "#e5e7eb",
-                            }
-                        }
-                    }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Enviar" arrow>
-                                <SendIcon
-                                    className="cursor-pointer mb-5 text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-150"
-                                />
-                            </Tooltip>
-                        )
-                    }}
+                    sx={
+                        [
+                            (theme) => ({
+                                "& .MuiFilledInput-root": {
+                                    backgroundColor: "#FFFFFF",
+                                    "&:hover": {
+                                        backgroundColor: "#e5e7eb",
+                                    }
+                                }
+                            }),
+                            (theme) =>
+                                theme.applyStyles('dark', {
+                                    "& .MuiFilledInput-root": {
+                                        backgroundColor: "#262626",
+                                        "&:hover": {
+                                            backgroundColor:"#334155" ,
+                                        }
+                                    },
+                                }),
+                        ]
+                       
+                    }
+                  
+                InputProps={{
+                    endAdornment: (
+                        <Tooltip title="Enviar" arrow>
+                            <SendIcon
+                                className="cursor-pointer mb-5 text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-150"
+                            />
+                        </Tooltip>
+                    )
+                }}
                 />
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 

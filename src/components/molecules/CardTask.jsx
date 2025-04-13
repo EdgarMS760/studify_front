@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import clsx from 'clsx';
 import React from 'react'
 import TextCardAtom from '../atoms/TextCardAtom';
+import { Box } from '@mui/material';
 
 const CardTask = ({ taskData, onClickCard, isGeneral=false}) => {
     const theme = useTheme();
@@ -10,11 +11,20 @@ const CardTask = ({ taskData, onClickCard, isGeneral=false}) => {
             onClickCard(taskData.id);
         }
     }
+    
+            //theme.palette.mode === 'dark' ? 'bg-neutral-800 hover:bg-neutral-700' : 'bg-white hover:bg-primary'
     return (
-        <div onClick={handleClick} className={clsx(
-            "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer",
-            theme.palette.mode === 'dark' ? 'bg-neutral-800 hover:bg-neutral-700' : 'bg-white hover:bg-primary'
-        )}>
+        <Box onClick={handleClick} className={clsx(
+            "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer"
+        )}  sx={[
+            (theme) => ({
+                backgroundColor: theme.vars.palette.secondary.main,
+            }),
+            (theme) =>
+                theme.applyStyles('dark', {
+                    backgroundColor: theme.vars.palette.secondary.main,
+                }),
+        ]}>
             <div className="grid grid-cols-3 items-center">
 
                 <div className="flex justify-start">
@@ -30,13 +40,13 @@ const CardTask = ({ taskData, onClickCard, isGeneral=false}) => {
                     <TextCardAtom
                         text={`${taskData.expired ? "Venció" :"Vence"} el ${taskData.date} a las ${taskData.time}`}
                         className={clsx("text-sm font-semibold",
-                            taskData.expired ? "!text-red-500" : "text-black"
+                            taskData.expired && "!text-red-500"
                         )}
                         isHighlighted={false}
                     />
                 </div>
             </div>
-        </div>
+        </Box>
     );
 };
 

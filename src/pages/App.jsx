@@ -7,9 +7,8 @@ import { AuthProvider } from '@libs/store/AuthProvider';
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme} defaultMode="system" noSsr>
         <SnackbarProvider>
-
           <Router />
         </SnackbarProvider>
       </ThemeProvider>

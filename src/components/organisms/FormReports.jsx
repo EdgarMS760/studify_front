@@ -12,9 +12,9 @@ const reportes = [
 ];
 
 const tareas = [
-  { id: 1, date: "2025-04-06", name: "Tarea activa 1", points: "10", time: "09:00", expired: false,groupName: "Grupo 1" },
-  { id: 2, date: "2025-04-07", name: "Tarea activa 2", points: "10", time: "10:00", expired: false,groupName: "Grupo 2" },
-  { id: 3, date: "2025-04-08", name: "Tarea activa 3", points: "10", time: "11:00", expired: false,groupName: "Grupo 3" },
+  { id: 1, date: "2025-04-06", name: "Tarea activa 1", points: "10", time: "09:00", expired: false, groupName: "Grupo 1" },
+  { id: 2, date: "2025-04-07", name: "Tarea activa 2", points: "10", time: "10:00", expired: false, groupName: "Grupo 2" },
+  { id: 3, date: "2025-04-08", name: "Tarea activa 3", points: "10", time: "11:00", expired: false, groupName: "Grupo 3" },
 ];
 
 const FormReports = () => {
@@ -62,31 +62,59 @@ const FormReports = () => {
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
-const theme = useTheme()
+  const theme = useTheme()
   const bgDarkMode = theme.palette.mode === 'dark' ? 'bg-secondaryHover' : 'bg-white';
   return (
-    <div className={clsx(theme.palette.mode === 'dark' ? 'bg-black' : 'bg-secondary',"min-h-screen  p-6 relative")}>
+    <Box className={clsx("min-h-screen p-6 relative")}
+      sx={[
+        (theme) => ({
+          backgroundColor: theme.vars.palette.secondary.main,
+        }),
+        (theme) =>
+          theme.applyStyles('dark', {
+            backgroundColor: theme.vars.palette.secondary.main,
+          }),
+      ]}>
       <h1 className="text-3xl font-bold font-mono mb-10 text-center">Reportes</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         <div className="space-y-6">
           {reportes.map(({ id, nombre, color, icono }) => (
-            <div
+            <Box
               key={id}
               onClick={() => abrirDialogReporte(nombre)}
-              className={clsx(bgDarkMode," shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
+              className={clsx(" shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
+              sx={[
+                (theme) => ({
+                  backgroundColor: "white",
+                }),
+                (theme) =>
+                  theme.applyStyles('dark', {
+                    backgroundColor: 'black',
+                  }),
+              ]}
             >
               <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl ${color}`}>
                 {icono}
               </div>
               <span className="font-semibold text-lg">{nombre}</span>
-            </div>
+            </Box>
           ))}
         </div>
 
-        <div className={clsx(theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white',"lg:col-span-2 shadow-lg rounded-2xl p-6")}>
+        <Box className={clsx("lg:col-span-2 shadow-lg rounded-2xl p-6")}
+          sx={[
+            (theme) => ({
+              backgroundColor: "white",
+            }),
+            (theme) =>
+              theme.applyStyles('dark', {
+                backgroundColor: ['black'],
+              }),
+          ]}
+        >
           <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
-          <div className="space-y-4 border rounded-xl py-2">
+          <div className="space-y-4 rounded-xl py-2">
             {tareas.map((item) => (
               // <button
               //   key={id}
@@ -96,10 +124,10 @@ const theme = useTheme()
               //   <p className="text-lg font-medium">{titulo}</p>
               //   <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
               // </button>
-              <CardTask taskData={item} onClickCard={irATarea}/>
+              <CardTask taskData={item} onClickCard={irATarea} />
             ))}
           </div>
-        </div>
+        </Box>
       </div>
 
       {/* Dialogs */}
@@ -155,7 +183,7 @@ const theme = useTheme()
           </DialogActions>
         </Dialog>
       )}
-    </div>
+    </Box>
   );
 };
 

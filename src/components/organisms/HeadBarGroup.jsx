@@ -6,11 +6,22 @@ import ItemsToHeadBarDesktop from '@components/molecules/ItemsToHeadBarDesktop';
 import ItemsToHeadBarMobile from '@components/molecules/ItemsToHeadBarMobile';
 import { useTheme } from '@emotion/react';
 import clsx from 'clsx';
+import { Box } from '@mui/material';
 const HeadBarGroup = () => {
     const theme = useTheme()
 
     return (
-        <div className={clsx("flex p-5 m-3 rounded-md max-h-full max-w-screen",theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white")}>
+        <Box className={clsx("flex p-5 m-3 rounded-md max-h-full max-w-screen")}
+        sx={[
+            (theme) => ({
+                backgroundColor: "white",
+            }),
+            (theme) =>
+                theme.applyStyles('dark', {
+                    backgroundColor: theme.vars.palette.secondary.main,
+                }),
+        ]}
+        >
             <div className="hidden [@media(min-width:1170px)]:grid grid-cols-3 items-center">
                 <div className="justify-self-start">
                     <TextCardAtom text="GRUPO 1" className="text-2xl" isHighlighted={true} />
@@ -35,7 +46,7 @@ const HeadBarGroup = () => {
                 <ItemsToHeadBarMobile />
                 </div>
             </div>
-        </div>
+        </Box>
     );
 };
 

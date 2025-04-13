@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { IconButton, useTheme } from '@mui/material';
+import { Box, IconButton, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TextCardAtom from '../atoms/TextCardAtom';
@@ -10,12 +10,28 @@ const CardMaterial = ({ data, isTeacher }) => {
     const theme = useTheme()
 
     return (
-        <div className={clsx('flex flex-row justify-between items-center rounded-lg shadow-md p-4 w-full h-20',
-            theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
-        )}>
+        <Box className={clsx('flex flex-row justify-between items-center rounded-lg shadow-md p-4 w-full h-20'
+        )}
+            sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}>
             <div className='flex flex-row items-center'>
 
-                <IconButton aria-label="file" color="secondary">
+                <IconButton aria-label="file" sx={[
+                    (theme) => ({
+                        color: theme.vars.palette.secondary.main,
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            color: "white",
+                        }),
+                ]}>
                     <InsertDriveFileIcon />
                 </IconButton>
 
@@ -33,17 +49,33 @@ const CardMaterial = ({ data, isTeacher }) => {
                 </div>
             </div>
             <div className="flex justify-center">
-                <IconButton aria-label="download" color="secondary">
+                <IconButton aria-label="download" sx={[
+                    (theme) => ({
+                        color: theme.vars.palette.secondary.main,
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            color: "white",
+                        }),
+                ]}>
                     <DownloadIcon />
                 </IconButton>
                 {isTeacher &&
 
-                    (<IconButton aria-label="delete" color="secondary">
+                    (<IconButton aria-label="delete" sx={[
+                        (theme) => ({
+                            color: theme.vars.palette.secondary.main,
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                color: "white",
+                            }),
+                    ]}>
                         <DeleteForeverIcon />
                     </IconButton>)
                 }
             </div>
-        </div>
+        </Box>
     )
 }
 

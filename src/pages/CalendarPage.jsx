@@ -1,7 +1,7 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 
@@ -50,8 +50,17 @@ const CalendarPage = () => {
         <div className="p-4">
             <h2 className="text-2xl font-semibold mb-4">Calendario de Tareas</h2>
 
-            <div
-                className={theme.palette.mode === "dark" ? "bg-neutral-800 p-4 rounded-md" : "bg-white p-4 rounded-md shadow"}
+            <Box
+                className=" p-4 rounded-md shadow"
+                sx={[
+                    (theme) => ({
+                        backgroundColor: "white",
+                    }),
+                    (theme) =>
+                        theme.applyStyles('dark', {
+                            backgroundColor: theme.vars.palette.secondary.main,
+                        }),
+                ]}
             >
                 <FullCalendar
                     plugins={[dayGridPlugin, interactionPlugin]}
@@ -63,7 +72,7 @@ const CalendarPage = () => {
                     height="auto"
                     eventClassNames={() => 'cursor-pointer hover:bg-primaryHover transition-colors duration-200'}
                 />
-            </div>
+            </Box>
         </div>
     );
 };

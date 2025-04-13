@@ -1,6 +1,6 @@
 import React, { use, useState } from 'react'
 import SelectAtom from '@components/atoms/SelectAtom'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Tab, Tabs, TextField, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import clsx from 'clsx';
@@ -47,11 +47,19 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
   };
 
   return (
-    <div
+    <Box
       className={clsx(
-        "mx-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4",
-        theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
+        "mx-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4"
       )}
+      sx={[
+        (theme) => ({
+          backgroundColor: "white",
+        }),
+        (theme) =>
+          theme.applyStyles('dark', {
+            backgroundColor: theme.vars.palette.secondary.main,
+          }),
+      ]}
     >
       <div className="w-full flex flex-wrap justify-center items-center [@media(min-width:1486px)]:grid [@media(min-width:1486px)]:grid-cols-3 [@media(min-width:1486px)]:items-center">
 
@@ -135,9 +143,23 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
 
           {visibleCreateTask && !isGeneralPage && (
             <>
-              <ButtonAtom onClick={handleOpen} className={bgButtonDarkMode + " !rounded-full"}>
-                Crear Tarea
-              </ButtonAtom>
+              <Button onClick={handleOpen} variant="contained" sx={[
+                (theme) => ({
+                  backgroundColor: theme.vars.palette.secondary.main,
+                  borderRadius: "20px",
+                  '&:hover': {
+                    backgroundColor: theme.vars.palette.secondary.hover,
+                    fontWeight: "bold",
+                    color: "white",
+                  },
+                }),
+                (theme) =>
+                  theme.applyStyles('dark', {
+                    backgroundColor: "black",
+                    color: "white",
+                    borderRadius: "20px",
+                  }),
+              ]}>Crear Tarea</Button>
               <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>Crear Tarea</DialogTitle>
 
@@ -180,7 +202,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                       onChange={(newValue) => setValueTime(newValue)}
                     />
                     <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                    <SliderGrades/>
+                    <SliderGrades />
                   </div>
                 </DialogContent>
 
@@ -193,7 +215,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
           )}
         </div>
       </div>
-    </div>
+    </Box>
   );
 
 };
