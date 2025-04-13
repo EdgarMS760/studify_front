@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useInView } from "react-intersection-observer";
 import CardSideBarGroup from "@components/molecules/CardSideBarGroup";
 import TextCardAtom from "@components/atoms/TextCardAtom";
+import { Box } from "@mui/material";
 
 const SideBarGroup = ({ items }) => {
     const theme = useTheme();
@@ -23,12 +24,20 @@ const SideBarGroup = ({ items }) => {
     }, [inView, items, visibleItems.length]);
 
     return (
-        <aside
+        <Box
             className={clsx(
                 "p-4 ml-3 mt-3 mb-3 rounded-md",
-                "h-fit overflow-y-auto ",
-                theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
+                "h-fit overflow-y-auto "
             )}
+            sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}
         >
             <div className="flex items-center justify-center mb-4">
                 <TextCardAtom text="GRUPOS" className="text-2xl" isHighlighted={true} />
@@ -50,7 +59,7 @@ const SideBarGroup = ({ items }) => {
                     </li>
                 ))}
             </ul>
-        </aside>
+        </Box>
     );
 };
 
