@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio, Avatar, IconButton, Grid, Snackbar, Alert, Backdrop, CircularProgress, styled } from '@mui/material';
 import { registerUser } from '@services/auth/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { fileToBase64 } from '@libs/helpers/fileToBase64';
+import { storage } from '@services/firebase/firebaseConfig';
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
 
 const FormRegister = ({ onToggle }) => {
 
@@ -11,6 +13,7 @@ const FormRegister = ({ onToggle }) => {
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
+    const [avatars, setAvatars] = useState([]);
 
     const { showSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
@@ -77,6 +80,18 @@ const FormRegister = ({ onToggle }) => {
         width: 1,
     });
 
+    useEffect(() => {
+        const fetchAvatars = async () => {
+            const folderRef = ref(storage, 'avatars/');
+            const res = await listAll(folderRef);
+            const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
+            setAvatars(urls);
+            console.log('urls', urls)
+        };
+
+        fetchAvatars();
+    }, []);
+
     return (
         <Box
             component="form"
@@ -122,17 +137,17 @@ const FormRegister = ({ onToggle }) => {
                         Subir Imagen
                     </Button>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                        {["/avatar1.png", "/avatar2.png", "/avatar3.png"].map((src) => (
+                        {avatars.map((src) => (
                             <IconButton key={src} onClick={() => setUser({ ...user, avatar: src })}>
                                 <Avatar src={src} sx={{ width: 50, height: 50 }} />
                             </IconButton>
                         ))}
                     </Box>
                 </Grid>
-                <Grid  item
-        xs={12}
-        md={6}
-        order={{ xs: 2, md: 1 }}>
+                <Grid item
+                    xs={12}
+                    md={6}
+                    order={{ xs: 2, md: 1 }}>
                     <TextField
                         fullWidth
                         label="Nombre Completo"
