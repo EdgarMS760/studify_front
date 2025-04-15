@@ -30,7 +30,7 @@ const DetailTaskTeacher = () => {
             fileType: 'video'
         },
         {
-            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: 'https://conasems-ava-prod.s3.sa-east-1.amazonaws.com/aulas/ava/dummy-1641923583.pdf',
+            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/example.pdf',
             fileType: 'pdf'
         },
         {

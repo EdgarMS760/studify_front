@@ -8,6 +8,10 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigationMUI } from '@libs/store/NavigationContext';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import { Box, IconButton } from '@mui/material';
 function PDFNavigation({
     usePDFSlickStore,
 }) {
@@ -85,10 +89,11 @@ const PdfViewer = ({ fileUrl }) => {
     const pageNumber = usePDFSlickStore((s) => s.pageNumber);
     const numPages = usePDFSlickStore((s) => s.numPages);
     const pagesOverview = pdfSlick?.getPagesOverview();
-
+    const { setHideNavigation } = useNavigationMUI();
     const onPageOpen = (pageNumber) => {
         pdfSlick?.gotoPage(pageNumber);
         setOpen(true);
+        setHideNavigation(true);
     };
 
     useEffect(() => {
@@ -98,58 +103,40 @@ const PdfViewer = ({ fileUrl }) => {
     }, [open]);
     return (
         <>
-            <div className="relative bg-gray-50 w-full h-full z-10">
+            <div className="p-2 relative w-full h-1/2 [@media(min-width:1750px)]:h-3/4 [@media(min-width:2000px)]:h-7/8 z-10">
                 <PDFSlickThumbnails
                     {...{ thumbsRef, usePDFSlickStore }}
-                    className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xl:gap-x-8 p-8"
                 >
-                    {({
-                        pageNumber,
-                        width,
-                        height,
-                        rotation,
-                        src,
-                        pageLabel,
-                        loaded,
-                    }) => (
-                        <div
-                            key={1}
-                            className="group p-4 bg-gray-100 rounded-sm border border-gray-200 shadow-sm"
-                            onClick={() => onPageOpen(1)}
-                        >
+                    {({ pageNumber, width, height, src }) =>
+                        pageNumber === 1 && (
                             <div
-                                className={clsx(
-                                    "w-full overflow-hidden rounded-sm border border-gray-200 cursor-pointer",
-                                    "shadow-sm group-hover:shadow-lg",
-                                    "scale-[.99]  group-hover:scale-100 origin-bottom",
-                                    "aspect-h-1 aspect-w-1 sm:aspect-h-3 sm:aspect-w-2",
-                                    "transition-all duration-200 ease-in-out"
-                                )}
+                                key={pageNumber}
+                                className="group p-4 rounded-sm shadow-sm"
+                                onClick={() => onPageOpen(pageNumber)}
                             >
-                                {src && (
-                                    <img
-                                        src={src}
-                                        width={width}
-                                        height={height}
-                                        className={clsx("h-full w-full object-cover object-center")}
-                                    />
-                                )}
-                            </div>
-                            <div className="mt-4 flex items-center justify-between text-base font-medium text-gray-900">
-                                <h3>{pageNumber}</h3>
-                                {src &&
-                                    pagesOverview?.[pageNumber - 1]?.width &&
-                                    pagesOverview?.[pageNumber - 1]?.height && (
-                                        <p className="text-sm italic text-gray-500">
-                                            {Math.floor(pagesOverview[pageNumber - 1].width)} ×{' '}
-                                            {Math.floor(pagesOverview[pageNumber - 1].height)}
-                                        </p>
+                                <div
+                                    className={clsx(
+                                        "w-full overflow-hidden rounded-sm border border-gray-200 cursor-pointer",
+                                        "shadow-sm group-hover:shadow-lg",
+                                        "scale-[.99] group-hover:scale-100 origin-bottom",
+                                        "aspect-h-1 aspect-w-1 sm:aspect-h-3 sm:aspect-w-2",
+                                        "transition-all duration-200 ease-in-out"
                                     )}
-
+                                >
+                                    {src && (
+                                        <img
+                                            src={src}
+                                            width={width}
+                                            height={height}
+                                            className="h-full w-full object-cover object-center"
+                                        />
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    }
                 </PDFSlickThumbnails>
+
             </div>
 
             <div
@@ -176,7 +163,7 @@ const PdfViewer = ({ fileUrl }) => {
                         }
                     )}
                 >
-                    <div className="flex-1 relative overflow-hidden">
+                    <div className="flex-1 relative overflow-auto mt-20">
                         <PDFSlickViewer
                             {...{
                                 viewerRef,
@@ -185,82 +172,77 @@ const PdfViewer = ({ fileUrl }) => {
                         />
                     </div>
 
-                    <div className="relative">
-                        <button
-                            onClick={() => setOpen(false)}
-                            type="button"
-                            className="bg-gray-100 shadow-sm text-gray-400 rounded-md p-1 hover:text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-0 focus:ring-orange-500"
-                        >
-                            <span className="sr-only">Close</span>
-                            <CloseIcon className="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 [box-shadow:1px_0_2px_0_rgb(0_0_0_/_0.1)]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <div>
-                                <nav
-                                    className="isolate inline-flex -space-x-px rounded-md shadow"
-                                    aria-label="Pagination"
+                    <Box
+                        sx={[
+                            (theme) => ({
+                                backgroundColor: "white",
+                            }),
+                            (theme) =>
+                                theme.applyStyles('dark', {
+                                    backgroundColor: theme.vars.palette.secondary.main,
+                                }),
+                        ]}
+                        className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 [box-shadow:1px_0_2px_0_rgb(0_0_0_/_0.1)]">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-4 sm:gap-6">
+                            <nav
+                                className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mx-auto"
+                                aria-label="Pagination"
+                            >
+                               
+                                <IconButton onClick={() => pdfSlick?.gotoPage(1)}  disabled={pageNumber <= 1} aria-label="first" color="primary" size="large"
+                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
                                 >
-                                    <button
-                                        disabled={pageNumber <= 1}
-                                        onClick={() => pdfSlick?.gotoPage(1)}
-                                        className="relative inline-flex items-center rounded-l-md px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:text-gray-300"
-                                    >
-                                        <span className="sr-only">First</span>
-                                        <NavigateBeforeIcon
-                                            className="h-5 w-5 -ml-1"
-                                            aria-hidden="true"
-                                        />
-                                        <NavigateNextIcon
-                                            className="h-5 w-5 absolute ml-1 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-                                    <button
-                                        disabled={pageNumber <= 1}
-                                        onClick={() => pdfSlick?.gotoPage(pageNumber - 1)}
-                                        className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:text-gray-300"
-                                    >
-                                        <span className="sr-only">Previous</span>
-                                        <NavigateBeforeIcon className="h-5 w-5" aria-hidden="true" />
-                                    </button>
+                                    <FirstPageIcon fontSize="inherit" />
+                                </IconButton>
 
-                                    <div className="relative w-64 inline-flex items-center justify-center px-4 py-2 text-sm  text-gray-900 ring-1 ring-inset ring-gray-300">
-                                        <p className="text-sm text-gray-700">
-                                            Showing page{" "}
-                                            <span className="font-medium">{pageNumber}</span> of{" "}
-                                            <span className="font-medium">{numPages}</span>
-                                        </p>
-                                    </div>
-                                    <button
-                                        disabled={pageNumber >= numPages}
-                                        onClick={() => pdfSlick?.gotoPage(pageNumber + 1)}
-                                        className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:text-gray-300"
-                                    >
-                                        <span className="sr-only">Next</span>
-                                        <NavigateNextIcon className="h-5 w-5" aria-hidden="true" />
-                                    </button>
-                                    <button
-                                        disabled={pageNumber >= numPages}
-                                        onClick={() => pdfSlick?.gotoPage(numPages)}
-                                        className="relative inline-flex items-center rounded-r-md px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:text-gray-300"
-                                    >
-                                        <span className="sr-only">Last</span>
-                                        <NavigateNextIcon
-                                            className="h-5 w-5 -ml-1"
-                                            aria-hidden="true"
-                                        />
-                                        <NavigateNextIcon
-                                            className="h-5 w-5 absolute ml-1 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-                                </nav>
+                               
+                                <IconButton   onClick={() => pdfSlick?.gotoPage(pageNumber - 1)} disabled={pageNumber <= 1} aria-label="Previous" color="primary" size="large"
+                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
+                                >
+                                    <NavigateBeforeIcon className="h-5 w-5" aria-hidden="true" />
+                                </IconButton>
+
+
+                                <Box sx={[
+                                    (theme) => ({
+                                        color: "black",
+                                    }),
+                                    (theme) =>
+                                        theme.applyStyles('dark', {
+                                            color: "white",
+                                        }),
+                                ]} className="px-4 py-2 text-sm ring-1 ring-inset ring-gray-300 rounded-md">
+                                    <p className="text-sm  text-center">
+                                        Mostrando pagina <span className="font-medium">{pageNumber}</span> de <span className="font-medium">{numPages}</span>
+                                    </p>
+                                </Box>
+                                
+                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber + 1)} disabled={pageNumber >= numPages} aria-label="Next" color="primary" size="large"
+                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
+                                >
+                                    <NavigateNextIcon className="h-5 w-5" aria-hidden="true" />
+                                </IconButton>
+                                
+                                <IconButton  onClick={() => pdfSlick?.gotoPage(numPages)} disabled={pageNumber >= numPages} aria-label="Last" color="primary" size="large"
+                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
+                                >
+                                    <LastPageIcon className="h-5 w-5" aria-hidden="true" />
+                                </IconButton>
+                            </nav>
+                            <div className="flex justify-center sm:justify-end">
+                                <button
+                                    onClick={() => { setOpen(false); setHideNavigation(false) }}
+                                    type="button"
+                                    className="bg-gray-100 shadow-sm text-gray-400 rounded-md p-2 hover:text-gray-500 hover:bg-gray-200 focus:outline-none"
+                                >
+                                    <span className="sr-only">Close</span>
+                                    <CloseIcon className="w-6 h-6" />
+                                </button>
                             </div>
                         </div>
-                    </div>
+
+
+                    </Box>
                 </div>
             </div>
         </>
