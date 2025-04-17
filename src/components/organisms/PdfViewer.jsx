@@ -12,6 +12,7 @@ import { useNavigationMUI } from '@libs/store/NavigationContext';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import { Box, IconButton } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 function PDFNavigation({
     usePDFSlickStore,
 }) {
@@ -184,19 +185,29 @@ const PdfViewer = ({ fileUrl }) => {
                         ]}
                         className="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 [box-shadow:1px_0_2px_0_rgb(0_0_0_/_0.1)]">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-4 sm:gap-6">
+                            <div className='flex justify-center items-center sm:justify-end'>
+                                <a
+                                    href={fileUrl}
+                                    download
+                                    className=" mx-2 bg-gray-100 shadow-sm text-gray-400 rounded-md p-1 hover:text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-0 focus:ring-orange-500"
+                                >
+                                    <span className="sr-only">Download</span>
+                                    <DownloadIcon className="w-6 h-6" sx={{ color: 'black' }} />
+                                </a>
+                            </div>
                             <nav
                                 className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mx-auto"
                                 aria-label="Pagination"
                             >
-                               
-                                <IconButton onClick={() => pdfSlick?.gotoPage(1)}  disabled={pageNumber <= 1} aria-label="first" color="primary" size="large"
+
+                                <IconButton onClick={() => pdfSlick?.gotoPage(1)} disabled={pageNumber <= 1} aria-label="first" color="primary" size="large"
                                     className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
                                 >
                                     <FirstPageIcon fontSize="inherit" />
                                 </IconButton>
 
-                               
-                                <IconButton   onClick={() => pdfSlick?.gotoPage(pageNumber - 1)} disabled={pageNumber <= 1} aria-label="Previous" color="primary" size="large"
+
+                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber - 1)} disabled={pageNumber <= 1} aria-label="Previous" color="primary" size="large"
                                     className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
                                 >
                                     <NavigateBeforeIcon className="h-5 w-5" aria-hidden="true" />
@@ -216,27 +227,28 @@ const PdfViewer = ({ fileUrl }) => {
                                         Mostrando pagina <span className="font-medium">{pageNumber}</span> de <span className="font-medium">{numPages}</span>
                                     </p>
                                 </Box>
-                                
+
                                 <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber + 1)} disabled={pageNumber >= numPages} aria-label="Next" color="primary" size="large"
                                     className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
                                 >
                                     <NavigateNextIcon className="h-5 w-5" aria-hidden="true" />
                                 </IconButton>
-                                
-                                <IconButton  onClick={() => pdfSlick?.gotoPage(numPages)} disabled={pageNumber >= numPages} aria-label="Last" color="primary" size="large"
+
+                                <IconButton onClick={() => pdfSlick?.gotoPage(numPages)} disabled={pageNumber >= numPages} aria-label="Last" color="primary" size="large"
                                     className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
                                 >
                                     <LastPageIcon className="h-5 w-5" aria-hidden="true" />
                                 </IconButton>
                             </nav>
-                            <div className="flex justify-center sm:justify-end">
+                            <div className="flex justify-center items-center sm:justify-end">
+
                                 <button
                                     onClick={() => { setOpen(false); setHideNavigation(false) }}
                                     type="button"
-                                    className="bg-gray-100 shadow-sm text-gray-400 rounded-md p-2 hover:text-gray-500 hover:bg-gray-200 focus:outline-none"
+                                    className="shadow-sm text-primary rounded-md p-2"
                                 >
                                     <span className="sr-only">Close</span>
-                                    <CloseIcon className="w-6 h-6" />
+                                    <CloseIcon className="w-6 h-6" sx={{ color: 'black' }} />
                                 </button>
                             </div>
                         </div>
