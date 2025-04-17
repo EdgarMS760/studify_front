@@ -82,11 +82,16 @@ const FormRegister = ({ onToggle }) => {
 
     useEffect(() => {
         const fetchAvatars = async () => {
-            const folderRef = ref(storage, 'avatars/');
-            const res = await listAll(folderRef);
-            const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
-            setAvatars(urls);
-            console.log('urls', urls)
+            try {
+                const folderRef = ref(storage, 'avatars/');
+                const res = await listAll(folderRef);
+                const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
+                setAvatars(urls);
+                console.log('urls', urls);
+            } catch (error) {
+                console.error("Error fetching avatars:", error);
+                setAvatars([]); // Fallback to an empty array if fetching fails
+            }
         };
 
         fetchAvatars();
