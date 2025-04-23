@@ -1,68 +1,65 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Grid2, IconButton, styled, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Grid2, IconButton, styled, TextField, Typography } from '@mui/material';
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import CardGroup from '@components/molecules/CardGroup';
 import TextCardAtom from '@components/atoms/TextCardAtom';
 import AddIcon from "@mui/icons-material/Add";
-import UploadIcon from '@mui/icons-material/Upload';
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
+import ModalManageGroups from '@components/molecules/ModalManageGroups';
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 const GroupsPage = () => {
     const [grupos, setGrupos] = useState([
-        { id: 1, nombre: 'Español', imagen: 'https://placehold.co/40' },
-        { id: 2, nombre: 'Mates', imagen: 'https://placehold.co/40' },
-        { id: 3, nombre: 'Inglés', imagen: 'https://placehold.co/40' },
-        { id: 4, nombre: 'Historia', imagen: 'https://placehold.co/40' },
-        { id: 5, nombre: 'Ciencias', imagen: 'https://placehold.co/40' },
-        { id: 6, nombre: 'Física', imagen: 'https://placehold.co/40' },
-        { id: 7, nombre: 'Química', imagen: 'https://placehold.co/40' },
-        { id: 8, nombre: 'Biología', imagen: 'https://placehold.co/40' },
-        { id: 9, nombre: 'Geografía', imagen: 'https://placehold.co/40' },
-        { id: 10, nombre: 'Arte', imagen: 'https://placehold.co/40' }
+        { id: 1, name: 'Español', image: 'https://placehold.co/40', estado: 'no archivado' },
+        { id: 2, name: 'Mates', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 3, name: 'Inglés', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 4, name: 'Historia', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 5, name: 'Ciencias', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 6, name: 'Física', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 7, name: 'Química', image: 'https://placehold.co/40', estado: 'archivado' },
+        { id: 8, name: 'Biología', image: 'https://placehold.co/40', estado: 'no archivado' },
+        { id: 9, name: 'Geografía', image: 'https://placehold.co/40', estado: 'no archivado' },
+        { id: 10, name: 'Arte', image: 'https://placehold.co/40', estado: 'no archivado' }
     ]);
-    const handleGrupoClick = (grupo) => {
-        alert(`Grupo seleccionado: ${grupo.nombre}`);
-    };
+
     const [openModal, setOpenModal] = useState(false);
-    const [newGroup, setNewGroup] = useState({
-        name: "",
-        image: "",
-    });
+    const [groupToEdit, setGroupToEdit] = useState(null);
+
+    const [expandedArchived, setExpandedArchived] = React.useState(false);
+
+    const handleChangeAccordionArchived = (panel) => (event, isExpanded) => {
+        setExpandedArchived(isExpanded ? panel : false);
+    };
 
     const handleAddGroup = () => {
+        setGroupToEdit(null); // modo crear
         setOpenModal(true);
     };
-
+    const handleEditGroup = (grupo) => {
+        setGroupToEdit({
+            ...grupo,
+            image: grupo.image || null,
+        });
+        setOpenModal(true);
+    };
     const handleCloseModal = () => {
         setOpenModal(false);
-        setNewGroup({ name: "", image: "" }); // Limpiar campos
+        setGroupToEdit(null);
     };
 
-    const handleSaveGroup = () => {
-        alert(`Nuevo grupo: ${newGroup.name} (${newGroup.image})`);
-        // Aquí puedes agregar lógica para enviarlo a backend o agregar al estado
+    const handleSaveGroup = (groupData) => {
+        if (groupToEdit) {
+            alert("Grupo editado:", groupData);
+            console.log("Actualizar grupo:", groupData);
+        } else {
+            alert("Grupo creado:", groupData);
+            console.log("Crear grupo:", groupData);
+        }
+
         handleCloseModal();
     };
 
-    const [previewImage, setPreviewImage] = useState("");
 
-    const handleImageChange = (event) => {
-        const file = event.target.files?.[0];
-        if (file) {
-          const imageUrl = URL.createObjectURL(file);
-          setPreviewImage(imageUrl);
-          setNewGroup((prev) => ({ ...prev, image: imageUrl }));
-        }
-      };
     return (
         <>
             <Box className={clsx('p-4 min-h-full'
@@ -79,15 +76,18 @@ const GroupsPage = () => {
 
                 <TextCardAtom text="Tus Grupos" isHighlighted={true} className="text-4xl mb-4" />
                 <Grid2 container spacing={2}>
-                    {grupos.map((grupo) => (
-                        <Grid2 item key={grupo.id}>
-                            <CardGroup
-                                grupo={grupo}
-                                onEdit={() => { }}
-                                onArchive={() => { }}
-                            />
-                        </Grid2>
-                    ))}
+                    {grupos
+                        .filter((grupo) => grupo.estado === "no archivado")
+                        .map((grupo) => (
+                            <Grid2 item key={grupo.id}>
+                                <CardGroup
+                                    grupo={grupo}
+                                    onEdit={() => handleEditGroup(grupo)}
+                                    onArchive={() => console.log("Archivar grupo", grupo)}
+                                />
+                            </Grid2>
+                        ))}
+
 
                     {/* Botón para crear un nuevo grupo */}
                     <Grid2 item>
@@ -114,47 +114,45 @@ const GroupsPage = () => {
                         </div>
                     </Grid2>
                 </Grid2>
+                <Box className="" sx={{ mt: 4 }}>
+                    <Accordion expanded={expandedArchived === 'panel1'} onChange={handleChangeAccordionArchived('panel1')}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header"
+                        >
+                            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+                                Grupos Archivados
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Grid2 container spacing={2} sx={{ padding: 2 }}>
+                                {grupos
+                                    .filter((grupo) => grupo.estado === "archivado")
+                                    .map((grupo) => (
+                                        <Grid2 item key={grupo.id}>
+                                            <CardGroup
+                                                grupo={grupo}
+                                                onEdit={() => handleEditGroup(grupo)}
+                                                onArchive={() => console.log("Archivar grupo", grupo)}
+                                                isArchived={true}
+                                            />
+                                        </Grid2>
+                                    ))}
+
+                            </Grid2>
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
             </Box>
-            <Dialog open={openModal} onClose={handleCloseModal} fullWidth>
-                <DialogTitle>Crear nuevo grupo</DialogTitle>
-                <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-                    {previewImage && (
-                        <Box
-                            component="img"
-                            src={previewImage}
-                            alt="Preview"
-                            sx={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 2 }}
-                        />
-                    )}
+            <ModalManageGroups
+                open={openModal}
+                onClose={handleCloseModal}
+                onSave={handleSaveGroup}
+                initialGroup={groupToEdit || { name: "", image: null }}
+                mode={groupToEdit ? "edit" : "create"}
+            />
 
-                    <Button
-                        component="label"
-                        role={undefined}
-                        variant="contained"
-                        tabIndex={-1}
-                        startIcon={<UploadIcon />}
-                    >
-                        Subir imagen
-                        <VisuallyHiddenInput type="file" onChange={handleImageChange} accept="image/*" />
-                    </Button>
-
-                    <TextField
-                        label="Nombre del grupo"
-                        value={newGroup.name}
-                        onChange={(e) =>
-                            setNewGroup((prev) => ({ ...prev, name: e.target.value }))
-                        }
-                        fullWidth
-                    />
-                </DialogContent>
-
-                <DialogActions>
-                    <Button onClick={handleCloseModal}>Cancelar</Button>
-                    <Button onClick={handleSaveGroup} variant="contained">
-                        Guardar
-                    </Button>
-                </DialogActions>
-            </Dialog>
 
         </>
     )
