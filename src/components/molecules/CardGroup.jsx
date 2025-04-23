@@ -9,7 +9,7 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
 
-const CardGroup = ({ grupo, onEdit, onArchive }) => {
+const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -38,89 +38,158 @@ const CardGroup = ({ grupo, onEdit, onArchive }) => {
     const handleGroupClick = () => {
         navigate(`/group/${grupo.id}`);
     };
+    const handleUnarchiveClick = (event) => {
+        event.stopPropagation();
+        handleMenuClose(event);
 
-    return (
-        <Box
-            onClick={handleGroupClick}
-            sx={[
-                (theme) => ({
-                    width: 150,
-                    height: 150,
-                    borderRadius: 2,
-                    boxShadow: 3,
-                    overflow: 'hidden',
-                    cursor: 'pointer',
+        console.log("Desarchivar grupo", grupo);
+    };
+
+
+    const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
+        
+        const [anchorEl, setAnchorEl] = useState(null);
+        const handleMenuClick = (e) => { e.stopPropagation(); setAnchorEl(e.currentTarget); };
+        const handleMenuClose = (e) => { e.stopPropagation(); setAnchorEl(null)};
+        return (
+            <Box
+                onClick={onClick}
+                sx={{
                     position: 'relative',
-                    transition: 'transform 0.1s ease-in-out',
-                    '&:hover': { transform: 'scale(1.02)' },
-                    backgroundColor: '#fff',
-
-                }),
-                (theme) =>
-                    theme.applyStyles('dark', {
-                        backgroundColor: theme.vars.palette.secondary.strong,
-                    }),
-            ]}
-        >
-            <IconButton
-                onClick={handleMenuClick}
-                sx={[
-                    (theme) => ({
+                    width: 200,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    boxShadow: 1,
+                    bgcolor: 'background.paper',
+                    cursor: 'pointer'
+                }}
+            >
+                <IconButton
+                    onClick={handleMenuClick}
+                    sx={{
                         position: 'absolute',
                         top: 4,
                         right: 4,
                         zIndex: 2,
-                        backgroundColor: "gray",
+                        backgroundColor: 'gray',
                         opacity: 0.33,
-                        '&:hover': { backgroundColor: 'rgba(255,255,255,1)' },
-                       
-                    }),
-                    (theme) =>
-                        theme.applyStyles('dark', {
-                            backgroundColor: "gray",
-                            opacity: 0.33,
-                            '&:hover': { backgroundColor: 'black' }
-                        }),
-                ]}
-            >
-                <MoreHorizIcon fontSize="small" />
-            </IconButton>
-
-            <Box
-                component="img"
-                src={grupo.imagen}
-                alt={`Grupo ${grupo.nombre}`}
-                sx={{
-                    height: 100,
-                    width: '100%',
-                    objectFit: 'cover',
-                    borderBottom: '1px solid #eee',
-                    borderRadius: '0px 0px 10px 10px',
-                }}
-            />
-
-            <Box sx={{ p: 1, textAlign: 'center' }}>
-                <Typography
-                    variant="body2"
-                    fontWeight="bold"
-                    fontFamily="Montserrat"
-                    noWrap
+                        '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
+                    }}
                 >
-                    {grupo.nombre}
-                </Typography>
-            </Box>
+                    <MoreHorizIcon fontSize="small" />
+                </IconButton>
 
-            <Popover
-                open={Boolean(anchorEl)}
-                anchorEl={anchorEl}
-                onClose={handleMenuClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                <Box
+                    component="img"
+                    src={grupo.image}
+                    alt={`Grupo ${grupo.name}`}
+                    sx={{
+                        height: 100,
+                        width: '100%',
+                        objectFit: 'cover',
+                        borderBottom: '1px solid #eee'
+                    }}
+                />
+
+                <Box sx={{ p: 1, textAlign: 'center' }}>
+                    <Typography
+                        variant="body2"
+                        fontWeight="bold"
+                        fontFamily="Montserrat"
+                        noWrap
+                    >
+                        {grupo.name}
+                    </Typography>
+                </Box>
+
+                <Popover
+                    open={Boolean(anchorEl)}
+                    anchorEl={anchorEl}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <MenuItem onClick={onEdit}>Editar</MenuItem>
+                    <MenuItem onClick={onArchive}>Archivar</MenuItem>
+                </Popover>
+            </Box>
+        );
+    };
+    const ArchivedGroupCard = ({ grupo, onUnarchive }) => {
+        const [anchorEl, setAnchorEl] = useState(null);
+
+        const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
+        const handleMenuClose = () => setAnchorEl(null);
+
+        return (
+            <Box
+            sx={{
+                position: 'relative',
+                width: 200,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: 1,
+                bgcolor: 'background.paper',
+                height: 50,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
             >
-                <MenuItem onClick={handleEditClick}>Editar</MenuItem>
-                <MenuItem onClick={handleArchiveClick}>Archivar</MenuItem>
-            </Popover>
-        </Box>
+                <IconButton
+                    onClick={handleMenuClick}
+                    sx={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 4,
+                        zIndex: 2,
+                    }}
+                >
+                    <MoreHorizIcon fontSize="small" />
+                </IconButton>
+
+                <Box
+                    sx={{
+                        p: 1,
+                        textAlign: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Typography
+                        variant="body2"
+                        fontWeight="bold"
+                        fontFamily="Montserrat"
+                    >
+                        {grupo.name}
+                    </Typography>
+                </Box>
+
+                <Popover
+                    open={Boolean(anchorEl)}
+                    anchorEl={anchorEl}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <MenuItem onClick={onUnarchive}>Desarchivar</MenuItem>
+                </Popover>
+            </Box>
+        );
+    };
+    return isArchived ? (
+        <ArchivedGroupCard
+            grupo={grupo}
+            onUnarchive={handleUnarchiveClick}
+        />
+    ) : (
+        <ActiveGroupCard
+            grupo={grupo}
+            onEdit={handleEditClick}
+            onArchive={handleArchiveClick}
+            onClick={handleGroupClick}
+        />
     );
 };
 
