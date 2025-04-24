@@ -34,6 +34,7 @@ const theme = createTheme({
         secondary: {
           main: '#262626',
           light: '#525252',
+          strong: '#1E1E1E',
         },
       }
     }

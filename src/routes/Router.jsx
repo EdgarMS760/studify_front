@@ -16,6 +16,7 @@ import FormReports from "@components/organisms/FormReports";
 import ProtectedRoute from "@routes/ProtectedRoute";
 import PublicOnlyRoute from "@routes/PublicOnlyRoute";
 import SettingsPage from "@pages/SettingsPage";
+import GroupsPage from "@pages/GroupsPage";
 
 export default function Router() {
     return (
@@ -29,7 +30,7 @@ export default function Router() {
                 }
             >
                 <Route index element={<CalendarPage />} />
-                <Route path="groups" index element={<FormGroups />} />
+                <Route path="groups" index element={<GroupsPage />} />
                 <Route path="reports" index element={<FormReports />} />
                 <Route path="group/:id" element={<GroupLayout />}>
                     <Route index element={<FeedGroupPage />} />
