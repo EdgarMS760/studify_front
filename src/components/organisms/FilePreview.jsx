@@ -2,22 +2,22 @@
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import ReactPlayer from 'react-player';
 import { useEffect } from 'react';
+import PdfViewer from '@components/organisms/PdfViewer';
 
 const FilePreview = ({ fileUrl, fileType }) => {
   useEffect(() => {
     console.log('first', fileType, fileUrl);
   }, []);
+
   if (!fileUrl) return null;
 
-  // if (fileType === 'pdf') {
-  //   return (
-  //     <div className="pdf-preview">
-  //       <Document file={fileUrl}>
-  //         <Page pageNumber={1} />
-  //       </Document>
-  //     </div>
-  //   );
-  // }
+  if (fileType === 'pdf') {
+
+    return (
+      <PdfViewer fileUrl={fileUrl} />
+    );
+  }
+
 
   // Si el tipo de archivo es imagen
   if (fileType === 'image') {
