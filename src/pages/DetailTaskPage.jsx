@@ -1,7 +1,7 @@
 import React from 'react'
 import DetailTaskTeacher from '@components/organisms/DetailTaskTeacher';
 import DetailTaskStudent from '@components/organisms/DetailTaskStudent';
-import { useAuth } from '../libs/store/AuthProvider';
+import { useAuth } from '@libs/store/AuthProvider';
 
 const DetailTaskPage = () => {
     const { user } = useAuth();

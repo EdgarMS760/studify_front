@@ -1,6 +1,6 @@
 import React from 'react'
 import MiniImg from '@components/atoms/MiniImg'
-import TextCardAtom from '../atoms/TextCardAtom'
+import TextCardAtom from '@components/atoms/TextCardAtom'
 import clsx from 'clsx'
 import { useTheme } from '@emotion/react'
 import { Box, IconButton, Tooltip } from '@mui/material'

@@ -21,6 +21,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuth } from '../../libs/store/AuthProvider';
 import { createTheme, styled, useColorScheme } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import { useNavigationMUI } from '../../libs/store/NavigationContext';
 
 const MainLayout = () => {
     const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -287,6 +288,7 @@ const MainLayout = () => {
             </div>
         );
     }
+    const { hideNavigation } = useNavigationMUI();
     return (
         <AppProvider
             navigation={NAVIGATION}
@@ -301,6 +303,7 @@ const MainLayout = () => {
                 slots={{
                     toolbarActions: userSessionLayout
                 }}
+                hideNavigation={hideNavigation}
             >
                 <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem', position: 'fixed', transform: 'translate(0%, -95%)', zIndex: '5000', right: 100 }}>
                     {/* */}

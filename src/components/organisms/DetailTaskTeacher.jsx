@@ -7,7 +7,7 @@ import FilePreview from './FilePreview';
 import SliderGrades from '../atoms/SliderGrades';
 import ButtonAtom from '../atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -30,8 +30,8 @@ const DetailTaskTeacher = () => {
             fileType: 'video'
         },
         {
-            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
+            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/example.pdf',
+            fileType: 'pdf'
         },
         {
             id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
@@ -103,7 +103,15 @@ const DetailTaskTeacher = () => {
     }
     return (
         <>
-            <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
+            <Box  sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]} className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
                 <div className='flex items-center justify-between'>
                     <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
                         <KeyboardReturnIcon fontSize="inherit" />
@@ -119,7 +127,7 @@ const DetailTaskTeacher = () => {
                     value={selected}
                     onChange={handleSelectChange}
                 />
-            </div>
+            </Box>
 
             <div className="flex flex-col lg:flex-row">
                 <div className="w-full lg:w-2/3">
