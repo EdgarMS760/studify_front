@@ -67,7 +67,8 @@ const ModalManageGroups = ({
 
     const handleSubmit = () => {
         const newErrors = {
-            nombre: groupData.nombre.trim() === "",
+            nombre: groupData.nombre.trim() == "",
+            descripcion: groupData.descripcion.trim() == "",
             foto: !previewImage && mode !== "edit",
         };
 
