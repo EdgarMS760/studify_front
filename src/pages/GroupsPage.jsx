@@ -121,7 +121,7 @@ const GroupsPage = () => {
                             backgroundColor: theme.vars.palette.secondary.main,
                         }),
                 ]}>
-             
+
                 {loading ? (
                     <Box className="flex items-center justify-center h-full w-full">
 
@@ -131,59 +131,72 @@ const GroupsPage = () => {
                     (
                         <>
                             <TextCardAtom text="Tus Grupos" isHighlighted={true} className="text-4xl mb-4" />
-                            <Grid2 container spacing={2}>
+                            <Grid2 container spacing={2} sx={{ padding: 2 }}>
+                                {(() => {
+                                    const activos = grupos.filter((grupo) => grupo.estado === "no archivado");
 
+                                    if (activos.length === 0) {
+                                        return (
+                                            <Typography variant="body1" sx={{ padding: 2 }}>
+                                                No hay grupos activos.
+                                            </Typography>
+                                        );
+                                    }
 
-                                <Grid2 container spacing={2} sx={{ padding: 2 }}>
-                                    {(() => {
-                                        const activos = grupos.filter((grupo) => grupo.estado === "no archivado");
+                                    return (
+                                        <>
+                                            {activos.map((grupo) => (
+                                                <Grid2 key={grupo._id}>
+                                                    <CardGroup
+                                                        grupo={grupo}
+                                                        onEdit={() => handleEditGroup(grupo)}
+                                                        onArchive={() => console.log("Archivar grupo", grupo)}
+                                                    />
+                                                </Grid2>
+                                            ))}
 
-                                        if (activos.length === 0) {
-                                            return (
-                                                <Typography variant="body1" sx={{ padding: 2 }}>
-                                                    No hay grupos activos.
-                                                </Typography>
-                                            );
-                                        }
+                                            {/* Botón para crear nuevo grupo*/}
+                                            <div className="flex flex-col items-center justify-center">
+                                                <Grid2>
+                                                    <Box
+                                                        onClick={handleAddGroup}
+                                                        sx={{
+                                                            height: '100%',
+                                                            minHeight: 50,
+                                                            minWidth: 50,
+                                                            borderRadius: 2,
+                                                            bgcolor: '#FD841F',
+                                                            color: 'white',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            cursor: 'pointer',
+                                                            boxShadow: 2,
+                                                            transition: 'all 0.3s',
+                                                            '&:hover': {
+                                                                boxShadow: 4,
+                                                                opacity: 0.9,
+                                                            }
+                                                        }}
+                                                    >
+                                                        <AddIcon className="w-6 h-6" sx={[
+                                                            (theme) => ({
+                                                                color: "white",
+                                                            }),
+                                                            (theme) =>
+                                                                theme.applyStyles('dark', {
+                                                                    color: "black",
+                                                                }),
+                                                        ]} />
+                                                    </Box>
+                                                </Grid2>
+                                            </div>
+                                        </>
+                                    );
+                                })()}
+                            </Grid2>
 
-                                        return activos.map((grupo) => (
-                                            <Grid2 key={grupo._id}>
-                                                <CardGroup
-                                                    grupo={grupo}
-                                                    onEdit={() => handleEditGroup(grupo)}
-                                                    onArchive={() => console.log("Archivar grupo", grupo)}
-                                                />
-                                            </Grid2>
-                                        ));
-                                    })()}
-                                </Grid2>
-
-
-                                {/* Botón para crear un nuevo grupo */}
-                                <Grid2>
-                                    <div className="flex flex-col items-center justify-center h-full w-full">
-
-                                        <button
-                                            onClick={handleAddGroup}
-                                            className="shadow-sm rounded-md p-2"
-                                            style={{
-                                                backgroundColor: '#FD841F',
-
-                                            }}
-                                        >
-                                            <AddIcon className="w-6 h-6" sx={[
-                                                (theme) => ({
-                                                    color: "white",
-                                                }),
-                                                (theme) =>
-                                                    theme.applyStyles('dark', {
-                                                        color: "black",
-                                                    }),
-                                            ]} />
-                                        </button>
-                                    </div>
-                                </Grid2>
-                            </Grid2></>
+                        </>
                     )}
                 <Box className="" sx={{ mt: 4 }}>
                     <Accordion expanded={expandedArchived === 'panel1'} onChange={handleChangeAccordionArchived('panel1')}>
@@ -197,7 +210,6 @@ const GroupsPage = () => {
                             </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-
                             <Grid2 container spacing={2} sx={{ padding: 2 }}>
                                 {(() => {
                                     const archivados = grupos.filter((grupo) => grupo.estado === "archivado");
@@ -231,7 +243,7 @@ const GroupsPage = () => {
                 open={openModal}
                 onClose={handleCloseModal}
                 onSave={handleSaveGroup}
-                initialGroup={groupToEdit || { name: "", image: null }}
+                initialGroup={groupToEdit || { nombre: "", foto: null, descripcion: "" }}
                 mode={groupToEdit ? "edit" : "create"}
             />
 

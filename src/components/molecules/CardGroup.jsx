@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
-
+//HACER RESPONSIVE EL CARD
 const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
@@ -59,7 +59,13 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                     onClick={onClick}
                     sx={{
                         position: 'relative',
-                        width: 200,
+                        width: {
+                            xs: 70,
+                            sm: 90,
+                            md: 110,
+                            lg: 130,
+                            xl: 150,
+                        },
                         borderRadius: 2,
                         overflow: 'hidden',
                         boxShadow: 1,
@@ -71,6 +77,18 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                         onClick={handleMenuClick}
                         sx={{
                             position: 'absolute',
+                            width: {
+                                xs: 7,
+                                sm: 20,
+                                md: 30,
+                                xl: 40,
+                            },
+                            height: {
+                                xs: 7,
+                                sm: 20,
+                                md: 30,
+                                xl: 40,
+                            },
                             top: 4,
                             right: 4,
                             zIndex: 2,
@@ -87,7 +105,6 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                         src={grupo.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(grupo.nombre)}`}
                         alt={`Grupo ${grupo.nombre}`}
                         sx={{
-                            height: 100,
                             width: '100%',
                             objectFit: 'cover',
                             borderBottom: '1px solid #eee'
