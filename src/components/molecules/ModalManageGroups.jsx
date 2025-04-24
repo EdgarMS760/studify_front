@@ -12,6 +12,7 @@ import {
 import UploadIcon from "@mui/icons-material/Upload";
 import { useEffect, useState } from "react";
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -28,18 +29,18 @@ const ModalManageGroups = ({
     open,
     onClose,
     onSave,
-    initialGroup = { name: "", image: null },
+    initialGroup = { nombre: "", foto: null, descripcion: "" },
     mode = "create",
 }) => {
     const [groupData, setGroupData] = useState(initialGroup);
     const [previewImage, setPreviewImage] = useState(null);
-    const [errors, setErrors] = useState({ name: false, image: false });
+    const [errors, setErrors] = useState({ nombre: false, foto: false, descripcion: false });
 
     useEffect(() => {
         setGroupData(initialGroup);
         console.log(initialGroup);
-        if (initialGroup.image) {
-            setPreviewImage(initialGroup.image);
+        if (initialGroup.foto) {
+            setPreviewImage(initialGroup.foto);
         } else {
             setPreviewImage(null);
         }
@@ -48,21 +49,26 @@ const ModalManageGroups = ({
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setGroupData({ ...groupData, image: file });
+            setGroupData({ ...groupData, foto: file });
             setPreviewImage(URL.createObjectURL(file));
-            setErrors((prev) => ({ ...prev, image: false }));
+            setErrors((prev) => ({ ...prev, foto: false }));
         }
     };
 
-    const handleChange = (e) => {
-        setGroupData({ ...groupData, name: e.target.value });
-        setErrors((prev) => ({ ...prev, name: false }));
+    const handleChangeName = (e) => {
+        setGroupData({ ...groupData, nombre: e.target.value });
+        setErrors((prev) => ({ ...prev, nombre: false }));
+    };
+
+    const handleChangeDescription = (e) => {
+        setGroupData({ ...groupData, descripcion: e.target.value });
+        setErrors((prev) => ({ ...prev, descripcion: false }));
     };
 
     const handleSubmit = () => {
         const newErrors = {
-            name: groupData.name.trim() === "",
-            image: !previewImage && mode !== "edit",
+            nombre: groupData.nombre.trim() === "",
+            foto: !previewImage && mode !== "edit",
         };
 
         setErrors(newErrors);
@@ -78,7 +84,7 @@ const ModalManageGroups = ({
             // Resetear errores cuando se abra el modal
             setErrors({});
         }
-    }, [open]);  
+    }, [open]);
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
@@ -87,14 +93,14 @@ const ModalManageGroups = ({
                 {previewImage || mode === "edit" ? (
                     <Box
                         component="img"
-                        src={previewImage}
+                        src={previewImage  || `https://ui-avatars.com/api/?name=${encodeURIComponent(groupData.nombre)}` }
                         alt="Preview"
                         sx={{
                             width: "100%",
                             maxHeight: 200,
                             objectFit: "cover",
                             borderRadius: 2,
-                            border: errors.image ? "2px solid red" : "none",
+                            border: errors.foto ? "2px solid red" : "none",
                         }}
                     />
                 ) : (
@@ -107,7 +113,7 @@ const ModalManageGroups = ({
                             justifyContent: "center",
                             borderRadius: 2,
                             bgcolor: "grey.100",
-                            border: `1px dashed ${errors.image ? "red" : "grey"}`,
+                            border: `1px dashed ${errors.foto ? "red" : "grey"}`,
                         }}
                     >
                         <InsertPhotoIcon sx={{ fontSize: 60, color: "grey.500" }} />
@@ -123,7 +129,7 @@ const ModalManageGroups = ({
                         {mode === "edit" ? "Cambiar imagen" : "Subir imagen"}
                         <VisuallyHiddenInput type="file" onChange={handleImageChange} accept="image/*" />
                     </Button>
-                    {errors.image && (
+                    {errors.foto && (
                         <Typography
                             variant="caption"
                             color="error"
@@ -136,11 +142,19 @@ const ModalManageGroups = ({
 
                 <TextField
                     label="Nombre del grupo"
-                    value={groupData.name}
-                    onChange={handleChange}
+                    value={groupData.nombre || ""}
+                    onChange={handleChangeName}
                     fullWidth
-                    error={errors.name}
-                    helperText={errors.name && "Este campo es obligatorio"}
+                    error={errors.nombre}
+                    helperText={errors.nombre && "Este campo es obligatorio"}
+                />
+                <TextField
+                    label="Descripción del grupo"
+                    value={groupData.descripcion || ""}
+                    onChange={handleChangeDescription}
+                    fullWidth
+                    error={errors.descripcion}
+                    helperText={errors.descripcion && "Este campo es obligatorio"}
                 />
             </DialogContent>
 

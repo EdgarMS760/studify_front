@@ -5,6 +5,7 @@ import {
     IconButton,
     Popover,
     MenuItem,
+    Tooltip,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
@@ -47,72 +48,75 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
 
 
     const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
-        
+
         const [anchorEl, setAnchorEl] = useState(null);
         const handleMenuClick = (e) => { e.stopPropagation(); setAnchorEl(e.currentTarget); };
-        const handleMenuClose = (e) => { e.stopPropagation(); setAnchorEl(null)};
+        const handleMenuClose = (e) => { e.stopPropagation(); setAnchorEl(null) };
         return (
-            <Box
-                onClick={onClick}
-                sx={{
-                    position: 'relative',
-                    width: 200,
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    boxShadow: 1,
-                    bgcolor: 'background.paper',
-                    cursor: 'pointer'
-                }}
-            >
-                <IconButton
-                    onClick={handleMenuClick}
-                    sx={{
-                        position: 'absolute',
-                        top: 4,
-                        right: 4,
-                        zIndex: 2,
-                        backgroundColor: 'gray',
-                        opacity: 0.33,
-                        '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
-                    }}
-                >
-                    <MoreHorizIcon fontSize="small" />
-                </IconButton>
+            <Tooltip title={grupo.descripcion} placement="bottom">
 
                 <Box
-                    component="img"
-                    src={grupo.image}
-                    alt={`Grupo ${grupo.name}`}
+                    onClick={onClick}
                     sx={{
-                        height: 100,
-                        width: '100%',
-                        objectFit: 'cover',
-                        borderBottom: '1px solid #eee'
+                        position: 'relative',
+                        width: 200,
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        boxShadow: 1,
+                        bgcolor: 'background.paper',
+                        cursor: 'pointer'
                     }}
-                />
-
-                <Box sx={{ p: 1, textAlign: 'center' }}>
-                    <Typography
-                        variant="body2"
-                        fontWeight="bold"
-                        fontFamily="Montserrat"
-                        noWrap
-                    >
-                        {grupo.name}
-                    </Typography>
-                </Box>
-
-                <Popover
-                    open={Boolean(anchorEl)}
-                    anchorEl={anchorEl}
-                    onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
-                    <MenuItem onClick={onEdit}>Editar</MenuItem>
-                    <MenuItem onClick={onArchive}>Archivar</MenuItem>
-                </Popover>
-            </Box>
+                    <IconButton
+                        onClick={handleMenuClick}
+                        sx={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            zIndex: 2,
+                            backgroundColor: 'gray',
+                            opacity: 0.33,
+                            '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
+                        }}
+                    >
+                        <MoreHorizIcon fontSize="small" />
+                    </IconButton>
+
+                    <Box
+                        component="img"
+                        src={grupo.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(grupo.nombre)}`}
+                        alt={`Grupo ${grupo.nombre}`}
+                        sx={{
+                            height: 100,
+                            width: '100%',
+                            objectFit: 'cover',
+                            borderBottom: '1px solid #eee'
+                        }}
+                    />
+
+                    <Box sx={{ p: 1, textAlign: 'center' }}>
+                        <Typography
+                            variant="body2"
+                            fontWeight="bold"
+                            fontFamily="Montserrat"
+                            noWrap
+                        >
+                            {grupo.nombre}
+                        </Typography>
+                    </Box>
+
+                    <Popover
+                        open={Boolean(anchorEl)}
+                        anchorEl={anchorEl}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                        <MenuItem onClick={onEdit}>Editar</MenuItem>
+                        <MenuItem onClick={onArchive}>Archivar</MenuItem>
+                    </Popover>
+                </Box>
+            </Tooltip>
         );
     };
     const ArchivedGroupCard = ({ grupo, onUnarchive }) => {
@@ -123,18 +127,18 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
 
         return (
             <Box
-            sx={{
-                position: 'relative',
-                width: 200,
-                borderRadius: 2,
-                overflow: 'hidden',
-                boxShadow: 1,
-                bgcolor: 'background.paper',
-                height: 50,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
+                sx={{
+                    position: 'relative',
+                    width: 200,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    boxShadow: 1,
+                    bgcolor: 'background.paper',
+                    height: 50,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
             >
                 <IconButton
                     onClick={handleMenuClick}
@@ -162,7 +166,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                         fontWeight="bold"
                         fontFamily="Montserrat"
                     >
-                        {grupo.name}
+                        {grupo.nombre}
                     </Typography>
                 </Box>
 
