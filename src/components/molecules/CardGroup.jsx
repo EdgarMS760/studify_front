@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
-//HACER RESPONSIVE EL CARD
+
 const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     };
 
     const handleGroupClick = () => {
-        navigate(`/group/${grupo.id}`);
+        navigate(`/group/${grupo._id}`);
     };
     const handleUnarchiveClick = (event) => {
         event.stopPropagation();
@@ -46,7 +46,10 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
         console.log("Desarchivar grupo", grupo);
     };
 
-
+    //TODO:
+    //implementar funcionaliad de fotos de grupos
+    //implementar funcionalidad del sidebar de grupos
+    //crear una coleccion en firebase para los post de los grupos, usar id de grupo como id de la coleccion y el id del post como id del documento.
     const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
 
         const [anchorEl, setAnchorEl] = useState(null);
@@ -106,10 +109,20 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                         alt={`Grupo ${grupo.nombre}`}
                         sx={{
                             width: '100%',
+                            height: {
+                                xs: 40,
+                                sm: 50,
+                                md: 90,
+                                lg: 100,
+                                xl: 120,
+                            },
                             objectFit: 'cover',
-                            borderBottom: '1px solid #eee'
+                            borderBottom: '1px solid #eee',
+                            borderTopLeftRadius: '8px',
+                            borderTopRightRadius: '8px'
                         }}
                     />
+
 
                     <Box sx={{ p: 1, textAlign: 'center' }}>
                         <Typography
@@ -136,7 +149,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
             </Tooltip>
         );
     };
-    const ArchivedGroupCard = ({ grupo, onUnarchive }) => {
+    const ArchivedGroupCard = ({ grupo, onArchive }) => {
         const [anchorEl, setAnchorEl] = useState(null);
 
         const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
@@ -194,7 +207,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
-                    <MenuItem onClick={onUnarchive}>Desarchivar</MenuItem>
+                    <MenuItem onClick={onArchive}>Desarchivar</MenuItem>
                 </Popover>
             </Box>
         );
@@ -202,7 +215,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     return isArchived ? (
         <ArchivedGroupCard
             grupo={grupo}
-            onUnarchive={handleUnarchiveClick}
+            onArchive={handleArchiveClick}
         />
     ) : (
         <ActiveGroupCard

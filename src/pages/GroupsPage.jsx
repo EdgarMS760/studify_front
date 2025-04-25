@@ -7,11 +7,13 @@ import AddIcon from "@mui/icons-material/Add";
 import ModalManageGroups from '@components/molecules/ModalManageGroups';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { deleteImage, uploadImageAndGetUrl } from '../libs/helpers/firebaseUtils';
-import { getGroups, postGroup } from '../services/groups/groupService';
+import { deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from '../libs/helpers/firebaseUtils';
+import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '../services/groups/groupService';
 
 const GroupsPage = () => {
-    const [grupos, setGrupos] = useState([
+    const [gruposActivos, setGruposActivos] = useState([
+    ]);
+    const [gruposArchivados, setGruposArchivados] = useState([
     ]);
     const [loading, setLoading] = useState(false);
     const { showSnackbar } = useSnackbar();
@@ -41,33 +43,76 @@ const GroupsPage = () => {
     };
 
     const handleSaveGroup = async (groupData) => {
-        if (groupToEdit) {
-            alert("Grupo editado:", groupData);
-            console.log("Actualizar grupo:", groupData);
-        } else {
+        let fileRef;
+        if (groupData.mode === "edit") {
+            console.log("Actualizar grupo:", groupToEdit);
 
-            let fileRef;
+            const oldImageURL =groupToEdit.foto || null;
+            try {
+                setLoading(true);
+
+                let picURL = groupData.foto || null;
+
+                // Subir imagen si es nueva
+                if (groupData.foto && typeof groupData.foto !== "string") {
+                    const { url, fileRef: uploadedRef } = await uploadImageAndGetUrl(
+                        groupData.foto,
+                        "groupPics"
+                    );
+                    picURL = url;
+                    fileRef = uploadedRef;
+                }
+
+                const response = await updateGroup(groupData._id, {
+                    nombre: groupData.nombre,
+                    descripcion: groupData.descripcion,
+                    foto: picURL,
+                });
+
+                // Borrar la imagen anterior si fue reemplazada y era de Firebase
+                if (
+                    oldImageURL &&
+                    oldImageURL !== picURL &&
+                    oldImageURL.includes("firebasestorage.googleapis.com")
+                ) {
+                    await deleteImageByUrl(oldImageURL);
+                }
+                showSnackbar(response.message, "success");
+
+            } catch (err) {
+                console.error("Error al registrar:", err);
+                const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
+                showSnackbar(message, "error");
+
+                //se elimina la imagen si hubo un error en el post
+                if (fileRef) {
+                    await deleteImage(fileRef);
+                }
+
+            } finally {
+                setLoading(false);
+            }
+        } else {
 
             try {
                 setLoading(true);
 
-                // let picURL = groupData.image || null;
+                let picURL = groupData.foto || null;
 
-                // // Subir imagen si es nueva
-                // if (groupData.image && typeof groupData.image !== "string") {
-                //     const { url, fileRef: uploadedRef } = await uploadImageAndGetUrl(
-                //         groupData.image,
-                //         "avatars"
-                //     );
-                //     picURL = url;
-                //     fileRef = uploadedRef;
-                // }
+                // Subir imagen si es nueva
+                if (groupData.foto && typeof groupData.foto !== "string") {
+                    const { url, fileRef: uploadedRef } = await uploadImageAndGetUrl(
+                        groupData.foto,
+                        "groupPics"
+                    );
+                    picURL = url;
+                    fileRef = uploadedRef;
+                }
 
-                // Actualizar usuario
                 const response = await postGroup({
                     nombre: groupData.nombre,
                     descripcion: groupData.descripcion,
-                    //foto_perfil: picURL,
+                    foto: picURL,
                 });
 
                 showSnackbar(response.message, "success");
@@ -78,34 +123,69 @@ const GroupsPage = () => {
                 const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
                 showSnackbar(message, "error");
 
-                // se elimina la imagen si hubo un error en el post
-                // if (fileRef) {
-                //     await deleteImage(fileRef);
-                // }
+                //se elimina la imagen si hubo un error en el post
+                if (fileRef) {
+                    await deleteImage(fileRef);
+                }
 
             } finally {
                 setLoading(false);
             }
-            console.log("Crear grupo:", groupData);
-            fetchGroups(); // Refrescar la lista de grupos después de crear uno nuevo
         }
+        fetchGroups(); // Refrescar la lista de grupos después de crear uno nuevo
 
         handleCloseModal();
     };
+    const handleArchiveGroup = async (groupData) => {
 
+        const idGroup = groupData._id;
+
+        setLoading(true);
+        try {
+            const response = await archiveGroup(idGroup);
+            showSnackbar("Grupo archivado con éxito", "success");
+            fetchGroups();
+        } catch (error) {
+            console.error("Error al archivar el grupo:", error);
+            const message = error.response?.data?.error || "Error al archivar el grupo.";
+            setLoading(false);
+            showSnackbar(message, "error");
+        }
+    }
+    const handleDearchiveGroup = async (groupData) => {
+
+        const idGroup = groupData._id;
+
+        setLoading(true);
+        try {
+            const response = await dearchiveGroup(idGroup);
+            showSnackbar("Grupo desarchivado con éxito", "success");
+            fetchGroups();
+        } catch (error) {
+            console.error("Error al desarchivar el grupo:", error);
+            const message = error.response?.data?.error || "Error al desarchivar el grupo.";
+            setLoading(false);
+            showSnackbar(message, "error");
+        }
+    }
     const fetchGroups = async () => {
         setLoading(true);
         try {
             const { groups, total, page } = await getGroups();
-            setGrupos(groups);
+            setGruposActivos(groups);
         } catch (error) {
             console.error("Error al obtener grupos:", error);
-        } finally {
-            setLoading(false);
         }
+        try {
+            const { groups, total, page } = await getGroups(1, 10, "archivado");
+            setGruposArchivados(groups);
+        } catch (error) {
+            console.error("Error al obtener grupos:", error);
+        }
+        setLoading(false);
     };
-    useEffect(() => {
 
+    useEffect(() => {
         fetchGroups();
     }, []);
     return (
@@ -133,9 +213,8 @@ const GroupsPage = () => {
                             <TextCardAtom text="Tus Grupos" isHighlighted={true} className="text-4xl mb-4" />
                             <Grid2 container spacing={2} sx={{ padding: 2 }}>
                                 {(() => {
-                                    const activos = grupos.filter((grupo) => grupo.estado === "no archivado");
 
-                                    if (activos.length === 0) {
+                                    if (gruposActivos.length === 0) {
                                         return (
                                             <Typography variant="body1" sx={{ padding: 2 }}>
                                                 No hay grupos activos.
@@ -145,12 +224,12 @@ const GroupsPage = () => {
 
                                     return (
                                         <>
-                                            {activos.map((grupo) => (
+                                            {gruposActivos.map((grupo) => (
                                                 <Grid2 key={grupo._id}>
                                                     <CardGroup
                                                         grupo={grupo}
                                                         onEdit={() => handleEditGroup(grupo)}
-                                                        onArchive={() => console.log("Archivar grupo", grupo)}
+                                                        onArchive={handleArchiveGroup}
                                                     />
                                                 </Grid2>
                                             ))}
@@ -212,9 +291,9 @@ const GroupsPage = () => {
                         <AccordionDetails>
                             <Grid2 container spacing={2} sx={{ padding: 2 }}>
                                 {(() => {
-                                    const archivados = grupos.filter((grupo) => grupo.estado === "archivado");
 
-                                    if (archivados.length === 0) {
+
+                                    if (gruposArchivados.length === 0) {
                                         return (
                                             <Typography variant="body1" sx={{ padding: 2 }}>
                                                 No hay grupos archivados.
@@ -222,12 +301,12 @@ const GroupsPage = () => {
                                         );
                                     }
 
-                                    return archivados.map((grupo) => (
+                                    return gruposArchivados.map((grupo) => (
                                         <Grid2 key={grupo._id}>
                                             <CardGroup
                                                 grupo={grupo}
                                                 onEdit={() => handleEditGroup(grupo)}
-                                                onArchive={() => console.log("Archivar grupo", grupo)}
+                                                onArchive={handleDearchiveGroup}
                                                 isArchived={true}
                                             />
                                         </Grid2>
