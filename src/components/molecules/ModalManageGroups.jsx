@@ -38,7 +38,6 @@ const ModalManageGroups = ({
 
     useEffect(() => {
         setGroupData(initialGroup);
-        console.log(initialGroup);
         if (initialGroup.foto) {
             setPreviewImage(initialGroup.foto);
         } else {
@@ -76,7 +75,7 @@ const ModalManageGroups = ({
 
         const hasErrors = Object.values(newErrors).some(Boolean);
         if (hasErrors) return;
-
+        groupData.mode = mode;
         onSave(groupData);
         onClose();
     };
