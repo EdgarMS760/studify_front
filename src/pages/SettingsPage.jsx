@@ -10,7 +10,7 @@ import { useSnackbar } from '@libs/store/SnackbarContext';
 const SettingsPage = () => {
     const { showSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
-    const { session, authentication, updateSessionFromUser } = useSessionAuth();
+    const { session, updateSessionFromUser } = useSessionAuth();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
