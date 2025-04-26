@@ -58,7 +58,7 @@ const SideBarGroup = ({ items }) => {
                                     : "hover:bg-neutral-200"
                             )}
                         >
-                            <CardSideBarGroup id={item._id} image={item.foto} text={item.nombre} />
+                            <CardSideBarGroup id={item._id} imageSrc={item.foto} text={item.nombre} />
                         </div>
                     </li>
                 ))}

@@ -7,8 +7,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ModalManageGroups from '@components/molecules/ModalManageGroups';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from '../libs/helpers/firebaseUtils';
-import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '../services/groups/groupService';
+import { createEmptyPostsCollection, deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from '@libs/helpers/firebaseUtils';
+import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '@services/groups/groupService';
 
 const GroupsPage = () => {
     const [gruposActivos, setGruposActivos] = useState([
@@ -114,6 +114,9 @@ const GroupsPage = () => {
                     descripcion: groupData.descripcion,
                     foto: picURL,
                 });
+                const newGroup = response.group;
+
+                await createEmptyPostsCollection(newGroup._id);
 
                 showSnackbar(response.message, "success");
 
