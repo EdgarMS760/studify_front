@@ -4,7 +4,8 @@ import { registerUser } from '@services/auth/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { fileToBase64 } from '@libs/helpers/fileToBase64';
 import { storage } from '@services/firebase/firebaseConfig';
-import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
+import { uploadImageAndGetUrl,deleteImage } from '@libs/helpers/firebaseUtils';
 
 const FormRegister = ({ onToggle }) => {
 
@@ -23,13 +24,16 @@ const FormRegister = ({ onToggle }) => {
 
         try {
             const base64 = await fileToBase64(file);
-            setUser(prev => ({ ...prev, avatar: base64 }));
+            setUser(prev => ({ ...prev, avatar: base64, avatarFile: file }));
         } catch (err) {
             console.error("Error al convertir imagen:", err);
         }
     };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const newErrors = {};
 
         if (!user.name) newErrors.name = "Nombre requerido";
@@ -42,31 +46,49 @@ const FormRegister = ({ onToggle }) => {
         if (!user.role) newErrors.role = "Seleccione un rol";
 
         setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) return;
 
-        if (Object.keys(newErrors).length > 0) {
-            return;
-        }
+        let fileRef;
 
-        console.log('user', user)
         try {
             setLoading(true);
+
+            let avatarURL = user.avatar || null;
+
+            if (user.avatarFile) {
+                const { url, fileRef: uploadedRef } = await uploadImageAndGetUrl(
+                    user.avatarFile,
+                    "avatars"
+                );
+                avatarURL = url;
+                fileRef = uploadedRef;
+            }
+
             const response = await registerUser({
                 nombre: user.name,
                 email: user.email,
                 password: user.password,
                 rol: user.role.toLowerCase(),
-                foto_perfil: user.avatar || null
+                foto_perfil: avatarURL
             });
-            showSnackbar(response.message, 'success');
+
+            showSnackbar(response.message, "success");
             onToggle();
+
         } catch (err) {
             console.error("Error al registrar:", err);
             const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
-            showSnackbar(message, 'error');
+            showSnackbar(message, "error");
+
+            if (fileRef) {
+                await deleteImage(fileRef);
+            }
+
         } finally {
             setLoading(false);
         }
     };
+
 
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -82,20 +104,27 @@ const FormRegister = ({ onToggle }) => {
 
     useEffect(() => {
         const fetchAvatars = async () => {
+            const cached = localStorage.getItem('avatarsStudify');
+            if (cached) {
+                setAvatars(JSON.parse(cached));
+                return;
+            }
+
             try {
                 const folderRef = ref(storage, 'avatars/');
                 const res = await listAll(folderRef);
                 const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
+                localStorage.setItem('avatarsStudify', JSON.stringify(urls));
                 setAvatars(urls);
-                console.log('urls', urls);
             } catch (error) {
                 console.error("Error fetching avatars:", error);
-                setAvatars([]); // Fallback to an empty array if fetching fails
+                setAvatars([]);
             }
         };
 
         fetchAvatars();
     }, []);
+
 
     return (
         <Box
@@ -227,6 +256,7 @@ const FormRegister = ({ onToggle }) => {
 
 
             <Button
+                onClick={handleSubmit}
                 type="submit"
                 variant="contained"
                 color="warning"
