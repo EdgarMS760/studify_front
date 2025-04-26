@@ -18,10 +18,10 @@ import { useSessionAuth } from '@libs/hooks/useSessionAuth';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Avatar, Typography, Tooltip, Popover, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { useAuth } from '../../libs/store/AuthProvider';
+import { useAuth } from '@libs/store/AuthProvider';
 import { createTheme, styled, useColorScheme } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-import { useNavigationMUI } from '../../libs/store/NavigationContext';
+import { useNavigationMUI } from '@libs/store/NavigationContext';
 
 const MainLayout = () => {
     const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -181,16 +181,7 @@ const MainLayout = () => {
         );
 
         const [isDarkMode, setIsDarkMode] = useState(mode === 'dark');
-        const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-        const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
-
-        const toggleMenu = React.useCallback(
-            (event) => {
-                setMenuAnchorEl(isMenuOpen ? null : event.currentTarget);
-                setIsMenuOpen((previousIsMenuOpen) => !previousIsMenuOpen);
-            },
-            [isMenuOpen],
-        );
+        
         useEffect(() => {
             setIsDarkMode(mode === 'dark');
         }, [mode]);

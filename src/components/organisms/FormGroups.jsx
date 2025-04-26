@@ -12,14 +12,22 @@ import AddIcon from '@mui/icons-material/Add';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
+import CardGroup from '../molecules/CardGroup';
 
 const FormGroups = () => {
   const navigate = useNavigate();
 
   const [grupos, setGrupos] = useState([
-    { id: 1, nombre: 'Español', imagen: '/grupo1.png' },
-    { id: 2, nombre: 'Mates', imagen: '/grupo2.png' },
-    { id: 3, nombre: 'Inglés', imagen: '/grupo3.png' },
+    { id: 1, nombre: 'Español', imagen: 'https://placehold.co/40' },
+    { id: 2, nombre: 'Mates', imagen: 'https://placehold.co/40' },
+    { id: 3, nombre: 'Inglés', imagen: 'https://placehold.co/40' },
+    { id: 4, nombre: 'Historia', imagen: 'https://placehold.co/40' },
+    { id: 5, nombre: 'Ciencias', imagen: 'https://placehold.co/40' },
+    { id: 6, nombre: 'Física', imagen: 'https://placehold.co/40' },
+    { id: 7, nombre: 'Química', imagen: 'https://placehold.co/40' },
+    { id: 8, nombre: 'Biología', imagen: 'https://placehold.co/40' },
+    { id: 9, nombre: 'Geografía', imagen: 'https://placehold.co/40' },
+    { id: 10, nombre: 'Arte', imagen: 'https://placehold.co/40' }
   ]);
 
   const [gruposArchivados, setGruposArchivados] = useState([
@@ -86,22 +94,8 @@ const FormGroups = () => {
       <Grid container spacing={2}>
         {grupos.map((grupo) => (
           <Grid item key={grupo.id}>
-            <ButtonBase onClick={() => handleGrupoClick(grupo)}>
-              <Card sx={{ width: 120, borderRadius: 2, boxShadow: 3 }}>
-                <CardMedia
-                  component="img"
-                  image={grupo.imagen}
-                  alt={`Grupo ${grupo.nombre}`}
-                  sx={{ height: 100, objectFit: 'cover' }}
-                />
-                <CardContent sx={{ padding: 1, textAlign: 'center' }}>
-                  <Typography variant="body2" fontWeight="bold" fontFamily="Montserrat">
-                    GRUPO “{grupo.nombre}”
-                  </Typography>
-                </CardContent>
-              </Card>
-            </ButtonBase>
-          </Grid>
+         <CardGroup grupo={grupo} onClick={() => handleGrupoClick(grupo)} />
+         </Grid>
         ))}
       </Grid>
 
