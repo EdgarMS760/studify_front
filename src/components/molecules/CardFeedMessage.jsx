@@ -9,7 +9,9 @@ const CardFeedMessage = ({ msgObj }) => {
   const theme = useTheme()
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
-
+  const date = msgObj.time?.toDate();
+  const options = { dateStyle: "short", timeStyle: "short" };
+  const formattedDate = date?.toLocaleString("en-US", options).replace(',', ' a las');
   if (isTeacher) {
     return (
       <Box className={clsx("p-4 rounded-lg")}
@@ -24,7 +26,7 @@ const CardFeedMessage = ({ msgObj }) => {
         ]}
       >
         <div className="text-left mb-2">
-          <TextCardAtom text={msgObj.time} className="text-sm text-gray-500" />
+          <TextCardAtom text={formattedDate} className="text-sm text-gray-500" />
         </div>
 
         <div className="grid grid-cols-3 ">
@@ -61,7 +63,7 @@ const CardFeedMessage = ({ msgObj }) => {
             <TextCardAtom text={msgObj.message} className="text-lg" isHighlighted={true} />
           </div>
           <div className="col-span-3 text-right mt-2">
-            <TextCardAtom text={msgObj.time} className="text-sm text-gray-500" />
+            <TextCardAtom text={formattedDate} className="text-sm text-gray-500" />
           </div>
         </div>
       </Box>

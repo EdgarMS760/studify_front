@@ -1,10 +1,10 @@
 import { Outlet, useParams } from "react-router-dom";
 import HeadBarGroup from "@components/organisms/HeadBarGroup";
 import clsx from "clsx";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import SideBarGroup from "@components/organisms/SideBarGroup";
 import { useEffect, useState } from "react";
-import { getGroupById, getGroups } from "../../services/groups/groupService";
+import { getGroupById, getGroups } from "@services/groups/groupService";
 
 const GroupLayout = () => {
     const [loading, setLoading] = useState(false);
@@ -12,11 +12,13 @@ const GroupLayout = () => {
     const [grupos, setGrupos] = useState([]);
     const [infoGrupo, setInfoGrupo] = useState({});
     const isLargeScreen = useMediaQuery('(min-width:1348px)');
+    const [showSideBar, setShowSideBar] = useState(true);
     const fetchGroups = async () => {
         setLoading(true);
         try {
             const { groups, total, page } = await getGroups();
             const filteredGroups = groups.filter(grupo => grupo._id !== id);
+
             setGrupos(filteredGroups);
         } catch (error) {
             console.error("Error al obtener grupos:", error);
@@ -37,13 +39,27 @@ const GroupLayout = () => {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        if (!isLargeScreen) {
+            setGrupos([]);
+        }
+    }, [isLargeScreen]);
+    
 
     useEffect(() => {
-        if (isLargeScreen) {
+        if (isLargeScreen ) {
             fetchGroups();
         }
     }, [isLargeScreen, id]);
 
+    useEffect(() => {
+        if (isLargeScreen && grupos.length > 0) {
+            setShowSideBar(true);
+        } else {
+            setShowSideBar(false);
+        }
+    }, [grupos, isLargeScreen]);
+    
     useEffect(() => {
         fetchGroupById();
     }, [id]);
@@ -65,9 +81,12 @@ const GroupLayout = () => {
                 ]}
             >
                 {/* este se oculta si pantalla es <= 1348px */}
-                <div className="hidden [@media(min-width:1348px)]:block h-full">
+                {showSideBar && (
+
+                    <div className="hidden [@media(min-width:1348px)]:block h-full">
                     <SideBarGroup items={grupos} />
                 </div>
+                )}
 
                 <div className="flex flex-col h-full w-full">
                     <HeadBarGroup info={infoGrupo}  />
