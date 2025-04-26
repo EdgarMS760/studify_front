@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Box, useMediaQuery } from "@mui/material";
 import SideBarGroup from "@components/organisms/SideBarGroup";
 import { useEffect, useState } from "react";
-import { getGroupById, getGroups } from "@services/groups/groupService";
+import { getGroupById, getGroups } from "@services/groupService";
 
 const GroupLayout = () => {
     const [loading, setLoading] = useState(false);
