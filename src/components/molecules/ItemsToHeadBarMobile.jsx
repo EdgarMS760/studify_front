@@ -4,15 +4,31 @@ import FolderIcon from '@mui/icons-material/Folder';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { ROUTES } from '@libs/constants/routes';
+import { useAuth } from '@libs/store/AuthProvider';
 const ItemsToHeadBarMobile = () => {
 
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
     const navigate = useNavigate();
     const location = useLocation();
-    const tabRoutes = ["/group/:id", "/group/:id/tasks", "/group/:id/material", "/group/:id/students"];
+    const { id } = useParams();
+    const tabRoutes = [
+        ROUTES.GROUP_DETAIL(id),
+        ROUTES.GROUP_TASKS(id),
+        ROUTES.GROUP_MATERIAL(id),
+        ROUTES.GROUP_STUDENTS(id),
+    ];
+    const patterns = [
+        new RegExp(`^${ROUTES.GROUP_DETAIL(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_TASKS(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_MATERIAL(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_STUDENTS(id)}$`),
+    ];
 
     // Encuentra el índice actual basado en la ruta
-    const currentTab = tabRoutes.indexOf(location.pathname);
+    const currentTab = patterns.findIndex((regex) => regex.test(location.pathname));
 
     // Función para manejar cambios de pestaña
     const handleChange = (_, newValue) => {
@@ -42,7 +58,7 @@ const ItemsToHeadBarMobile = () => {
             <Tab icon={<HomeIcon />} iconPosition="start" aria-label="MURO" />
             <Tab icon={<HomeWorkIcon />} iconPosition="start" aria-label="TAREAS" />
             <Tab icon={<FolderIcon />} iconPosition="start" aria-label="MATERIAL" />
-            <Tab icon={<GroupsIcon />} iconPosition="start" aria-label="ALUMNOS" />
+            {isTeacher && <Tab icon={<GroupsIcon />} iconPosition="start" aria-label="ALUMNOS" />}
         </Tabs>
     )
 }
