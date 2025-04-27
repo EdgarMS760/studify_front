@@ -1,14 +1,21 @@
 import React, { useEffect } from 'react'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import TextCardAtom from '../atoms/TextCardAtom';
+import TextCardAtom from '@components/atoms/TextCardAtom';
 import clsx from 'clsx';
 const CardMaterial = ({ data, isTeacher }) => {
-
-    const theme = useTheme()
-
+    const handleDownload = (url) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank'; // para abrir en nueva pestaña (opcional)
+        link.download = ''; // nombre del archivo (opcional, Firebase suele mandar el nombre correcto)
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+      
     return (
         <Box className={clsx('flex flex-row justify-between items-center rounded-lg shadow-md p-4 w-full h-20'
         )}
@@ -38,28 +45,33 @@ const CardMaterial = ({ data, isTeacher }) => {
                 <div className="flex flex-col justify-center">
 
                     <TextCardAtom
-                        text={data.name}
+                        text={data.titulo}
                         className="text-lg"
                         isHighlighted={true}
                     />
                     <TextCardAtom
-                        text={data.type}
+                        text={'archivo'}
                         className="text-sm text-gray-500"
                     />
                 </div>
             </div>
             <div className="flex justify-center">
-                <IconButton aria-label="download" sx={[
-                    (theme) => ({
-                        color: theme.vars.palette.secondary.main,
-                    }),
-                    (theme) =>
-                        theme.applyStyles('dark', {
-                            color: "white",
+                <IconButton
+                    aria-label="download"
+                    onClick={() => handleDownload(data.archivo)}
+                    sx={[
+                        (theme) => ({
+                            color: theme.vars.palette.secondary.main,
                         }),
-                ]}>
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                color: "white",
+                            }),
+                    ]}
+                >
                     <DownloadIcon />
                 </IconButton>
+
                 {isTeacher &&
 
                     (<IconButton aria-label="delete" sx={[

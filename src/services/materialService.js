@@ -26,3 +26,24 @@ export const postMaterial = async (newMaterial) => {
         throw error;
     }
 };
+export const getMaterials = async (group_id, pagina = 1, limit = 10) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if (!token) throw new Error("Falta token");
+
+        const response = await axiosInstance.get("/classmat", {
+            params: {
+                group_id,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al obtener los materiales:", error);
+        throw error;
+    }
+}
