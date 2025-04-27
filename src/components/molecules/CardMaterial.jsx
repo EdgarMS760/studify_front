@@ -9,7 +9,7 @@ const CardMaterial = ({ data, isTeacher }) => {
     const handleDownload = (url) => {
         const link = document.createElement('a');
         link.href = url;
-        link.target = '_blank'; // para abrir en nueva pestaña (opcional)
+        link.target = '_blank';
         link.download = ''; // nombre del archivo (opcional, Firebase suele mandar el nombre correcto)
         document.body.appendChild(link);
         link.click();
@@ -50,7 +50,7 @@ const CardMaterial = ({ data, isTeacher }) => {
                         isHighlighted={true}
                     />
                     <TextCardAtom
-                        text={'archivo'}
+                        text={data.tipo || 'Archivo'}
                         className="text-sm text-gray-500"
                     />
                 </div>
