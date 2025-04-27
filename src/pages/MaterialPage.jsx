@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CardMaterial from '@components/molecules/CardMaterial'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Pagination, styled, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Pagination, styled, TextField, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import { useAuth } from '@libs/store/AuthProvider';
@@ -9,6 +9,9 @@ import { useSnackbar } from '@libs/store/SnackbarContext';
 import { deleteImage } from '@libs/helpers/firebaseUtils';
 import { getMaterials, postMaterial } from '@services/materialService';
 import { useParams } from 'react-router';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useDebounce } from '@libs/hooks/Debounce';
+import { getFileType } from '@libs/helpers/filesUtils';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -71,7 +74,7 @@ const MaterialPage = () => {
   ]
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
-  const [open, setOpen] = useState(false); // Para manejar la apertura del diálogo
+  const [open, setOpen] = useState(false); 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
@@ -81,11 +84,25 @@ const MaterialPage = () => {
     file: "",
   });
   const { showSnackbar } = useSnackbar();
-  const [loading, setLoading] = useState(false);
   const { id } = useParams();
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 400);
   const [material, setMaterial] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1);
+
+
+
+  useEffect(() => {
+    fetchMaterial(debouncedQuery);
+  }, [debouncedQuery]);
+
   const handleClickOpen = () => {
     setOpen(true);
+    setTitle("");
+    setDescription("");
+    setFile(null);
     setErrors({
       title: "",
       description: "",
@@ -149,39 +166,39 @@ const MaterialPage = () => {
           fileRef = uploadedRef;
         }
 
+        const fileType = getFileType(file?.name);
         const response = await postMaterial({
           grupo_id: id,
           titulo: title,
           descripcion: description,
           archivo: fileURL,
+          tipo: fileType,
         });
 
         showSnackbar(response.message, "success");
-
       } catch (err) {
         console.error("Error al registrar:", err);
         const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
         showSnackbar(message, "error");
 
-        //se elimina la imagen si hubo un error en el post
         if (fileRef) {
           await deleteImage(fileRef);
         }
 
       } finally {
-        setLoading(false);
+        setOpen(false); 
+        fetchMaterial(debouncedQuery); 
       }
-
-      console.log({ title, description, file });
-      setOpen(false); // Cerrar el diálogo
     }
   };
 
-  const fetchMaterial = async () => {
+  const fetchMaterial = async (toSearch, pageNumber = 1) => {
     try {
       setLoading(true);
-      const response = await getMaterials(id);
+      const response = await getMaterials(id, toSearch, pageNumber); // <-- asegúrate que tu getMaterials reciba página
       setMaterial(response.materiales);
+      setTotalPages(response.totalPages || 1);
+      setPage(response.page || 1);
     } catch (err) {
       console.error("Error al obtener materiales:", err);
       const message = err.response?.data?.error || "Error al obtener materiales.";
@@ -191,14 +208,16 @@ const MaterialPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMaterial();
-  }, []);
+  const handlePageChange = (event, value) => {
+    fetchMaterial(debouncedQuery, value);
+  };
+
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:justify-between m-4 gap-4">
         <TextField
           id="search-task"
+          onChange={e => setQuery(e.target.value)}
           variant="standard"
           placeholder="Buscar..."
           InputProps={{
@@ -218,22 +237,34 @@ const MaterialPage = () => {
           </div>
         )}
       </div>
-
-      {material.length === 0 ? (<div className='flex justify-center'>No hay materiales disponibles.</div>) : (
+      {loading ? (<div className='flex justify-center'><CircularProgress /></div>) : (
 
         <>
-          {material.map((item, index) => (
-            <div key={index} className="m-3">
-              <CardMaterial data={item} isTeacher={isTeacher} />
-            </div>
-          ))}
+          {material.length === 0 ? (<div className='flex justify-center'>No hay materiales disponibles.</div>) : (
+
+            <>
+              {material.map((item, index) => (
+                <div key={index} className="m-3">
+                  <CardMaterial data={item} isTeacher={isTeacher} />
+                </div>
+              ))}
+
+            </>
+          )}
 
         </>
       )}
       <div className="flex justify-center m-4">
-
-        <Pagination count={10} showFirstButton showLastButton color="primary" />
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          showFirstButton
+          showLastButton
+          color="primary"
+        />
       </div>
+
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Subir Material</DialogTitle>
@@ -263,7 +294,7 @@ const MaterialPage = () => {
               component="label"
               variant="contained"
             >
-              <Typography
+              {/* <Typography
                 sx={[
                   (theme) => ({
                     color: "white",
@@ -274,13 +305,23 @@ const MaterialPage = () => {
                       color: theme.vars.palette.secondary.main,
                     }),
                 ]}
-              >Subir material</Typography>
+              >cargar archivo</Typography> */}
+              <CloudUploadIcon className="w-6 h-6" sx={{ color: 'white' }} />
               <VisuallyHiddenInput type="file" accept="*" onChange={handleFileChange} />
             </Button>
             {file && (
-              <div className="mt-2 text-sm text-gray-600">
+              <Box className="mt-2 text-sm" 
+              sx={[
+                (theme) => ({
+                  color: "black",
+                }),
+                (theme) =>
+                  theme.applyStyles('dark', {
+                    color: 'white' ,
+                  }),
+              ]}>
                 <strong>Archivo seleccionado:</strong> {file.name}
-              </div>
+              </Box>
             )}
             {errors.file && (
               <div className="mt-2 text-sm text-red-600">{errors.file}</div>

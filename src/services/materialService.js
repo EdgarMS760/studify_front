@@ -26,7 +26,7 @@ export const postMaterial = async (newMaterial) => {
         throw error;
     }
 };
-export const getMaterials = async (group_id, pagina = 1, limit = 10) => {
+export const getMaterials = async (group_id, search = "", page = 1, limit = 10) => {
     try {
         const token = localStorage.getItem('token_studify');
 
@@ -35,6 +35,9 @@ export const getMaterials = async (group_id, pagina = 1, limit = 10) => {
         const response = await axiosInstance.get("/classmat", {
             params: {
                 group_id,
+                search,
+                page,
+                limit,
             },
             headers: {
                 Authorization: `Bearer ${token}`,
