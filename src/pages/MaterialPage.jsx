@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CardMaterial from '@components/molecules/CardMaterial'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Pagination, styled, TextField, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
@@ -6,8 +6,8 @@ import ButtonAtom from '@components/atoms/ButtonAtom';
 import { useAuth } from '@libs/store/AuthProvider';
 import { uploadImageAndGetUrl } from '@libs/helpers/firebaseUtils';
 import { useSnackbar } from '@libs/store/SnackbarContext';
-import { deleteImage } from '../libs/helpers/firebaseUtils';
-import { postMaterial } from '../services/materialService';
+import { deleteImage } from '@libs/helpers/firebaseUtils';
+import { getMaterials, postMaterial } from '@services/materialService';
 import { useParams } from 'react-router';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -83,7 +83,7 @@ const MaterialPage = () => {
   const { showSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-
+  const [material, setMaterial] = useState([]);
   const handleClickOpen = () => {
     setOpen(true);
     setErrors({
@@ -177,6 +177,23 @@ const MaterialPage = () => {
     }
   };
 
+  const fetchMaterial = async () => {
+    try {
+      setLoading(true);
+      const response = await getMaterials(id);
+      setMaterial(response.materiales);
+    } catch (err) {
+      console.error("Error al obtener materiales:", err);
+      const message = err.response?.data?.error || "Error al obtener materiales.";
+      showSnackbar(message, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterial();
+  }, []);
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:justify-between m-4 gap-4">
@@ -202,11 +219,17 @@ const MaterialPage = () => {
         )}
       </div>
 
-      {dummy.map((item, index) => (
-        <div key={index} className="m-3">
-          <CardMaterial data={item} isTeacher={isTeacher} />
-        </div>
-      ))}
+      {material.length === 0 ? (<div className='flex justify-center'>No hay materiales disponibles.</div>) : (
+
+        <>
+          {material.map((item, index) => (
+            <div key={index} className="m-3">
+              <CardMaterial data={item} isTeacher={isTeacher} />
+            </div>
+          ))}
+
+        </>
+      )}
       <div className="flex justify-center m-4">
 
         <Pagination count={10} showFirstButton showLastButton color="primary" />
