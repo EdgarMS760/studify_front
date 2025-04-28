@@ -7,20 +7,26 @@ const MessagesFeed = ({ groupId }) => {
 
     useEffect(() => {
         if (!groupId) return;
-        
+
         const unsubscribe = listenToGroupMessages(groupId, setMessages);
         return () => unsubscribe();
     }, [groupId]);
-    
+
     useEffect(() => {
-        
+
         console.log('messages', messages)
     }, [messages]);
     return (
         <div className="flex flex-col h-full overflow-y-auto p-3 space-y-3">
-            {messages.map((msg) => (
-                <CardFeedMessage key={msg.id} msgObj={msg} />
-            ))}
+            {messages.length === 0 ? (
+                <p className="text-gray-500 text-center mt-10">
+                    No hay post todavía, crea uno para compartir con tu grupo.
+                </p>
+            ) : (
+                messages.map((msg) => (
+                    <CardFeedMessage key={msg.id} msgObj={msg} />
+                ))
+            )}
         </div>
     );
 };

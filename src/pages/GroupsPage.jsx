@@ -8,7 +8,7 @@ import ModalManageGroups from '@components/molecules/ModalManageGroups';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { createEmptyPostsCollection, deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from '@libs/helpers/firebaseUtils';
-import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '@services/groups/groupService';
+import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '@services/groupService';
 
 const GroupsPage = () => {
     const [gruposActivos, setGruposActivos] = useState([

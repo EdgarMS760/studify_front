@@ -3,7 +3,7 @@ import { TextField, Button, Grid, Avatar, Box, Typography, Backdrop, CircularPro
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import { useSessionAuth } from "@libs/hooks/useSessionAuth";
 import { deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from "@libs/helpers/firebaseUtils";
-import { editUser } from "@services/user/userService";
+import { editUser } from "@services/userService";
 
 import { useSnackbar } from '@libs/store/SnackbarContext';
 

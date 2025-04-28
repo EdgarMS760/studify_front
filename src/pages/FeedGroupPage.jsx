@@ -7,58 +7,6 @@ import SendIcon from '@mui/icons-material/Send';
 import { createGroupPost } from "@libs/helpers/firebaseUtils";
 import { useParams } from "react-router";
 
-const dummyMessages = [
-    {
-        time: "10:30 AM",
-        message: "primero",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:30 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:30 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "10:45 AM",
-        message: "test",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    },
-    {
-        time: "11:00 AM",
-        message: "ultimo",
-        user: { name: "edgar", img: "https://via.placeholder.com/50" }
-    }
-];
 const FeedGroupPage = () => {
     const theme = useTheme();
     const [text, setText] = useState("");
