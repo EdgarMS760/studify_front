@@ -252,7 +252,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                         endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
                         aria-describedby="outlined-weight-helper-text"
                         inputProps={{
-                          'aria-label': 'punntos',
+                          'aria-label': 'puntos',
                         }}
                       />
                     </FormControl>
