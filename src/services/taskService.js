@@ -24,7 +24,7 @@ export const postTask = async (newTask) => {
     }
 };
 
-export const getTasks = async (group, pagina = 1, limit = 10, status="activo") => {
+export const getTasks = async (group_id, pagina = 1, limit = 10, status="Abierta") => {
     try {
         const storedUser = JSON.parse(localStorage.getItem('user_studify'));
         const token = localStorage.getItem('token_studify');
@@ -36,7 +36,7 @@ export const getTasks = async (group, pagina = 1, limit = 10, status="activo") =
             params: {
                 pagina,
                 status,
-                group
+                group_id
             },
             headers: {
                 Authorization: `Bearer ${token}`,
