@@ -1,7 +1,7 @@
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from '@services/firebase/firebaseConfig';
+import { storage } from '@services/firebaseConfig';
 import { collection, doc, setDoc, serverTimestamp, addDoc, deleteDoc, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { dbFireStore } from "@services/firebase/firebaseConfig";
+import { dbFireStore } from "@services/firebaseConfig";
 export const uploadImageAndGetUrl = async (file, folder = "uploads") => {
     if (!file) throw new Error("No file provided");
 
