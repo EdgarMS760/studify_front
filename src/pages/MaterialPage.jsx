@@ -25,53 +25,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const MaterialPage = () => {
-  const dummy = [
-    {
-      id: 1,
-      name: "Material 1",
-      type: "pdf"
-    },
-    {
-      id: 2,
-      name: "Material 2",
-      type: "video"
-    },
-    {
-      id: 3,
-      name: "Material 3",
-      type: "audio"
-    },
-    {
-      id: 4,
-      name: "Material 4",
-      type: "pdf"
-    },
-    {
-      id: 5,
-      name: "Material 5",
-      type: "video"
-    },
-    {
-      id: 6,
-      name: "Material 6",
-      type: "audio"
-    },
-    {
-      id: 7,
-      name: "Material 7",
-      type: "pdf"
-    },
-    {
-      id: 8,
-      name: "Material 8",
-      type: "video"
-    },
-    {
-      id: 9,
-      name: "Material 9",
-      type: "audio"
-    }
-  ]
+
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
   const [open, setOpen] = useState(false); 
@@ -245,7 +199,7 @@ const MaterialPage = () => {
             <>
               {material.map((item, index) => (
                 <div key={index} className="m-3">
-                  <CardMaterial data={item} isTeacher={isTeacher} />
+                  <CardMaterial data={item} isTeacher={isTeacher} onDelete={() => fetchMaterial(debouncedQuery)}/>
                 </div>
               ))}
 

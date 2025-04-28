@@ -50,3 +50,22 @@ export const getMaterials = async (group_id, search = "", page = 1, limit = 10) 
         throw error;
     }
 }
+
+export const deleteMaterial = async (materialId) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if (!token) throw new Error("Falta token");
+
+        const response = await axiosInstance.delete(`/classmat/${materialId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al eliminar el material:", error);
+        throw error;
+    }
+}
