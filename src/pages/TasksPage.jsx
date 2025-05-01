@@ -5,6 +5,7 @@ import { Box, CircularProgress, Pagination } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useAuth } from '@libs/store/AuthProvider';
 import { getTasks } from '@services/taskService';
+import { ROUTES } from '@libs/constants/routes';
 
 const TasksPage = () => {
   const { user } = useAuth();
@@ -13,26 +14,21 @@ const TasksPage = () => {
 
   const [tasks, setTasks] = React.useState([]);
   const handleStatusTask = (status) => {
-    if (status === "cerrada") {
-      //setTasks(expiredTrueArray);
-    } else if (status === "Abierta") {
-      //setTasks(expiredFalseArray);
-    } else {
-      //setTasks([]);
-    }
+    fetchTasks(status);
+
   }
   const navigate = useNavigate();
   const { id: groupId } = useParams();
   const location = useLocation();
-  const handleCardClick = (taskId) => {
-    navigate(`/group/${groupId}/tasks/${taskId}`);
+  const handleCardClick = (groupIdTask, taskId) => {
+    navigate(ROUTES.TASK_DETAIL(groupIdTask, taskId));
   };
-  const isGeneralPage = location.pathname === '/homework'
+  const isGeneralPage = location.pathname === ROUTES.HOMEWORK;
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (status, pagina = 1) => {
     setLoading(true);
     try {
-      const { tasks, total, page } = await getTasks(groupId);
+      const { tasks, total, page } = await getTasks(groupId, status, pagina);
       setTasks(tasks);
     } catch (error) {
       console.error("Error al obtener tareas:", error);
@@ -71,7 +67,7 @@ const TasksPage = () => {
               <>
                 {tasks.map((task, index) => (
                   <div key={index} className="m-2">
-                    <CardTask taskData={task} onClickCard={() => handleCardClick(task.id)} isGeneral={isGeneralPage} />
+                    <CardTask taskData={task} onClickCard={(groupId, taskId) => handleCardClick(groupId, taskId)} isGeneral={isGeneralPage} />
                   </div>
                 ))}
               </>
