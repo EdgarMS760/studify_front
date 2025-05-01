@@ -26,7 +26,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
   const { id } = useParams();
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    const status = newValue === 0 ? 'abierta' : 'cerrada';
+    const status = newValue === 0 ? 'Abierta' : 'Cerrada';
     onStatusChange(status);
   };
   const options = [
