@@ -24,7 +24,7 @@ export const postTask = async (newTask) => {
     }
 };
 
-export const getTasks = async (group_id, pagina = 1, limit = 10, status="Abierta") => {
+export const getTasks = async (group_id, status="Abierta", pagina = 1, limit = 10) => {
     try {
         const storedUser = JSON.parse(localStorage.getItem('user_studify'));
         const token = localStorage.getItem('token_studify');
