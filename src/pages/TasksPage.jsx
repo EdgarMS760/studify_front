@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import TaskTabs from '@components/molecules/TaskTabs'
 import CardTask from '@components/molecules/CardTask'
 import { Box, CircularProgress, Pagination } from '@mui/material';
@@ -6,13 +6,21 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import { useAuth } from '@libs/store/AuthProvider';
 import { getTasks } from '@services/taskService';
 import { ROUTES } from '@libs/constants/routes';
-
+import { useDebounce } from '@libs/hooks/Debounce';
 const TasksPage = () => {
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
-  const [loading, setLoading] = React.useState(false);
-
-  const [tasks, setTasks] = React.useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 400);
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    fetchTasks(undefined, value);
+  };
+  
+  const [tasks, setTasks] = useState([]);
   const handleStatusTask = (status) => {
     fetchTasks(status);
 
@@ -28,8 +36,10 @@ const TasksPage = () => {
   const fetchTasks = async (status, pagina = 1) => {
     setLoading(true);
     try {
-      const { tasks, total, page } = await getTasks(groupId, status, pagina);
+      const { tasks, totalPages, page } = await getTasks(groupId, status, pagina);
       setTasks(tasks);
+      setTotalPages(totalPages || 1);
+      setPage(page || 1); 
     } catch (error) {
       console.error("Error al obtener tareas:", error);
     } finally {
@@ -77,7 +87,14 @@ const TasksPage = () => {
 
       </Box> 
       <div className="flex justify-center m-4">
-        <Pagination count={10} showFirstButton showLastButton color="primary" />
+         <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  showFirstButton
+                  showLastButton
+                  color="primary"
+                />
       </div>
     </Box>
   );
