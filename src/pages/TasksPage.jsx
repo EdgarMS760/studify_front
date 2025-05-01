@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TaskTabs from '@components/molecules/TaskTabs'
 import CardTask from '@components/molecules/CardTask'
-import { Box, Pagination } from '@mui/material';
+import { Box, CircularProgress, Pagination } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { useAuth } from '../libs/store/AuthProvider';
+import { useAuth } from '@libs/store/AuthProvider';
+import { getTasks } from '@services/taskService';
 
 const TasksPage = () => {
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
+  const [loading, setLoading] = React.useState(false);
   const expiredTrueArray = [
     { id: 1, date: "2025-04-05", name: "Tarea vencida 1", points: "10", time: "12:00", expired: true, groupName: "Grupo 1" },
     { id: 2, date: "2025-04-04", name: "Tarea vencida 2", points: "10", time: "13:00", expired: true, groupName: "Grupo 2" },
@@ -36,11 +38,11 @@ const TasksPage = () => {
   const [tasks, setTasks] = React.useState(expiredFalseArray);
   const handleStatusTask = (status) => {
     if (status === "cerrada") {
-      setTasks(expiredTrueArray);
+      //setTasks(expiredTrueArray);
     } else if (status === "abierta") {
-      setTasks(expiredFalseArray);
+      //setTasks(expiredFalseArray);
     } else {
-      setTasks([]);
+      //setTasks([]);
     }
   }
   const navigate = useNavigate();
@@ -50,6 +52,23 @@ const TasksPage = () => {
     navigate(`/group/${groupId}/tasks/${taskId}`);
   };
   const isGeneralPage = location.pathname === '/homework'
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      const { tasks, total, page } = await getTasks();
+      setTasks(tasks);
+    } catch (error) {
+      console.error("Error al obtener tareas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <Box>
       <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} isGeneralPage={isGeneralPage} />
@@ -64,13 +83,28 @@ const TasksPage = () => {
             backgroundColor: "black",
           }),
       ]}>
-        {tasks.map((task, index) => (
-          <div key={index} className="m-2">
-            <CardTask taskData={task} onClickCard={() => handleCardClick(task.id)} isGeneral={isGeneralPage} />
-          </div>
-        ))}
+        {loading ? (<div className='flex justify-center items-center'> <CircularProgress /></div>) : (
 
-      </Box> {/* Closing the div for task mapping */}
+
+          <>
+            {tasks.length === 0 ? (
+              <div className="flex justify-center items-center h-full">
+                <h2 className="text-gray-500">No hay tareas disponibles</h2>
+              </div>
+            ) : (
+              <>
+                {tasks.map((task, index) => (
+                  <div key={index} className="m-2">
+                    <CardTask taskData={task} onClickCard={() => handleCardClick(task.id)} isGeneral={isGeneralPage} />
+                  </div>
+                ))}
+
+              </>
+            )}
+          </>
+        )}
+
+      </Box> 
       <div className="flex justify-center m-4">
         <Pagination count={10} showFirstButton showLastButton color="primary" />
       </div>

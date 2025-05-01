@@ -10,8 +10,8 @@ const UserPreview = ({ user }) => {
 
   return (
     <>
-      <MiniImg src="https://placehold.co/600x400" alt="test"/>
-      <TextCardAtom text="usuario" className="text-secondaryHover text-sm"/>
+      <MiniImg src={user.image} alt="test"/>
+      <TextCardAtom text={user.name} className="text-secondaryHover text-sm"/>
 
     </>
   );

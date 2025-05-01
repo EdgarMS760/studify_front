@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-let externalLoadSession = () => {};
+let externalLoadSession = () => { };
 export const useSessionAuth = () => {
   const [session, setSession] = useState(null);
 
@@ -52,7 +52,7 @@ export const useSessionAuth = () => {
   }, []);
   return {
     session,
-    updateSessionFromUser,  
+    updateSessionFromUser,
     authentication: {
       signIn,
       signOut

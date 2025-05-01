@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, IconButton, Backdrop, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Google, GitHub, Facebook } from '@mui/icons-material';
-import { loginUser } from '@services/auth/authService';
+import { loginUser } from '@services/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { useAuth } from '@libs/store/AuthProvider';
 

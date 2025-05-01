@@ -6,36 +6,36 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Tab, Tabs } from '@mui/material';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
 import { useAuth } from '@libs/store/AuthProvider';
+import { ROUTES } from '@libs/constants/routes';
 const ItemsToHeadBarDesktop = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
     const { user } = useAuth();
     const isTeacher = user?.rol === "maestro";
-    const base = `/group/${id}`;
 
     const tabRoutes = [
-      `${base}`,
-      `${base}/tasks`,
-      `${base}/material`,
-      `${base}/students`,
+        ROUTES.GROUP_DETAIL(id),
+        ROUTES.GROUP_TASKS(id),
+        ROUTES.GROUP_MATERIAL(id),
+        ROUTES.GROUP_STUDENTS(id),
     ];
-  
+
     const patterns = [
-      new RegExp(`^${base}$`),            
-      new RegExp(`^${base}/tasks`),     
-      new RegExp(`^${base}/material`),
-      new RegExp(`^${base}/students`),
+        new RegExp(`^${ROUTES.GROUP_DETAIL(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_TASKS(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_MATERIAL(id)}$`),
+        new RegExp(`^${ROUTES.GROUP_STUDENTS(id)}$`),
     ];
-  
+
     const currentTab = patterns.findIndex((regex) => regex.test(location.pathname));
-  
+
     const handleChange = (_, newValue) => {
-      navigate(tabRoutes[newValue]);
+        navigate(tabRoutes[newValue]);
     };
     return (
         <Tabs
-        value={currentTab !== -1 ? currentTab : false} 
+            value={currentTab !== -1 ? currentTab : false}
             onChange={handleChange}
             aria-label="icon label tabs example"
             textColor="inherit"
@@ -86,7 +86,7 @@ const ItemsToHeadBarDesktop = () => {
             <Tab icon={<HomeIcon />} iconPosition="start" label="MURO" />
             <Tab icon={<HomeWorkIcon />} iconPosition="start" label="TAREAS" />
             <Tab icon={<FolderIcon />} iconPosition="start" label="MATERIAL" />
-           {isTeacher && <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />}
+            {isTeacher && <Tab icon={<GroupsIcon />} iconPosition="start" label="ALUMNOS" />}
         </Tabs>
     )
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Typography, RadioGroup, FormControlLabel, Radio, Avatar, IconButton, Grid, Snackbar, Alert, Backdrop, CircularProgress, styled } from '@mui/material';
-import { registerUser } from '@services/auth/authService';
+import { registerUser } from '@services/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { fileToBase64 } from '@libs/helpers/fileToBase64';
-import { storage } from '@services/firebase/firebaseConfig';
+import { storage } from '@services/firebaseConfig';
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
 import { uploadImageAndGetUrl,deleteImage } from '@libs/helpers/firebaseUtils';
 
