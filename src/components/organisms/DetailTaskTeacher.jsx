@@ -11,7 +11,8 @@ import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tex
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { ROUTES } from '../../libs/constants/routes';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
@@ -98,8 +99,9 @@ const DetailTaskTeacher = () => {
     const theme = useTheme()
     const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
     const navigate = useNavigate();
+    const {id} = useParams()
     const returnToTask = () =>{
-        navigate(`/group/1/tasks`)
+        navigate(ROUTES.GROUP_TASKS(id))
     }
     return (
         <>
