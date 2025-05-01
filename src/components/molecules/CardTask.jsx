@@ -14,9 +14,10 @@ dayjs.extend(timezone);
 const CardTask = ({ taskData, onClickCard, isGeneral = false }) => {
     const theme = useTheme();
     const handleClick = () => {
-        if (onClickCard) {
-            onClickCard(taskData.id);
-        }
+            if (onClickCard) {
+                onClickCard(taskData.grupo._id, taskData._id);
+            }
+        
     }
     const fechaUTC = dayjs.utc(taskData.fecha_vencimiento);
     const fechaLocal = fechaUTC.tz('America/Monterrey');
@@ -41,7 +42,7 @@ const CardTask = ({ taskData, onClickCard, isGeneral = false }) => {
             <div className="grid grid-cols-3 items-center">
 
                 <div className="flex justify-start">
-                    <TextCardAtom text={isGeneral ? taskData.groupName : fechaGeneral} className="text-lg" isHighlighted={true} />
+                    <TextCardAtom text={isGeneral ? taskData.grupo.nombre : fechaGeneral} className="text-lg truncated" isHighlighted={true} />
                 </div>
 
                 <div className="flex justify-center text-center">
@@ -51,9 +52,9 @@ const CardTask = ({ taskData, onClickCard, isGeneral = false }) => {
                 <div className="flex flex-col items-end text-right">
                     <TextCardAtom text={taskData.puntos_totales + " puntos"} className="text-lg font-semibold" isHighlighted={true} />
                     <TextCardAtom
-                        text={taskData.expired ? "Expiró el " + fechadetalle : "Expira el " + fechadetalle}
+                        text={taskData.estatus === "Cerrada" ? "Expiró el " + fechadetalle : "Expira el " + fechadetalle}
                         className={clsx("text-sm font-semibold",
-                            taskData.expired && "!text-red-500"
+                            taskData.estatus === "Cerrada" && "!text-red-500"
                         )}
                         isHighlighted={false}
                     />

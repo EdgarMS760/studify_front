@@ -6,4 +6,7 @@ export const ROUTES = {
     GROUP_MATERIAL: (id) => `/group/${id}/material`,
     GROUP_STUDENTS: (id) => `/group/${id}/students`,
 
-};
+    TASK_DETAIL: (groupId, taskId) => `/group/${groupId}/tasks/${taskId}`,
+
+    HOMEWORK:'/homework',
+}; 
