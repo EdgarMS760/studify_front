@@ -13,8 +13,6 @@ const MessagesFeed = ({ groupId }) => {
     }, [groupId]);
 
     useEffect(() => {
-
-        console.log('messages', messages)
     }, [messages]);
     return (
         <div className="flex flex-col h-full overflow-y-auto p-3 space-y-3">
