@@ -11,6 +11,7 @@ import { TimePicker } from '@mui/x-date-pickers';
 import { useParams } from 'react-router';
 import { postTask } from '@services/taskService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
+import { formatToISOString } from '@libs/helpers/dateUtils';
 const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day')); // Día de mañana
@@ -51,13 +52,9 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
     if (!valueCalendar || !valueTime) return;
 
     // Combinar fecha y hora
-    const combined = valueCalendar
-      .set('hour', valueTime.hour())
-      .set('minute', valueTime.minute())
-      .set('second', 0)
-      .set('millisecond', 0);
+  
 
-    const finalTimestamp = combined.toISOString();
+    const finalTimestamp = formatToISOString(valueCalendar, valueTime);
     const taskData = {
       titulo: title, descripcion: description,
       fecha_vencimiento: finalTimestamp,

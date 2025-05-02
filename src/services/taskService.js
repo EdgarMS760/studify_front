@@ -65,3 +65,25 @@ export const getDetailTask = async (taskId) => {
         throw error;
     }
 }   
+export const updateTask = async (taskId, updatedTask) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if ( !token) throw new Error("Falta token");
+
+        const response = await axiosInstance.patch(
+            `/tasks/${taskId}`,
+            updatedTask,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al actualizar la tarea:", error);
+        throw error;
+    }
+}
