@@ -1,25 +1,28 @@
 import React, { useState } from 'react'
 import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
-import CardStudentTask from '../molecules/CardStudentTask';
-import FullscreenFileModal from './FullscreenFileModal';
+import CardStudentTask from '@components/molecules/CardStudentTask';
+import { useSnackbar } from '@libs/store/SnackbarContext';
 import FilePreview from './FilePreview';
-import SliderGrades from '../atoms/SliderGrades';
-import ButtonAtom from '../atoms/ButtonAtom';
+import SliderGrades from '@components/atoms/SliderGrades';
+import ButtonAtom from '@components/atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams } from 'react-router';
-import { ROUTES } from '../../libs/constants/routes';
-import { getDetailTask } from '../../services/taskService';
+import { ROUTES } from '@libs/constants/routes';
+import { getDetailTask, updateTask } from '@services/taskService';
+import { formatToISOString } from '@libs/helpers/dateUtils';
 const DetailTaskTeacher = () => {
+    const { showSnackbar } = useSnackbar();
     const [selected, setSelected] = useState('');
     const options = [
         { value: "asc", label: 'Mas Recientes primero' },
         { value: "desc", label: 'Mas Antiguos primero' }
     ];
+    const [errors, setErrors] = useState({});
 
 
     const students = [
@@ -77,7 +80,23 @@ const DetailTaskTeacher = () => {
     const [fileType, setFileType] = useState(null);
 
     const [title, setTitle] = useState("");
+    const [titleEdit, setTitleEdit] = useState("");
     const [description, setDescription] = useState("");
+    const [valueTask, setValueTask] = useState(0);
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!titleEdit.trim()) newErrors.titleEdit = 'El título es obligatorio';
+        if (!description.trim()) newErrors.description = 'La descripción es obligatoria';
+        if (!valueCalendar) newErrors.valueCalendar = 'La fecha es obligatoria';
+        if (!valueTime) newErrors.valueTime = 'La hora es obligatoria';
+        if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
+            newErrors.valueTask = 'El valor debe ser un número mayor a 0';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSelect = (student) => {
         setSelectedStudentId(student.id);
@@ -87,11 +106,18 @@ const DetailTaskTeacher = () => {
     };
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false);
-        setTitle("");
-        setDescription("");
     };
-    const handleEditTask = () => {
-        console.log("Tarea editada:", { title, description });
+    const handleEditTask = async () => {
+        if (!validateForm()) return;
+        const finalTimestamp = formatToISOString(valueCalendar, valueTime);
+        console.log("Tarea editada:", { titleEdit, description, valueTask, finalTimestamp });
+        const taskData = {
+            titulo: titleEdit, descripcion: description,
+            fecha_vencimiento: finalTimestamp,
+            puntos_totales: valueTask
+        }
+        const response = await updateTask(taskId, taskData);
+        showSnackbar(response.message, "success");
         handleCloseModalEdit();
     };
 
@@ -100,18 +126,20 @@ const DetailTaskTeacher = () => {
     const theme = useTheme()
     const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
     const navigate = useNavigate();
-    const {id} = useParams()
-    const returnToTask = () =>{
+    const { id, taskId } = useParams()
+    const returnToTask = () => {
         navigate(ROUTES.GROUP_TASKS(id))
     }
 
     const fetchDetailTask = async () => {
         try {
-            const {titulo, descripcion, fecha} = await getDetailTask(id);
-            setTitle(response.title);
-            setDescription(response.description);
-            setValueCalendar(dayjs(response.due_date));
-            setValueTime(dayjs(response.due_time));
+            const { titulo, descripcion, fecha_vencimiento, puntos_totales } = await getDetailTask(taskId);
+            setTitle(titulo);
+            setTitleEdit(titulo);
+            setDescription(descripcion);
+            setValueCalendar(dayjs(fecha_vencimiento));
+            setValueTime(dayjs(fecha_vencimiento));
+            setValueTask(puntos_totales);
         } catch (error) {
             console.error("Error fetching task details:", error);
         }
@@ -122,9 +150,13 @@ const DetailTaskTeacher = () => {
         fetchDetailTask();
     }, []);
 
+    const handleopenModalEdit = () => {
+        setOpenModalEdit(true);
+        setErrors({});
+    }
     return (
         <>
-            <Box  sx={[
+            <Box sx={[
                 (theme) => ({
                     backgroundColor: "white",
                 }),
@@ -137,8 +169,8 @@ const DetailTaskTeacher = () => {
                     <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
                         <KeyboardReturnIcon fontSize="inherit" />
                     </IconButton>
-                    <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
-                    <IconButton onClick={() => setOpenModalEdit(true)} aria-label="editTask" color="primary" size="large">
+                    <TextCardAtom text={title || "sin nombre"} className="text-2xl" isHighlighted={true} />
+                    <IconButton onClick={() => handleopenModalEdit()} aria-label="editTask" color="primary" size="large">
                         <EditIcon fontSize="inherit" />
                     </IconButton>
                 </div>
@@ -167,7 +199,6 @@ const DetailTaskTeacher = () => {
                     {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
                     <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
                     <SliderGrades />
-
                     <div className='flex justify-center mt-4'>
 
                         <ButtonAtom
@@ -190,16 +221,15 @@ const DetailTaskTeacher = () => {
                     <div className='flex flex-col gap-4 mt-2'>
 
                         <TextField
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            value={titleEdit}
+                            onChange={(e) => setTitleEdit(e.target.value)}
                             fullWidth
-                            id="filled-basic"
-                            label="Titulo de la tarea..."
-                            multiline
-                            maxRows={4}
+                            label="Título de la tarea..."
                             variant="outlined"
-
+                            error={!!errors.titleEdit}
+                            helperText={errors.titleEdit}
                         />
+
                         <TextField
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -208,9 +238,9 @@ const DetailTaskTeacher = () => {
                             label="Descripción de la tarea..."
                             multiline
                             rows={4}
-                            maxRows={4}
                             variant="outlined"
-
+                            error={!!errors.description}
+                            helperText={errors.description}
                         />
 
                         <TextCardAtom text="Fecha de entrega" className="text-lg" />
@@ -218,19 +248,45 @@ const DetailTaskTeacher = () => {
                             label="Selecciona una fecha"
                             value={valueCalendar}
                             onChange={(newValue) => setValueCalendar(newValue)}
+                            slotProps={{
+                                textField: {
+                                    error: !!errors.valueCalendar,
+                                    helperText: errors.valueCalendar,
+                                },
+                            }}
                         />
                         <TimePicker
                             label="Selecciona una hora"
                             value={valueTime}
                             onChange={(newValue) => setValueTime(newValue)}
+                            slotProps={{
+                                textField: {
+                                    error: !!errors.valueTime,
+                                    helperText: errors.valueTime,
+                                },
+                            }}
                         />
                         <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                        <SliderGrades />
+                        <FormControl className='sm:w-[15ch]' variant="outlined">
+
+                            <OutlinedInput
+                                value={valueTask}
+                                onChange={(e) => setValueTask(e.target.value)}
+                                error={!!errors.valueTask}
+                                endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
+                                aria-describedby="outlined-weight-helper-text"
+                                inputProps={{ 'aria-label': 'puntos' }}
+                            />
+                            {errors.valueTask && (
+                                <p className="text-red-500 text-sm mt-1">{errors.valueTask}</p>
+                            )}
+
+                        </FormControl>
                     </div>
                 </DialogContent>
 
                 <DialogActions>
-                    <ButtonAtom onClick={handleEditTask}>Crear</ButtonAtom>
+                    <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
                     <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
                 </DialogActions>
             </Dialog>
