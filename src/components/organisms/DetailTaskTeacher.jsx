@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams } from 'react-router';
 import { ROUTES } from '../../libs/constants/routes';
+import { getDetailTask } from '../../services/taskService';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
@@ -103,6 +104,24 @@ const DetailTaskTeacher = () => {
     const returnToTask = () =>{
         navigate(ROUTES.GROUP_TASKS(id))
     }
+
+    const fetchDetailTask = async () => {
+        try {
+            const {titulo, descripcion, fecha} = await getDetailTask(id);
+            setTitle(response.title);
+            setDescription(response.description);
+            setValueCalendar(dayjs(response.due_date));
+            setValueTime(dayjs(response.due_time));
+        } catch (error) {
+            console.error("Error fetching task details:", error);
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchDetailTask();
+    }, []);
+
     return (
         <>
             <Box  sx={[
