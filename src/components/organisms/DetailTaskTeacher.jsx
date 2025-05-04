@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
 import CardStudentTask from '@components/molecules/CardStudentTask';
@@ -146,7 +146,7 @@ const DetailTaskTeacher = () => {
     }
 
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchDetailTask();
     }, []);
 

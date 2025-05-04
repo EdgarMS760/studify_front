@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
@@ -7,11 +7,16 @@ import { Box, IconButton, InputAdornment, useTheme } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
-import CardStudent from "../components/molecules/CardStudent";
+import CardStudent from "@components/molecules/CardStudent";
+import { getGroupStudents } from "@services/studentService";
+import { useParams } from "react-router";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroupDialog";
+import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
 
 const StudentsPage = () => {
-  const theme = useTheme();
   const [search, setSearch] = useState("");
+  const { id } = useParams();
 
   const existingStudents = [
     { id: 101, fullName: "Luis García", email: "luis@example.com" },
@@ -31,16 +36,7 @@ const StudentsPage = () => {
   }, [search]);
 
   const [students, setStudents] = useState([
-    { id: 1, listNumber: 1, fullName: "Juan Pérez" },
-    { id: 2, listNumber: 2, fullName: "Ana López" },
-    { id: 3, listNumber: 3, fullName: "Carlos Ruiz" },
-    { id: 4, listNumber: 4, fullName: "María García" },
-    { id: 5, listNumber: 5, fullName: "Luis Fernández" },
-    { id: 6, listNumber: 6, fullName: "Laura Martínez" },
-    { id: 7, listNumber: 7, fullName: "Pedro Sánchez" },
-    { id: 8, listNumber: 8, fullName: "Sofía Gómez" },
-    { id: 9, listNumber: 9, fullName: "Javier Torres" },
-    { id: 10, listNumber: 10, fullName: "Lucía Morales" },
+    { _id: 1, numero_lista: 1, nombre: "Juan Pérez" },
   ]);
 
   const [attendanceTaken, setAttendanceTaken] = useState(false);
@@ -67,8 +63,29 @@ const StudentsPage = () => {
     }
   };
 
+  const fetchGroupStudents = async () => {
 
+    try {
+      const { alumnos } = await getGroupStudents(id);
+      setStudents(alumnos);
+    } catch (error) {
+      console.error("Error fetching group students:", error);
+    }
+  }
 
+  useEffect(() => {
+    fetchGroupStudents();
+  }, []);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleRemoveStudent = (id) => {
+    const updated = students.filter((s) => s._id !== id).map((s, i) => ({
+      ...s,
+      numero_lista: i + 1, // Recalcular número de lista
+    }));
+    setStudents(updated);
+  };
   return (
     <Box
       className={clsx(
@@ -86,9 +103,14 @@ const StudentsPage = () => {
     >
 
       <div className="flex flex-wrap justify-between items-center gap-4">
-        <IconButton onClick={() => setOpen(true)} aria-label="addStudent" color="primary" size="large">
-          <PersonAddIcon fontSize="inherit" />
-        </IconButton>
+        <div>
+          <IconButton onClick={() => setOpen(true)} aria-label="addStudent" color="primary" size="large">
+            <PersonAddIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton onClick={() => setDialogOpen(true)} aria-label="removeStudent" color="primary" size="large">
+            <PersonRemoveIcon fontSize="inherit" />
+          </IconButton>
+        </div>
 
         <TextCardAtom
           text="07/06/2025"
@@ -138,36 +160,18 @@ const StudentsPage = () => {
         />
       </div>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Agregar Alumno</DialogTitle>
-        <DialogContent className="space-y-4">
-          <div className="mt-2">
-
-            <TextField
-              label="Buscar por nombre o email"
-              fullWidth
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          {search.trim() !== "" && (
-            <div className="space-y-2 mt-4">
-              {filteredStudents.length > 0 ? (
-                filteredStudents.map((student) => (
-                  <CardStudent key={student.id} student={student} />
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">No se encontraron resultados</span>
-              )}
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <ButtonAtom onClick={() => setOpen(false)}>Cerrar</ButtonAtom>
-        </DialogActions>
-      </Dialog>
-
+      <AddStudentsGroupDialog
+      
+          open={open}
+          onClose={() => setOpen(false)}
+      />
+      
+          <RemoveStudentsGroupDialog
+           open={dialogOpen}
+           onClose={() => setDialogOpen(false)}
+           students={students}
+           onRemove={handleRemoveStudent}
+          />
     </Box>
   );
 };
