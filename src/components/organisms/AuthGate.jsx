@@ -13,7 +13,7 @@ const AuthGate = () => {
     const theme = useTheme();
     const bgColor = theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white';
     return (
-        <Box className="w-screen h-screen flex flex-col items-center"
+        <Box className="w-screen h-screen flex flex-col items-center justify-center gap-6 px-4"
             sx={[
                 (theme) => ({
                     backgroundColor: "white",
