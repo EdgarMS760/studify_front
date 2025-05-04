@@ -8,7 +8,7 @@ const LoginLayout = () => {
   const theme = useTheme();
   const bgColor = theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white';
   return (
-    <div className={clsx("flex flex-col overflow-hidden min-h-full", bgColor)}>
+    <div className={clsx("flex items-center justify-center min-h-screen w-screen", bgColor)}>
       <div className={clsx("p-6 rounded-lg shadow-md text-center", bgColor)}>
         <img
           src="/Logo.png"
