@@ -48,7 +48,9 @@ const StudentsPage = () => {
 
     try {
       const { alumnos } = await getGroupStudents(id);
-      setStudents(alumnos);
+      const alumnosOrdenados = alumnos.sort((a, b) => a.numero_lista - b.numero_lista);
+
+      setStudents(alumnosOrdenados);
     } catch (error) {
       console.error("Error fetching group students:", error);
     }
