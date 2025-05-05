@@ -111,7 +111,7 @@ const FormRegister = ({ onToggle }) => {
             }
 
             try {
-                const folderRef = ref(storage, 'avatars/');
+                const folderRef = ref(storage, 'defaultAvatars/');
                 const res = await listAll(folderRef);
                 const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
                 localStorage.setItem('avatarsStudify', JSON.stringify(urls));
