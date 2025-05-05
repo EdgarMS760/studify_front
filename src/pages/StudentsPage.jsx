@@ -15,25 +15,8 @@ import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroup
 import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
 
 const StudentsPage = () => {
-  const [search, setSearch] = useState("");
   const { id } = useParams();
 
-  const existingStudents = [
-    { id: 101, fullName: "Luis García", email: "luis@example.com" },
-    { id: 102, fullName: "María Torres", email: "maria@example.com" },
-    { id: 103, fullName: "Pedro Sánchez lopez lopez", email: "pedro@example.com" },
-
-  ];
-
-  // busqueda
-  const filteredStudents = useMemo(() => {
-    const term = search.toLowerCase();
-    return existingStudents.filter(
-      (s) =>
-        s.fullName.toLowerCase().includes(term) ||
-        s.email.toLowerCase().includes(term)
-    );
-  }, [search]);
 
   const [students, setStudents] = useState([
     { _id: 1, numero_lista: 1, nombre: "Juan Pérez" },
@@ -45,8 +28,6 @@ const StudentsPage = () => {
   );
 
   const [open, setOpen] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
 
   const handleToggle = (id) => {
     setAttendance((prev) => ({
@@ -80,12 +61,12 @@ const StudentsPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleRemoveStudent = (id) => {
-    const updated = students.filter((s) => s._id !== id).map((s, i) => ({
-      ...s,
-      numero_lista: i + 1, // Recalcular número de lista
-    }));
-    setStudents(updated);
+    fetchGroupStudents();
   };
+
+  const handleAddStudent = (student) => {
+    fetchGroupStudents();
+  }
   return (
     <Box
       className={clsx(
@@ -161,17 +142,17 @@ const StudentsPage = () => {
       </div>
 
       <AddStudentsGroupDialog
-      
-          open={open}
-          onClose={() => setOpen(false)}
+        onSelect={handleAddStudent}
+        open={open}
+        onClose={() => setOpen(false)}
       />
-      
-          <RemoveStudentsGroupDialog
-           open={dialogOpen}
-           onClose={() => setDialogOpen(false)}
-           students={students}
-           onRemove={handleRemoveStudent}
-          />
+
+      <RemoveStudentsGroupDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        students={students}
+        onRemove={handleRemoveStudent}
+      />
     </Box>
   );
 };
