@@ -1,25 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import clsx from "clsx";
-import { Box, IconButton, InputAdornment, useTheme } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment } from "@mui/material";
+import { TextField } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
-import CardStudent from "@components/molecules/CardStudent";
 import { getGroupStudents } from "@services/studentService";
 import { useParams } from "react-router";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroupDialog";
 import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
+import { getAttendance } from "@services/attendanceService";
 
 const StudentsPage = () => {
   const { id } = useParams();
 
 
   const [students, setStudents] = useState([
-    { _id: 1, numero_lista: 1, nombre: "Juan Pérez" },
   ]);
 
   const [attendanceTaken, setAttendanceTaken] = useState(false);
@@ -56,8 +55,18 @@ const StudentsPage = () => {
     }
   }
 
+  const fetchattendance = async () => {
+    try {
+
+      const response = await getAttendance(id, new Date().toISOString());
+      console.log("Asistencia:", response.message);
+    } catch (error) {
+      console.error("Error fetching attendance:", error);
+    }
+  }
   useEffect(() => {
     fetchGroupStudents();
+    fetchattendance();
   }, []);
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -125,7 +134,7 @@ const StudentsPage = () => {
             isHighlighted={true}
           />
           {!attendanceTaken ? (
-            <ButtonAtom onClick={handleGenerateAttendance}>
+            <ButtonAtom disabled={students.length === 0} onClick={handleGenerateAttendance}>
               Generar Asistencia
             </ButtonAtom>
           ) : (
@@ -134,13 +143,18 @@ const StudentsPage = () => {
             </span>
           )}
         </div>
+        {students.length === 0 ? (
+          <div className="flex justify-center items-center h-32">
 
-        <AttendanceList
-          students={students}
-          attendance={attendance}
-          onToggle={handleToggle}
-          disabled={attendanceTaken}
-        />
+            No hay alumnos en este grupo.
+          </div>
+        ) : (
+          <AttendanceList
+            students={students}
+            attendance={attendance}
+            onToggle={handleToggle}
+            disabled={attendanceTaken}
+          />)}
       </div>
 
       <AddStudentsGroupDialog
