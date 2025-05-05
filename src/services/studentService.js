@@ -1,17 +1,17 @@
 import axiosInstance from "@libs/helpers/axiosInstance";
 
-export const addStudentToGroup = async (newStudent) => {
+export const addStudentToGroup = async (group_id, newStudent) => {
     try {
-        const storedUser = JSON.parse(localStorage.getItem('user_studify'));
         const token = localStorage.getItem('token_studify');
-        const id = storedUser?._id;
 
-        if (!id || !token) throw new Error("Faltan datos del usuario o token");
+        if (!token) throw new Error("Falta token");
 
-        newStudent.maestro_id = id;
+        newStudent = {
+            alumno_id: newStudent._id,
+        }
 
         const response = await axiosInstance.post(
-            "/students",
+            `groups/${group_id}/addStudent`,
             newStudent,
             {
                 headers: {
@@ -23,8 +23,7 @@ export const addStudentToGroup = async (newStudent) => {
         return response.data;
 
     } catch (error) {
-        console.error("Error al crear el estudiante:", error);
-        throw error;
+        throw error.response?.data?.error || error.message;
     }
 }
 
@@ -65,15 +64,17 @@ export const deleteGroupStudent = async (grupoId,studentId) => {
     }
 }
 
-export const getStudent = async (email,usuario) => {
+export const getStudent = async (q, page = 1, limit = 10) => {
     try {
         const token = localStorage.getItem('token_studify');
 
         if (!token) throw new Error("Falta token");
 
-        const response = await axiosInstance.get(`/users`, {
+        const response = await axiosInstance.get(`/users/`, {
             params: {
-                email
+                q,
+                page,
+                limit
             },
             headers: {
                 Authorization: `Bearer ${token}`,
