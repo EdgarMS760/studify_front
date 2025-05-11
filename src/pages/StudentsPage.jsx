@@ -22,19 +22,30 @@ const StudentsPage = () => {
   ]);
 
   const [attendanceTaken, setAttendanceTaken] = useState(false);
-  const [attendance, setAttendance] = useState(() =>
-    Object.fromEntries(students.map((s) => [s.id, false]))
-  );
+  const [attendance, setAttendance] = useState([]);
 
   const [open, setOpen] = useState(false);
 
   const handleToggle = (id) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setAttendance((prev) =>
+      prev.map((item) =>
+        item.alumno_id === id
+          ? { ...item, presente: !item.presente }
+          : item
+      )
+    );
   };
-
+  
+  // {
+  //   "grupo_id": "67db7f7062ef5370de5ba8d7",
+  //   "fecha": "2025-04-12T00:00:00Z",
+  //   "asistencias": [
+  //     {
+  //       "alumno_id": "67e9a0fa2ae6d4b98f9a684f",
+  //       "presente": true
+  //     }
+  //   ]
+  // }
   const handleGenerateAttendance = () => {
     const confirmed = window.confirm("¿Estás seguro de generar la asistencia?");
     if (confirmed) {
@@ -68,6 +79,16 @@ const StudentsPage = () => {
     fetchGroupStudents();
     fetchattendance();
   }, []);
+
+  useEffect(() => {
+    if (students.length > 0) {
+      const initialAttendance = students.map((student) => ({
+        alumno_id: student._id,
+        presente: false,
+      }));
+      setAttendance(initialAttendance);
+    }
+  }, [students]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
