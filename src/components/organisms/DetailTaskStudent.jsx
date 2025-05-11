@@ -1,30 +1,75 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import clsx from "clsx";
-import { useTheme } from "@mui/material";
+import { Box, IconButton, useTheme } from "@mui/material";
+import { useNavigate, useParams } from "react-router";
+import { ROUTES } from '@libs/constants/routes';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import { getDetailTask } from '@services/taskService';
 
+import dayjs from "dayjs";
+import { formatDateToLocal } from "../../libs/helpers/dateUtils";
 const DetailTaskStudent = () => {
     const [isDelivered, setIsDelivered] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
-    const deliveryDate = "2025-04-10 23:59";
-
+    const { id, taskId } = useParams()
+    const navigate = useNavigate();
     const handleDeliveryToggle = () => {
         setIsDelivered(!isDelivered);
     };
+    const [taskData, setTaskData] = useState({
+        title: '',
+        description: '',
+        date: null,
+        value: 0,
+    });
+
 
     const handleFileChange = (e) => {
         setUploadedFile(e.target.files[0]);
     };
-    const theme = useTheme()
+    const returnToTask = () => {
+        navigate(ROUTES.GROUP_TASKS(id));
+    }
+
+    const fetchDetailTask = async () => {
+        try {
+            const { titulo, descripcion, fecha_vencimiento, puntos_totales } = await getDetailTask(taskId);
+            setTaskData({
+                title: titulo,
+                description: descripcion,
+                Date: formatDateToLocal(fecha_vencimiento),
+                value: puntos_totales,
+            });
+        } catch (error) {
+            console.error("Error fetching task details:", error);
+        }
+    }
+
+
+    useEffect(() => {
+        fetchDetailTask();
+    }, []);
+
     return (
-        <div className={clsx("m-3 space-y-6 p-4",
-            theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white",)
-        }>
-          
+        <Box className={clsx("m-3 space-y-6 p-4")}
+            sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}>
+
             <div className="flex items-center justify-between">
+                <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
+                    <KeyboardReturnIcon fontSize="inherit" />
+                </IconButton>
                 <TextCardAtom
-                    text="Nombre de la tarea"
+                    text={taskData.title}
                     className="text-xl"
                     isHighlighted={true}
                 />
@@ -36,31 +81,49 @@ const DetailTaskStudent = () => {
                         {isDelivered ? "Deshacer entrega" : "Entregar"}
                     </ButtonAtom>
                     <TextCardAtom
-                        text={`Fecha de entrega: ${deliveryDate}`}
+                        text={`Fecha de entrega: ${taskData.Date} `}
                         className="text-sm text-gray-500"
                     />
                 </div>
             </div>
 
-         
-            <TextCardAtom
-                text="Descripción de la tarea"
-                className={clsx("text-lg p-3 rounded-md shadow-sm",
-                    theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary",
-                )}
-            />
+            <Box sx={[
+                (theme) => ({
+                    backgroundColor: theme.vars.palette.secondary.main,
+                    borderRadius: "8px",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: 'black',
+                    })]}>
 
-          
+                <TextCardAtom
+                    text="Descripción de la tarea"
+                    className={clsx("text-lg p-3 rounded-md shadow-sm"
+                    )}
+
+                />
+            </Box>
+
+
             {uploadedFile && (
-                <div className={clsx("border p-3 rounded-md shadow-sm",
-                    theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-neutral-100",
-                )}>
+                <Box className={clsx("border p-3 rounded-md shadow-sm"
+                )}
+                    sx={[
+                        (theme) => ({
+                            backgroundColor: "white",
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                backgroundColor: theme.vars.palette.secondary.main,
+                            })]}
+                >
                     <p className="text-sm font-medium">Archivo subido:</p>
                     <p className="text-sm text-blue-600 truncate">{uploadedFile.name}</p>
-                </div>
+                </Box>
             )}
 
-        
+
             {!isDelivered && (
                 <div>
                     <label
@@ -77,7 +140,7 @@ const DetailTaskStudent = () => {
                     />
                 </div>
             )}
-        </div>
+        </Box>
     );
 };
 

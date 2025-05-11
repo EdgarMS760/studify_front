@@ -20,9 +20,9 @@ const TasksPage = () => {
     setPage(value);
     fetchTasks(taskStatus, value);
   };
-  
+
   const [tasks, setTasks] = useState([]);
-  
+
   const handleStatusTask = (status) => {
     fetchTasks(status);
 
@@ -41,7 +41,7 @@ const TasksPage = () => {
       const { tasks, totalPages, page } = await getTasks(groupId, status, pagina);
       setTasks(tasks);
       setTotalPages(totalPages || 1);
-      setPage(page || 1); 
+      setPage(page || 1);
       setTaskStatus(status || '');
     } catch (error) {
       console.error("Error al obtener tareas:", error);
@@ -88,16 +88,16 @@ const TasksPage = () => {
           </>
         )}
 
-      </Box> 
+      </Box>
       <div className="flex justify-center m-4">
-         <Pagination
-                  count={totalPages}
-                  page={page}
-                  onChange={handlePageChange}
-                  showFirstButton
-                  showLastButton
-                  color="primary"
-                />
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          showFirstButton
+          showLastButton
+          color="primary"
+        />
       </div>
     </Box>
   );
