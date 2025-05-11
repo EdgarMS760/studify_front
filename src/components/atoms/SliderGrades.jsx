@@ -1,10 +1,10 @@
 import { Box, Slider, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { MIN_GRADES_VALUE, MAX_GRADES_VALUE } from '@libs/constants/Grades';
 import TextCardAtom from '@components/atoms/TextCardAtom';
-const SliderGrades = () => {
-    const [valGrade, setValGrade] = React.useState(MIN_GRADES_VALUE);
+const SliderGrades = ({ onValGrade, grade = 0 }) => {
+    const [valGrade, setValGrade] = React.useState(grade);
     const marks = [
         {
             value: MIN_GRADES_VALUE,
@@ -17,8 +17,11 @@ const SliderGrades = () => {
     ];
     const handleChange = (_, newValue) => {
         setValGrade(newValue);
+        onValGrade(newValue);
     };
-
+    useEffect(() => {
+        setValGrade(grade);
+    }, [grade]);
     return (
         <>
             <Slider
@@ -37,7 +40,7 @@ const SliderGrades = () => {
                 >
                     {MIN_GRADES_VALUE}
                 </Typography>
-                <TextCardAtom text={valGrade} className="text-xl" isHighlighted={true}/>
+                <TextCardAtom text={valGrade} className="text-xl" isHighlighted={true} />
                 <Typography
                     variant="body2"
                     onClick={() => setValGrade(MAX_GRADES_VALUE)}

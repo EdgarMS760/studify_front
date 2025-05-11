@@ -87,3 +87,29 @@ export const updateTask = async (taskId, updatedTask) => {
         throw error;
     }
 }
+
+export const setGradeToTask = async (taskId, newGrades, alumno_id) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if (!token) throw new Error("Falta token");
+
+        const response = await axiosInstance.post(
+            `/tasks/${taskId}/gradeTask`,
+            {
+                alumno_id,
+                calificacion: newGrades
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al calificar la tarea:", error);
+        throw error;
+    }
+};

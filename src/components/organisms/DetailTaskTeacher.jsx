@@ -15,6 +15,7 @@ import { useNavigate, useParams } from 'react-router';
 import { ROUTES } from '@libs/constants/routes';
 import { getDetailTask, updateTask } from '@services/taskService';
 import { formatToISOString } from '@libs/helpers/dateUtils';
+import { setGradeToTask } from '../../services/taskService';
 const DetailTaskTeacher = () => {
     const { showSnackbar } = useSnackbar();
     const [selected, setSelected] = useState('');
@@ -82,7 +83,11 @@ const DetailTaskTeacher = () => {
     const [title, setTitle] = useState("");
     const [titleEdit, setTitleEdit] = useState("");
     const [description, setDescription] = useState("");
+    const [valueTaskEdit, setValueTaskEdit] = useState(0);
     const [valueTask, setValueTask] = useState(0);
+    const [submissions, setSubmissions] = useState([]);
+    const [isGraded, setIsGraded] = useState(false);
+
     const validateForm = () => {
         const newErrors = {};
 
@@ -90,7 +95,7 @@ const DetailTaskTeacher = () => {
         if (!description.trim()) newErrors.description = 'La descripción es obligatoria';
         if (!valueCalendar) newErrors.valueCalendar = 'La fecha es obligatoria';
         if (!valueTime) newErrors.valueTime = 'La hora es obligatoria';
-        if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
+        if (!valueTaskEdit || isNaN(valueTaskEdit) || Number(valueTaskEdit) <= 0) {
             newErrors.valueTask = 'El valor debe ser un número mayor a 0';
         }
 
@@ -98,11 +103,13 @@ const DetailTaskTeacher = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSelect = (student) => {
-        setSelectedStudentId(student.id);
-        setSelectedFile(student.fileUrl);
-        setFileType(student.fileType);
-        console.log('files', student.fileUrl, student.fileType)
+    const handleSelect = (submission) => {
+        setSelectedStudentId(submission.id);
+        setSelectedFile(submission.archivo_entregado);
+        setFileType(submission.tipo_archivo);
+        setValueTask(submission.calificacion || 0);
+        setIsGraded(submission.calificacion != null);
+        console.log('submission', submission);
     };
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false);
@@ -110,11 +117,11 @@ const DetailTaskTeacher = () => {
     const handleEditTask = async () => {
         if (!validateForm()) return;
         const finalTimestamp = formatToISOString(valueCalendar, valueTime);
-        console.log("Tarea editada:", { titleEdit, description, valueTask, finalTimestamp });
+        console.log("Tarea editada:", { titleEdit, description, valueTaskEdit, finalTimestamp });
         const taskData = {
             titulo: titleEdit, descripcion: description,
             fecha_vencimiento: finalTimestamp,
-            puntos_totales: valueTask
+            puntos_totales: valueTaskEdit
         }
         const response = await updateTask(taskId, taskData);
         showSnackbar(response.message, "success");
@@ -133,17 +140,37 @@ const DetailTaskTeacher = () => {
 
     const fetchDetailTask = async () => {
         try {
-            const { titulo, descripcion, fecha_vencimiento, puntos_totales } = await getDetailTask(taskId);
+            const { titulo, descripcion, fecha_vencimiento, puntos_totales, entregas } = await getDetailTask(taskId);
             setTitle(titulo);
             setTitleEdit(titulo);
             setDescription(descripcion);
             setValueCalendar(dayjs(fecha_vencimiento));
             setValueTime(dayjs(fecha_vencimiento));
-            setValueTask(puntos_totales);
+            setValueTaskEdit(puntos_totales);
+            setSubmissions(entregas);
         } catch (error) {
             console.error("Error fetching task details:", error);
         }
     }
+
+    const handleSetGrade = async () => {
+        if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
+            showSnackbar("La calificación debe ser mayor a 0", "error");
+            return;
+        }
+
+        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId);
+
+        showSnackbar(message, "success");
+
+        setSubmissions((prev) =>
+            prev.map((item) =>
+                item.id === entrega.alumno_id
+                    ? { ...item, ...entrega }
+                    : item
+            )
+        );
+    };
 
 
     useEffect(() => {
@@ -184,29 +211,33 @@ const DetailTaskTeacher = () => {
 
             <div className="flex flex-col lg:flex-row">
                 <div className="w-full lg:w-2/3">
-                    {students.map((student) => (
-                        <CardStudentTask
-                            key={student.id}
-                            data={student}
-                            isSelected={selectedStudentId === student.id}
-                            onSelect={() => handleSelect(student)}
-                        />
-                    ))}
+                    {Array.isArray(submissions) ? (
+                        submissions.map((submission) => (
+                            <CardStudentTask
+                                key={submission.id}
+                                data={submission}
+                                isSelected={selectedStudentId === submission.id}
+                                onSelect={() => handleSelect(submission)}
+                            />
+                        ))
+                    ) : (
+                        <p>No hay entregas disponibles.</p>
+                    )}
+
                 </div>
 
                 <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
+                    {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType} />
 
-                    {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
-                    <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
-                    <SliderGrades />
-                    <div className='flex justify-center mt-4'>
+                        <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
+                        <SliderGrades onValGrade={setValueTask} grade={valueTask} />
+                        <div className='flex justify-center mt-4'>
 
-                        <ButtonAtom
-                            onClick={() => alert("Calificado")}
-                        >
-                            Calificar
-                        </ButtonAtom>
-                    </div>
+                            <ButtonAtom onClick={handleSetGrade}>
+                                {isGraded ? "Actualizar calificación" : "Calificar"}
+                            </ButtonAtom>
+
+                        </div></>}
                 </div>
             </div>
             {/* <FullscreenFileModal
@@ -270,15 +301,15 @@ const DetailTaskTeacher = () => {
                         <FormControl className='sm:w-[15ch]' variant="outlined">
 
                             <OutlinedInput
-                                value={valueTask}
-                                onChange={(e) => setValueTask(e.target.value)}
-                                error={!!errors.valueTask}
+                                value={valueTaskEdit}
+                                onChange={(e) => setValueTaskEdit(e.target.value)}
+                                error={!!errors.valueTaskEdit}
                                 endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
                                 aria-describedby="outlined-weight-helper-text"
                                 inputProps={{ 'aria-label': 'puntos' }}
                             />
-                            {errors.valueTask && (
-                                <p className="text-red-500 text-sm mt-1">{errors.valueTask}</p>
+                            {errors.valueTaskEdit && (
+                                <p className="text-red-500 text-sm mt-1">{errors.valueTaskEdit}</p>
                             )}
 
                         </FormControl>

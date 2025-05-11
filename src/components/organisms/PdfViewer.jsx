@@ -73,6 +73,7 @@ function PDFNavigation({
 }
 
 const PdfViewer = ({ fileUrl }) => {
+        const [error, setError] = useState(false);
     const {
         viewerRef,
         thumbsRef,
@@ -97,11 +98,37 @@ const PdfViewer = ({ fileUrl }) => {
         setHideNavigation(true);
     };
 
+        useEffect(() => {
+        const validatePdf = async () => {
+            try {
+                const overview = pdfSlick?.getPagesOverview();
+                if (!overview || overview.length === 0) {
+                    throw new Error("Archivo no válido");
+                }
+            } catch (e) {
+                setError(true);
+            }
+        };
+
+        if (pdfSlick) {
+            validatePdf();
+        }
+    }, [pdfSlick]);
+    
     useEffect(() => {
         if (open) {
             pdfSlick?.viewer.update();
         }
     }, [open]);
+
+    if (error) {
+        return (
+            <div className="p-6 text-red-500 text-center">
+                El archivo proporcionado no es un PDF válido.
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="p-2 relative w-full h-1/2 [@media(min-width:1750px)]:h-3/4 [@media(min-width:2000px)]:h-7/8 z-10">
