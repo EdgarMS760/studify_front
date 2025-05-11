@@ -113,3 +113,26 @@ export const setGradeToTask = async (taskId, newGrades, alumno_id) => {
         throw error;
     }
 };
+export const uploadTask= async (taskId, data) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+        const storedUser = JSON.parse(localStorage.getItem('user_studify'));
+        if (!token || !storedUser?._id) throw new Error("Falta token o ID de usuario");
+        data.alumno_id = storedUser._id;
+        data.nombre_usuario = storedUser.nombre;
+        const response = await axiosInstance.post(
+            `/tasks/${taskId}/uploads`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al subir la tarea:", error);
+        throw error;
+    }
+}
