@@ -227,7 +227,7 @@ const DetailTaskTeacher = () => {
                 </div>
 
                 <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
-                    {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType} />
+                    {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType.toLowerCase()} />
 
                         <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
                         <SliderGrades onValGrade={setValueTask} grade={valueTask} />
