@@ -13,6 +13,8 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroupDialog";
 import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
 import { getAttendance } from "@services/attendanceService";
+import { postAttendance } from "../services/attendanceService";
+import dayjs from "dayjs";
 
 const StudentsPage = () => {
   const { id } = useParams();
@@ -35,20 +37,16 @@ const StudentsPage = () => {
       )
     );
   };
-  
-  // {
-  //   "grupo_id": "67db7f7062ef5370de5ba8d7",
-  //   "fecha": "2025-04-12T00:00:00Z",
-  //   "asistencias": [
-  //     {
-  //       "alumno_id": "67e9a0fa2ae6d4b98f9a684f",
-  //       "presente": true
-  //     }
-  //   ]
-  // }
-  const handleGenerateAttendance = () => {
+
+  const handleGenerateAttendance = async () => {
     const confirmed = window.confirm("¿Estás seguro de generar la asistencia?");
     if (confirmed) {
+      const attendanceData = {
+        grupo_id: id,
+        fecha: new Date().toISOString(),
+        asistencias: attendance,
+      };
+      await postAttendance(attendanceData);
       setAttendanceTaken(true);
       console.log("Asistencia generada:", attendance);
     }
@@ -66,18 +64,37 @@ const StudentsPage = () => {
     }
   }
 
-  const fetchattendance = async () => {
-    try {
+const fetchAttendance = async () => {
+  try {
+    const response = await getAttendance(id, new Date().toISOString());
 
-      const response = await getAttendance(id, new Date().toISOString());
-      console.log("Asistencia:", response.message);
-    } catch (error) {
-      console.error("Error fetching attendance:", error);
+    if (response.notFound) {
+      console.log("No hay asistencia registrada aún:", response.message);
+      setAttendance({}); 
+      setAttendanceTaken(false);
+      return;
     }
+
+    const asistencia = response.attendance.asistencias;
+
+    const mappedAttendance = {};
+    asistencia.forEach(({ alumno_id, presente }) => {
+      mappedAttendance[alumno_id] = presente;
+    });
+
+    console.log("Asistencia:", mappedAttendance);
+    setAttendance(mappedAttendance);
+    setAttendanceTaken(true);
+  } catch (error) {
+    console.error("Error crítico al obtener la asistencia:", error);
+
   }
+};
+
+
   useEffect(() => {
     fetchGroupStudents();
-    fetchattendance();
+    fetchAttendance();
   }, []);
 
   useEffect(() => {
@@ -126,7 +143,7 @@ const StudentsPage = () => {
         </div>
 
         <TextCardAtom
-          text="07/06/2025"
+          text={dayjs().format("DD/MM/YYYY")}
           className="text-2xl"
           isHighlighted={true}
         />
