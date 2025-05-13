@@ -1,13 +1,13 @@
 import axiosInstance from "@libs/helpers/axiosInstance";
 
-export const getAttendance = async (grupo_id, fecha) => {
+export const getAttendance = async (grupo_id, fechaLocal, zonaHoraria) => {
     try {
         const token = localStorage.getItem('token_studify');
 
         if (!token) throw new Error("Falta token");
 
         const response = await axiosInstance.get("/attendance", {
-            params: { grupo_id, fecha },
+            params: { grupo_id, fechaLocal, zonaHoraria },
             headers: {
                 Authorization: `Bearer ${token}`,
             },

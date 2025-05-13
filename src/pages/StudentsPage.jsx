@@ -13,8 +13,13 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroupDialog";
 import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
 import { getAttendance } from "@services/attendanceService";
-import { postAttendance } from "../services/attendanceService";
-import dayjs from "dayjs";
+import { postAttendance } from "@services/attendanceService";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const StudentsPage = () => {
   const { id } = useParams();
@@ -64,32 +69,38 @@ const StudentsPage = () => {
     }
   }
 
-const fetchAttendance = async () => {
-  try {
-    const response = await getAttendance(id, new Date().toISOString());
+  const fetchAttendance = async () => {
+    try {
+      const userTimezone = dayjs.tz.guess();
+      const now = dayjs().tz(userTimezone);
 
-    if (response.notFound) {
-      console.log("No hay asistencia registrada aún:", response.message);
-      setAttendance({}); 
-      setAttendanceTaken(false);
-      return;
+      const fechaLocal = now.format('YYYY-MM-DD'); 
+      const timezoneOffset = now.utcOffset();
+
+      const response = await getAttendance(id, fechaLocal, timezoneOffset);
+
+      if (response.notFound) {
+        console.log("No hay asistencia registrada aún:", response.message);
+        setAttendance({});
+        setAttendanceTaken(false);
+        return;
+      }
+
+      const asistencia = response.attendance.asistencias;
+
+      const mappedAttendance = {};
+      asistencia.forEach(({ alumno_id, presente }) => {
+        mappedAttendance[alumno_id] = presente;
+      });
+
+      console.log("Asistencia:", mappedAttendance);
+      setAttendance(mappedAttendance);
+      setAttendanceTaken(true);
+    } catch (error) {
+      console.error("Error crítico al obtener la asistencia:", error);
+
     }
-
-    const asistencia = response.attendance.asistencias;
-
-    const mappedAttendance = {};
-    asistencia.forEach(({ alumno_id, presente }) => {
-      mappedAttendance[alumno_id] = presente;
-    });
-
-    console.log("Asistencia:", mappedAttendance);
-    setAttendance(mappedAttendance);
-    setAttendanceTaken(true);
-  } catch (error) {
-    console.error("Error crítico al obtener la asistencia:", error);
-
-  }
-};
+  };
 
 
   useEffect(() => {
