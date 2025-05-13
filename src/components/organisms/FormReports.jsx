@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography, Box, IconButton, Select, MenuItem, useTheme } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, IconButton, Select, MenuItem, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import clsx from 'clsx';
 import CardTask from '../molecules/CardTask';
@@ -62,8 +62,9 @@ const FormReports = () => {
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
-  const theme = useTheme()
-  const bgDarkMode = theme.palette.mode === 'dark' ? 'bg-secondaryHover' : 'bg-white';
+
+  const theme = useTheme();
+
   return (
     <Box className={clsx("min-h-screen p-6 relative")}
       sx={[
@@ -74,8 +75,11 @@ const FormReports = () => {
           theme.applyStyles('dark', {
             backgroundColor: theme.vars.palette.secondary.main,
           }),
-      ]}>
-      <h1 className="text-3xl font-bold font-mono mb-10 text-center">Reportes</h1>
+      ]}
+    >
+      <h1 className="text-base sm:text-lg font-bold font-mono mb-4 text-center">
+        Reportes
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         <div className="space-y-6">
@@ -83,11 +87,9 @@ const FormReports = () => {
             <Box
               key={id}
               onClick={() => abrirDialogReporte(nombre)}
-              className={clsx(" shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
+              className={clsx("shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
               sx={[
-                (theme) => ({
-                  backgroundColor: "white",
-                }),
+                () => ({ backgroundColor: "white" }),
                 (theme) =>
                   theme.applyStyles('dark', {
                     backgroundColor: 'black',
@@ -104,26 +106,16 @@ const FormReports = () => {
 
         <Box className={clsx("lg:col-span-2 shadow-lg rounded-2xl p-6")}
           sx={[
-            (theme) => ({
-              backgroundColor: "white",
-            }),
+            () => ({ backgroundColor: "white" }),
             (theme) =>
               theme.applyStyles('dark', {
-                backgroundColor: ['black'],
+                backgroundColor: 'black',
               }),
           ]}
         >
-          <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
+          <h2 className="text-xl font-semibold mb-4">Últimas Tareas</h2>
           <div className="space-y-4 rounded-xl py-2">
             {tareas.map((item) => (
-              // <button
-              //   key={id}
-              //   onClick={() => irATarea(id)}
-              //   className="w-full text-black hover:bg-[#F25019] hover:text-white text-left rounded-lg p-4 shadow transition-colors duration-200 bg-[#333]"
-              // >
-              //   <p className="text-lg font-medium">{titulo}</p>
-              //   <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
-              // </button>
               <CardTask taskData={item} onClickCard={irATarea} />
             ))}
           </div>
@@ -167,19 +159,8 @@ const FormReports = () => {
             />
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={cerrarDialogReporte}
-              color="primary"
-            >
-              Cerrar
-            </Button>
-            <Button
-              onClick={() => console.log('Generar reporte')}
-              variant="contained"
-              color="primary"
-            >
-              Generar Reporte
-            </Button>
+            <Button onClick={cerrarDialogReporte} color="primary">Cerrar</Button>
+            <Button onClick={() => console.log('Generar reporte')} variant="contained" color="primary">Generar Reporte</Button>
           </DialogActions>
         </Dialog>
       )}
@@ -187,7 +168,6 @@ const FormReports = () => {
   );
 };
 
-// Tabla reusable
 const TablaReporte = ({ headers, columnas }) => (
   <div className="overflow-x-auto">
     <table className="w-full border border-black text-sm text-center">

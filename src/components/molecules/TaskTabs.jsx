@@ -1,6 +1,9 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import SelectAtom from '@components/atoms/SelectAtom'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, OutlinedInput, Tab, Tabs, TextField, useTheme } from '@mui/material';
+import {
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
+  FormControl, InputAdornment, OutlinedInput, Tab, Tabs, TextField, useTheme
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import clsx from 'clsx';
@@ -11,30 +14,32 @@ import { TimePicker } from '@mui/x-date-pickers';
 import { useParams } from 'react-router';
 import { postTask } from '@services/taskService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
+
 const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
-  const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day')); // Día de mañana
+  const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day'));
   const [valueTime, setValueTime] = useState(dayjs());
   const [valueTask, setValueTask] = useState(0);
   const [loading, setLoading] = useState(false);
   const { showSnackbar } = useSnackbar();
-  const handleSelectChange = (event) => {
-    setSelected(event.target.value);
-  };
+  const handleSelectChange = (event) => setSelected(event.target.value);
   const [value, setValue] = useState(0);
-
   const { id } = useParams();
+  const theme = useTheme();
+  const bgButtonDarkMode = theme.palette.mode === 'dark'
+    ? '!bg-secondaryHover hover:!bg-black !font-bold'
+    : '!bg-secondary hover:!bg-secondaryHover !font-bold';
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
     const status = newValue === 0 ? 'Abierta' : 'Cerrada';
     onStatusChange(status);
   };
+
   const options = [
     { value: "asc", label: 'Mas Recientes primero' },
     { value: "desc", label: 'Mas Antiguos primero' }
   ];
-  const theme = useTheme()
-  const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -50,7 +55,6 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
   const handleCreate = async () => {
     if (!valueCalendar || !valueTime) return;
 
-    // Combinar fecha y hora
     const combined = valueCalendar
       .set('hour', valueTime.hour())
       .set('minute', valueTime.minute())
@@ -58,31 +62,26 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
       .set('millisecond', 0);
 
     const finalTimestamp = combined.toISOString();
+
     const taskData = {
-      titulo: title, descripcion: description,
+      titulo: title,
+      descripcion: description,
       fecha_vencimiento: finalTimestamp,
-      puntos_totales: valueTask, grupo_id: id
+      puntos_totales: valueTask,
+      grupo_id: id
     };
 
     try {
       setLoading(true);
-
-
       const response = await postTask(taskData);
-
       showSnackbar(response.message, "success");
-
     } catch (err) {
-      console.error("Error al registrar:", err);
       const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
       showSnackbar(message, "error");
-
-
-
     } finally {
       setLoading(false);
+      handleClose();
     }
-    handleClose();
   };
 
   return (
@@ -91,13 +90,10 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
         "mx-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4"
       )}
       sx={[
-        (theme) => ({
-          backgroundColor: "white",
+        { backgroundColor: "white" },
+        (theme) => theme.applyStyles('dark', {
+          backgroundColor: theme.vars.palette.secondary.main,
         }),
-        (theme) =>
-          theme.applyStyles('dark', {
-            backgroundColor: theme.vars.palette.secondary.main,
-          }),
       ]}
     >
       <div className="w-full flex flex-wrap justify-center items-center [@media(min-width:1486px)]:grid [@media(min-width:1486px)]:grid-cols-3 [@media(min-width:1486px)]:items-center">
@@ -110,9 +106,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
             textColor="inherit"
             indicatorColor="primary"
             sx={{
-              "& .MuiTabs-indicator": {
-                backgroundColor: "#808080",
-              },
+              "& .MuiTabs-indicator": { backgroundColor: "#808080" },
               "& .MuiTab-root": {
                 color: "#808080",
                 minWidth: "160px",
@@ -125,30 +119,11 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                   borderRadius: "8px",
                 },
               },
-
-              "@media (max-width: 1500px)": {
-                minWidth: "130px",
-                fontSize: "15px",
-              },
-
-              "@media (max-width: 1400px)": {
-                minWidth: "120px",
-                fontSize: "14px",
-              },
-              "@media (max-width: 1370px)": {
-                minWidth: "120px",
-                fontSize: "14px",
-              },
-
-              "@media (max-width: 1250px)": {
-                minWidth: "120px",
-                fontSize: "13px",
-              },
-
-              "@media (max-width: 1170px)": {
-                minWidth: "120px",
-                fontSize: "12px",
-              },
+              "@media (max-width: 1500px)": { minWidth: "130px", fontSize: "15px" },
+              "@media (max-width: 1400px)": { minWidth: "120px", fontSize: "14px" },
+              "@media (max-width: 1370px)": { minWidth: "120px", fontSize: "14px" },
+              "@media (max-width: 1250px)": { minWidth: "120px", fontSize: "13px" },
+              "@media (max-width: 1170px)": { minWidth: "120px", fontSize: "12px" },
             }}
           >
             <Tab label="Próximas" />
@@ -182,95 +157,113 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
 
           {visibleCreateTask && !isGeneralPage && (
             <>
-              <Button onClick={handleOpen} variant="contained" sx={[
-                (theme) => ({
-                  backgroundColor: theme.vars.palette.secondary.main,
-                  borderRadius: "20px",
-                  '&:hover': {
-                    backgroundColor: theme.vars.palette.secondary.hover,
-                    fontWeight: "bold",
-                    color: "white",
+              <Button
+                onClick={handleOpen}
+                variant="contained"
+                sx={[
+                  {
+                    backgroundColor: theme.vars.palette.secondary.main,
+                    borderRadius: "20px",
+                    '&:hover': {
+                      backgroundColor: theme.vars.palette.secondary.hover,
+                      fontWeight: "bold",
+                      color: "white",
+                    },
                   },
-                }),
-                (theme) =>
                   theme.applyStyles('dark', {
                     backgroundColor: "black",
                     color: "white",
                     borderRadius: "20px",
                   }),
-              ]}>Crear Tarea</Button>
+                ]}
+              >
+                Crear Tarea
+              </Button>
+
               <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle>Crear Tarea</DialogTitle>
+  <DialogTitle sx={{ textAlign: 'center' }}>Crear Tarea</DialogTitle>
 
-                <DialogContent>
-                  <div className='flex flex-col gap-4 mt-2'>
+  <DialogContent>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap={2}
+      mt={2}
+    >
+      <TextField
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        label="Titulo de la tarea..."
+        variant="outlined"
+      />
+      <TextField
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        fullWidth
+        label="Descripción de la tarea..."
+        multiline
+        maxRows={4}
+        variant="outlined"
+      />
+      <TextCardAtom text="Fecha de entrega" className="text-lg text-center" />
+      <DatePicker
+        label="Selecciona una fecha"
+        value={valueCalendar}
+        onChange={(newValue) => setValueCalendar(newValue)}
+      />
+      <TimePicker
+        label="Selecciona una hora"
+        value={valueTime}
+        onChange={(newValue) => setValueTime(newValue)}
+      />
+      <TextCardAtom text="Valor de la tarea" className="text-lg text-center" />
+      <FormControl className="sm:w-[15ch]" variant="outlined">
+        <OutlinedInput
+          value={valueTask}
+          onChange={(e) => setValueTask(e.target.value)}
+          endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
+          inputProps={{ 'aria-label': 'puntos' }}
+        />
+      </FormControl>
+    </Box>
+  </DialogContent>
 
-                    <TextField
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      fullWidth
-                      id="filled-basic"
-                      label="Titulo de la tarea..."
-                      variant="outlined"
+  <DialogActions
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      px: 3,
+      pb: 2,
+    }}
+  >
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        width: '100%',
+        maxWidth: 300,
+        mx: 'auto',
+      }}
+    >
+      <ButtonAtom onClick={handleCreate} fullWidth>
+        Crear
+      </ButtonAtom>
+      <ButtonAtom onClick={handleClose} className={bgButtonDarkMode} fullWidth>
+        Cancelar
+      </ButtonAtom>
+    </Box>
+  </DialogActions>
+</Dialog>
 
-                    />
-                    <TextField
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      fullWidth
-                      id="outlined-basic"
-                      label="Descripción de la tarea..."
-                      multiline
-                      maxRows={4}
-                      variant="outlined"
-
-                    />
-
-                    <TextCardAtom text="Fecha de entrega" className="text-lg" />
-                    <DatePicker
-                      label="Selecciona una fecha"
-                      value={valueCalendar}
-                      onChange={(newValue) => {
-                        setValueCalendar(newValue);
-                      }}
-
-                    />
-                    <TimePicker
-                      label="Selecciona una hora"
-                      value={valueTime}
-                      onChange={(newValue) => {
-                        setValueTime(newValue);
-                      }}
-
-                    />
-                    <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                    <FormControl className='sm:w-[15ch]' variant="outlined">
-
-                      <OutlinedInput
-                        value={valueTask}
-                        onChange={(e) => setValueTask(e.target.value)}
-                        endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
-                        aria-describedby="outlined-weight-helper-text"
-                        inputProps={{
-                          'aria-label': 'puntos',
-                        }}
-                      />
-                    </FormControl>
-                  </div>
-                </DialogContent>
-
-                <DialogActions>
-                  <ButtonAtom onClick={handleCreate}>Crear</ButtonAtom>
-                  <ButtonAtom onClick={handleClose} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
-                </DialogActions>
-              </Dialog>
             </>
           )}
         </div>
       </div>
     </Box>
   );
-
 };
 
 export default TaskTabs;

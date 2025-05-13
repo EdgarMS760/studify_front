@@ -4,10 +4,12 @@ import ButtonAtom from "@components/atoms/ButtonAtom";
 import clsx from "clsx";
 import { useTheme } from "@mui/material";
 
+
 const DetailTaskStudent = () => {
     const [isDelivered, setIsDelivered] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const deliveryDate = "2025-04-10 23:59";
+    const theme = useTheme();
 
     const handleDeliveryToggle = () => {
         setIsDelivered(!isDelivered);
@@ -16,13 +18,14 @@ const DetailTaskStudent = () => {
     const handleFileChange = (e) => {
         setUploadedFile(e.target.files[0]);
     };
-    const theme = useTheme()
+
     return (
-        <div className={clsx("m-3 space-y-6 p-4",
-            theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white",)
-        }>
-          
-            <div className="flex items-center justify-between">
+        <div className={clsx(
+            "m-3 space-y-6 p-4",
+            theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
+        )}>
+            {/* Título y botón: apilados verticalmente en pantallas pequeñas */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <TextCardAtom
                     text="Nombre de la tarea"
                     className="text-xl"
@@ -30,9 +33,7 @@ const DetailTaskStudent = () => {
                 />
 
                 <div className="flex flex-col justify-center">
-                    <ButtonAtom
-                        onClick={handleDeliveryToggle}
-                    >
+                    <ButtonAtom onClick={handleDeliveryToggle}>
                         {isDelivered ? "Deshacer entrega" : "Entregar"}
                     </ButtonAtom>
                     <TextCardAtom
@@ -42,25 +43,24 @@ const DetailTaskStudent = () => {
                 </div>
             </div>
 
-         
             <TextCardAtom
                 text="Descripción de la tarea"
-                className={clsx("text-lg p-3 rounded-md shadow-sm",
-                    theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary",
+                className={clsx(
+                    "text-lg p-3 rounded-md shadow-sm",
+                    theme.palette.mode === "dark" ? "bg-neutral-600" : "bg-secondary"
                 )}
             />
 
-          
             {uploadedFile && (
-                <div className={clsx("border p-3 rounded-md shadow-sm",
-                    theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-neutral-100",
+                <div className={clsx(
+                    "border p-3 rounded-md shadow-sm",
+                    theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-neutral-100"
                 )}>
                     <p className="text-sm font-medium">Archivo subido:</p>
                     <p className="text-sm text-blue-600 truncate">{uploadedFile.name}</p>
                 </div>
             )}
 
-        
             {!isDelivered && (
                 <div>
                     <label

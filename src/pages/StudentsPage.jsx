@@ -3,24 +3,33 @@ import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import clsx from "clsx";
-import { Box, IconButton, InputAdornment, useTheme } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import SearchIcon from '@mui/icons-material/Search';
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  useTheme,
+  useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SearchIcon from "@mui/icons-material/Search";
 import CardStudent from "../components/molecules/CardStudent";
 
 const StudentsPage = () => {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery("(max-width: 270px)");
   const [search, setSearch] = useState("");
 
   const existingStudents = [
     { id: 101, fullName: "Luis García", email: "luis@example.com" },
     { id: 102, fullName: "María Torres", email: "maria@example.com" },
     { id: 103, fullName: "Pedro Sánchez lopez lopez", email: "pedro@example.com" },
-
   ];
 
-  // busqueda
   const filteredStudents = useMemo(() => {
     const term = search.toLowerCase();
     return existingStudents.filter(
@@ -67,34 +76,37 @@ const StudentsPage = () => {
     }
   };
 
-
-
   return (
     <Box
       className={clsx(
-        "m-3 p-4 space-y-4"
+        "space-y-4",
+        isSmallScreen ? "p-2" : "m-3 p-4"
       )}
       sx={[
-        (theme) => ({
-          backgroundColor: "white",
+        { backgroundColor: "white" },
+        theme.applyStyles?.("dark", {
+          backgroundColor: theme.vars.palette.secondary.main,
         }),
-        (theme) =>
-          theme.applyStyles('dark', {
-            backgroundColor: theme.vars.palette.secondary.main,
-          }),
       ]}
     >
-
-      <div className="flex flex-wrap justify-between items-center gap-4">
+      <div
+        className={clsx(
+          "flex flex-wrap items-center gap-4",
+          isSmallScreen ? "flex-col items-stretch space-y-2" : "justify-between"
+        )}
+      >
         <IconButton onClick={() => setOpen(true)} aria-label="addStudent" color="primary" size="large">
           <PersonAddIcon fontSize="inherit" />
         </IconButton>
 
-        <TextCardAtom
-          text="07/06/2025"
-          className="text-2xl"
-          isHighlighted={true}
-        />
+        <div className={clsx(isSmallScreen && "w-full flex justify-center")}>
+  <TextCardAtom
+    text="07/06/2025"
+    className="text-2xl"
+    isHighlighted={true}
+  />
+</div>
+
 
         <TextField
           id="search-task"
@@ -107,42 +119,52 @@ const StudentsPage = () => {
               </InputAdornment>
             ),
           }}
-          sx={{ minWidth: 180 }}
-        />
-
-      </div>
-
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <TextCardAtom
-            text="Lista de Asistencia"
-            className="text-2xl"
-            isHighlighted={true}
-          />
-          {!attendanceTaken ? (
-            <ButtonAtom onClick={handleGenerateAttendance}>
-              Generar Asistencia
-            </ButtonAtom>
-          ) : (
-            <span className="text-green-600 font-semibold text-sm">
-              Asistencia ya tomada
-            </span>
-          )}
-        </div>
-
-        <AttendanceList
-          students={students}
-          attendance={attendance}
-          onToggle={handleToggle}
-          disabled={attendanceTaken}
+          sx={{ width: isSmallScreen ? "100%" : 180 }}
         />
       </div>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      {/* Ajuste responsive aquí */}
+      <div
+  className={clsx(
+    "mb-2",
+    isSmallScreen
+      ? "flex flex-col items-center gap-2"
+      : "flex justify-between items-center"
+  )}
+>
+  <TextCardAtom
+    text="Lista de Asistencia"
+    className="text-2xl"
+    isHighlighted={true}
+  />
+  {!attendanceTaken ? (
+    <ButtonAtom onClick={handleGenerateAttendance}>
+      Generar Asistencia
+    </ButtonAtom>
+  ) : (
+    <span className="text-green-600 font-semibold text-sm">
+      Asistencia ya tomada
+    </span>
+  )}
+</div>
+
+      <AttendanceList
+        students={students}
+        attendance={attendance}
+        onToggle={handleToggle}
+        disabled={attendanceTaken}
+      />
+
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        fullScreen={isSmallScreen}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>Agregar Alumno</DialogTitle>
         <DialogContent className="space-y-4">
           <div className="mt-2">
-
             <TextField
               label="Buscar por nombre o email"
               fullWidth
@@ -158,7 +180,9 @@ const StudentsPage = () => {
                   <CardStudent key={student.id} student={student} />
                 ))
               ) : (
-                <span className="text-sm text-gray-500">No se encontraron resultados</span>
+                <span className="text-sm text-gray-500">
+                  No se encontraron resultados
+                </span>
               )}
             </div>
           )}
@@ -167,7 +191,6 @@ const StudentsPage = () => {
           <ButtonAtom onClick={() => setOpen(false)}>Cerrar</ButtonAtom>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
 };

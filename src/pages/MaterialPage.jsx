@@ -220,73 +220,66 @@ const MaterialPage = () => {
       </div>
 
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subir Material</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Título"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-            margin="normal"
-            error={!!errors.title}
-            helperText={errors.title}
-          />
-          <TextField
-            label="Descripción"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            error={!!errors.description}
-            helperText={errors.description}
-          />
-          <div className="flex flex-col justify-center items-center mt-4">
-            <Button
-              component="label"
-              variant="contained"
-            >
-              {/* <Typography
-                sx={[
-                  (theme) => ({
-                    color: "white",
-                    fontWeight: "medium",
-                  }),
-                  (theme) =>
-                    theme.applyStyles('dark', {
-                      color: theme.vars.palette.secondary.main,
-                    }),
-                ]}
-              >cargar archivo</Typography> */}
-              <CloudUploadIcon className="w-6 h-6" sx={{ color: 'white' }} />
-              <VisuallyHiddenInput type="file" accept="*" onChange={handleFileChange} />
-            </Button>
-            {file && (
-              <Box className="mt-2 text-sm" 
-              sx={[
-                (theme) => ({
-                  color: "black",
-                }),
-                (theme) =>
-                  theme.applyStyles('dark', {
-                    color: 'white' ,
-                  }),
-              ]}>
-                <strong>Archivo seleccionado:</strong> {file.name}
-              </Box>
-            )}
-            {errors.file && (
-              <div className="mt-2 text-sm text-red-600">{errors.file}</div>
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit} color="primary">Subir</Button>
-        </DialogActions>
-      </Dialog>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+  <DialogTitle sx={{ textAlign: 'center' }}>Subir Material</DialogTitle>
+
+  <DialogContent>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 2,
+        mt: 1,
+      }}
+    >
+      <TextField
+        label="Título"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        error={!!errors.title}
+        helperText={errors.title}
+      />
+      <TextField
+        label="Descripción"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        fullWidth
+        multiline
+        rows={4}
+        error={!!errors.description}
+        helperText={errors.description}
+      />
+
+      <Button component="label" variant="contained">
+        <CloudUploadIcon className="w-6 h-6" sx={{ color: 'white' }} />
+        <VisuallyHiddenInput type="file" accept="*" onChange={handleFileChange} />
+      </Button>
+
+      {file && (
+        <Box
+          sx={{
+            fontSize: '0.875rem',
+            color: (theme) =>
+              theme.palette.mode === 'dark' ? 'white' : 'black',
+          }}
+        >
+          <strong>Archivo seleccionado:</strong> {file.name}
+        </Box>
+      )}
+      {errors.file && (
+        <Box sx={{ fontSize: '0.875rem', color: 'red' }}>{errors.file}</Box>
+      )}
+    </Box>
+  </DialogContent>
+
+  <DialogActions sx={{ justifyContent: 'center', gap: 2, pb: 2 }}>
+    <Button onClick={handleClose} variant="outlined">Cancelar</Button>
+    <Button onClick={handleSubmit} color="primary" variant="contained">Subir</Button>
+  </DialogActions>
+</Dialog>
+
     </>
   )
 }

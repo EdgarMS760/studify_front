@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import TaskTabs from '@components/molecules/TaskTabs'
 import CardTask from '@components/molecules/CardTask'
-import { Box, CircularProgress, Pagination } from '@mui/material';
+import { Box, CircularProgress, Pagination, useMediaQuery } from '@mui/material'; // <== useMediaQuery agregado
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useAuth } from '@libs/store/AuthProvider';
 import { getTasks } from '@services/taskService';
 import { ROUTES } from '@libs/constants/routes';
 import { useDebounce } from '@libs/hooks/Debounce';
+
 const TasksPage = () => {
   const { user } = useAuth();
   const isTeacher = user?.rol === "maestro";
@@ -15,16 +16,17 @@ const TasksPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 400);
+  const isSmallScreen = useMediaQuery('(max-width: 270px)'); // <== agregado
+
   const handlePageChange = (event, value) => {
     setPage(value);
     fetchTasks(undefined, value);
   };
-  
+
   const [tasks, setTasks] = useState([]);
   const handleStatusTask = (status) => {
     fetchTasks(status);
-
-  }
+  };
   const navigate = useNavigate();
   const { id: groupId } = useParams();
   const location = useLocation();
@@ -54,11 +56,11 @@ const TasksPage = () => {
   return (
     <Box>
       <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} isGeneralPage={isGeneralPage} />
-      <Box className="p-5" sx={[
+      <Box className={isSmallScreen ? "p-2" : "p-5"} sx={[
         (theme) => ({
           backgroundColor: "white",
           borderRadius: "10px",
-          marginX: "10px",
+          marginX: isSmallScreen ? "-10px" : "10px",
         }),
         (theme) =>
           theme.applyStyles('dark', {
@@ -66,12 +68,10 @@ const TasksPage = () => {
           }),
       ]}>
         {loading ? (<div className='flex justify-center items-center'> <CircularProgress /></div>) : (
-
-
           <>
             {tasks.length === 0 ? (
               <div className="flex justify-center items-center h-full">
-                <h2 className="text-gray-500">No hay tareas disponibles</h2>
+                <h2 className="text-gray-500 text-sm text-center">No hay tareas disponibles</h2>
               </div>
             ) : (
               <>
@@ -84,17 +84,17 @@ const TasksPage = () => {
             )}
           </>
         )}
-
       </Box> 
       <div className="flex justify-center m-4">
          <Pagination
-                  count={totalPages}
-                  page={page}
-                  onChange={handlePageChange}
-                  showFirstButton
-                  showLastButton
-                  color="primary"
-                />
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+            showFirstButton
+            showLastButton
+            color="primary"
+            size={isSmallScreen ? "small" : "medium"} // <== se adapta a pantallas pequeñas
+          />
       </div>
     </Box>
   );
