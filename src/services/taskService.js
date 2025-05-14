@@ -136,3 +136,24 @@ export const uploadTask= async (taskId, data) => {
         throw error;
     }
 }
+export const deleteUploadTask = async (taskId) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if (!token) throw new Error("Falta token");
+
+        const response = await axiosInstance.delete(
+            `/tasks/${taskId}/uploads`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al eliminar la tarea:", error);
+        throw error;
+    }
+}

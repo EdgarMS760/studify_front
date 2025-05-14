@@ -9,9 +9,10 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { getDetailTask } from "@services/taskService";
 import { formatDateToLocal } from "@libs/helpers/dateUtils";
 import { getFileType } from '@libs/helpers/filesUtils';
-import { uploadImageAndGetUrl, deleteImage } from '@libs/helpers/firebaseUtils';
+import { uploadImageAndGetUrl, deleteImage,deleteImageByUrl } from '@libs/helpers/firebaseUtils';
 import { uploadTask } from "@services/taskService";
 import { useSnackbar } from '@libs/store/SnackbarContext';
+import { deleteUploadTask } from "../../services/taskService";
 const DetailTaskStudent = () => {
     const { showSnackbar } = useSnackbar();
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -103,6 +104,25 @@ const DetailTaskStudent = () => {
         }
 
     };
+    const handleDeleteDelivery = async () => {
+        let fileRef;
+        const oldFile = taskData.fileUrl; // Guarda foto anterior
+        try {
+            const response = await deleteUploadTask(taskId);
+            showSnackbar(response.message, "success");
+            if (
+                oldFile &&
+                oldFile.includes("firebasestorage.googleapis.com")
+            ) {
+                await deleteImageByUrl(oldFile);
+            }
+            fetchDetailTask();
+        } catch (error) {
+            console.error("Error deleting task delivery:", error);
+            const message = error.response?.data?.error || "Error al deshacer la entrega.";
+            showSnackbar(message, "error");
+        }
+    };
     return (
         <Box
             className={clsx("m-3 space-y-6 p-4")}
@@ -130,7 +150,7 @@ const DetailTaskStudent = () => {
                         </ButtonAtom>
                     )}
                     {!isExpired && taskData.status === "Entregado" && (
-                        <ButtonAtom onClick={() => console.log("Deshacer entrega")}>
+                        <ButtonAtom onClick={handleDeleteDelivery}>
                             Deshacer entrega
                         </ButtonAtom>
                     )}
