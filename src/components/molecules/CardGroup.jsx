@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
+import { ROUTES } from '@libs/constants/routes';
 
 const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -37,7 +38,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     };
 
     const handleGroupClick = () => {
-        navigate(`/group/${grupo._id}`);
+        navigate(ROUTES.GROUP_DETAIL(grupo.id));
     };
     const handleUnarchiveClick = (event) => {
         event.stopPropagation();
