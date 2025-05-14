@@ -29,7 +29,7 @@ const StudentsPage = () => {
   ]);
 
   const [attendanceTaken, setAttendanceTaken] = useState(false);
-  const [attendance, setAttendance] = useState([]);
+  const [attendance, setAttendance] = useState({});
 
   const [open, setOpen] = useState(false);
 
