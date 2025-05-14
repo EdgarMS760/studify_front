@@ -10,6 +10,7 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
 import { useAuth } from '@libs/store/AuthProvider';
+import { ROUTES } from '@libs/constants/routes';
 const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     };
 
     const handleGroupClick = () => {
-        navigate(`/group/${grupo._id}`);
+        navigate(ROUTES.GROUP_DETAIL(grupo.id));
     };
     const handleUnarchiveClick = (event) => {
         event.stopPropagation();
