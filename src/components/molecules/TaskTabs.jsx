@@ -1,6 +1,6 @@
 import React, { use, useState } from 'react'
 import SelectAtom from '@components/atoms/SelectAtom'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Tab, Tabs, TextField, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, OutlinedInput, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import clsx from 'clsx';
@@ -8,19 +8,25 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import TextCardAtom from '@components/atoms/TextCardAtom';
 import { TimePicker } from '@mui/x-date-pickers';
-import SliderGrades from '../atoms/SliderGrades';
+import { useParams } from 'react-router';
+import { postTask } from '@services/taskService';
+import { useSnackbar } from '@libs/store/SnackbarContext';
 const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
-  const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
-  const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
+  const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day')); // Día de mañana
+  const [valueTime, setValueTime] = useState(dayjs());
+  const [valueTask, setValueTask] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const { showSnackbar } = useSnackbar();
   const handleSelectChange = (event) => {
     setSelected(event.target.value);
   };
   const [value, setValue] = useState(0);
 
+  const { id } = useParams();
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    const status = newValue === 0 ? 'abierta' : 'cerrada';
+    const status = newValue === 0 ? 'Abierta' : 'Cerrada';
     onStatusChange(status);
   };
   const options = [
@@ -41,17 +47,58 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
     setDescription("");
   };
 
-  const handleCreate = () => {
-    console.log("Tarea creada:", { title, description });
+  const handleCreate = async () => {
+    if (!valueCalendar || !valueTime) return;
+
+    // Combinar fecha y hora
+    const combined = valueCalendar
+      .set('hour', valueTime.hour())
+      .set('minute', valueTime.minute())
+      .set('second', 0)
+      .set('millisecond', 0);
+
+    const finalTimestamp = combined.toISOString();
+    const taskData = {
+      titulo: title, descripcion: description,
+      fecha_vencimiento: finalTimestamp,
+      puntos_totales: valueTask, grupo_id: id
+    };
+
+    try {
+      setLoading(true);
+
+
+      const response = await postTask(taskData);
+
+      showSnackbar(response.message, "success");
+
+    } catch (err) {
+      console.error("Error al registrar:", err);
+      const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
+      showSnackbar(message, "error");
+
+
+
+    } finally {
+      setLoading(false);
+    }
     handleClose();
   };
 
   return (
-    <div
+    <Box
       className={clsx(
-        "mx-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4",
-        theme.palette.mode === "dark" ? "bg-neutral-800" : "bg-white"
+        "mx-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4"
       )}
+      sx={[
+        (theme) => ({
+          backgroundColor: "white",
+        }),
+        (theme) =>
+          theme.applyStyles('dark', {
+            backgroundColor: theme.vars.palette.secondary.main,
+          }),
+      ]}
     >
       <div className="w-full flex flex-wrap justify-center items-center [@media(min-width:1486px)]:grid [@media(min-width:1486px)]:grid-cols-3 [@media(min-width:1486px)]:items-center">
 
@@ -133,11 +180,25 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
             onChange={handleSelectChange}
           />
 
-          {visibleCreateTask & !isGeneralPage && (
+          {visibleCreateTask && !isGeneralPage && (
             <>
-              <ButtonAtom onClick={handleOpen} className={bgButtonDarkMode + " !rounded-full"}>
-                Crear Tarea
-              </ButtonAtom>
+              <Button onClick={handleOpen} variant="contained" sx={[
+                (theme) => ({
+                  backgroundColor: theme.vars.palette.secondary.main,
+                  borderRadius: "20px",
+                  '&:hover': {
+                    backgroundColor: theme.vars.palette.secondary.hover,
+                    fontWeight: "bold",
+                    color: "white",
+                  },
+                }),
+                (theme) =>
+                  theme.applyStyles('dark', {
+                    backgroundColor: "black",
+                    color: "white",
+                    borderRadius: "20px",
+                  }),
+              ]}>Crear Tarea</Button>
               <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>Crear Tarea</DialogTitle>
 
@@ -150,8 +211,6 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                       fullWidth
                       id="filled-basic"
                       label="Titulo de la tarea..."
-                      multiline
-                      maxRows={4}
                       variant="outlined"
 
                     />
@@ -162,7 +221,6 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                       id="outlined-basic"
                       label="Descripción de la tarea..."
                       multiline
-                      rows={4}
                       maxRows={4}
                       variant="outlined"
 
@@ -172,15 +230,32 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                     <DatePicker
                       label="Selecciona una fecha"
                       value={valueCalendar}
-                      onChange={(newValue) => setValueCalendar(newValue)}
+                      onChange={(newValue) => {
+                        setValueCalendar(newValue);
+                      }}
+
                     />
                     <TimePicker
                       label="Selecciona una hora"
                       value={valueTime}
-                      onChange={(newValue) => setValueTime(newValue)}
+                      onChange={(newValue) => {
+                        setValueTime(newValue);
+                      }}
+
                     />
                     <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                    <SliderGrades/>
+                    <FormControl className='sm:w-[15ch]' variant="outlined">
+
+                      <OutlinedInput
+                        value={valueTask}
+                        onChange={(e) => setValueTask(e.target.value)}
+                        endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
+                        aria-describedby="outlined-weight-helper-text"
+                        inputProps={{
+                          'aria-label': 'puntos',
+                        }}
+                      />
+                    </FormControl>
                   </div>
                 </DialogContent>
 
@@ -193,7 +268,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
           )}
         </div>
       </div>
-    </div>
+    </Box>
   );
 
 };

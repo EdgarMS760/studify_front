@@ -7,11 +7,12 @@ import FilePreview from './FilePreview';
 import SliderGrades from '../atoms/SliderGrades';
 import ButtonAtom from '../atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { ROUTES } from '../../libs/constants/routes';
 const DetailTaskTeacher = () => {
     const [selected, setSelected] = useState('');
     const options = [
@@ -30,8 +31,8 @@ const DetailTaskTeacher = () => {
             fileType: 'video'
         },
         {
-            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
+            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/example.pdf',
+            fileType: 'pdf'
         },
         {
             id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
@@ -98,12 +99,21 @@ const DetailTaskTeacher = () => {
     const theme = useTheme()
     const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
     const navigate = useNavigate();
+    const {id} = useParams()
     const returnToTask = () =>{
-        navigate(`/group/1/tasks`)
+        navigate(ROUTES.GROUP_TASKS(id))
     }
     return (
         <>
-            <div className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
+            <Box  sx={[
+                (theme) => ({
+                    backgroundColor: "white",
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]} className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
                 <div className='flex items-center justify-between'>
                     <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
                         <KeyboardReturnIcon fontSize="inherit" />
@@ -119,7 +129,7 @@ const DetailTaskTeacher = () => {
                     value={selected}
                     onChange={handleSelectChange}
                 />
-            </div>
+            </Box>
 
             <div className="flex flex-col lg:flex-row">
                 <div className="w-full lg:w-2/3">

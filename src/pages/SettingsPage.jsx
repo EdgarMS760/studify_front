@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { TextField, Button, Grid, Avatar, Box, Typography } from "@mui/material";
-import { useAuth } from "../libs/store/AuthProvider";
-import ButtonAtom from "../components/atoms/ButtonAtom";
+import { TextField, Button, Grid, Avatar, Box, Typography, Backdrop, CircularProgress } from "@mui/material";
+import ButtonAtom from "@components/atoms/ButtonAtom";
+import { useSessionAuth } from "@libs/hooks/useSessionAuth";
+import { deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from "@libs/helpers/firebaseUtils";
+import { editUser } from "@services/userService";
 
+import { useSnackbar } from '@libs/store/SnackbarContext';
 
 const SettingsPage = () => {
-    const { user, token } = useAuth(); // Recuperamos los datos del usuario desde el contexto
+    const { showSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false);
+    const { session, updateSessionFromUser } = useSessionAuth();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -13,14 +18,15 @@ const SettingsPage = () => {
     });
 
     useEffect(() => {
-        if (user) {
+        if (session) {
             setFormData({
-                name: user?.nombre || "",
-                email: user?.email || "",
-                avatar: user?.foto_perfil || "",
+                name: session?.user?.name || 'Usuario',
+                avatar: session?.user?.image || '',
+                email: session?.user?.email || '',
             })
         }
-    }, []);
+    }, [session]);
+
     const [imagePreview, setImagePreview] = useState(formData.avatar); // Para previsualizar la imagen antes de subirla
 
     const handleInputChange = (e) => {
@@ -36,7 +42,7 @@ const SettingsPage = () => {
         if (file) {
             setFormData({
                 ...formData,
-                avatar: URL.createObjectURL(file), // Para la previsualización de la imagen
+                avatar: file, // Para la previsualización de la imagen
             });
             setImagePreview(URL.createObjectURL(file));
         }
@@ -44,12 +50,70 @@ const SettingsPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Datos enviados:", formData);
-
+        let fileRef;
+        const oldImageURL = session?.user?.image; // Guarda foto anterior
+    
+        try {
+            setLoading(true);
+    
+            let avatarURL = formData.avatar || null;
+    
+            // Subir imagen si es nueva
+            if (formData.avatar && typeof formData.avatar !== "string") {
+                const { url, fileRef: uploadedRef } = await uploadImageAndGetUrl(
+                    formData.avatar,
+                    "avatars"
+                );
+                avatarURL = url;
+                fileRef = uploadedRef;
+            }
+    
+            // Actualizar usuario
+            const response = await editUser({
+                nombre: formData.name,
+                email: formData.email,
+                foto_perfil: avatarURL,
+            });
+    
+            showSnackbar(response.message, "success");
+    
+            // 🔁 Actualizar sesión con el nuevo usuario
+            updateSessionFromUser(response.usuario);
+    
+            // Borrar la imagen anterior si fue reemplazada y era de Firebase
+            if (
+                oldImageURL &&
+                oldImageURL !== avatarURL &&
+                oldImageURL.includes("firebasestorage.googleapis.com")
+            ) {
+                await deleteImageByUrl(oldImageURL);
+            }
+    
+        } catch (err) {
+            console.error("Error al registrar:", err);
+            const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
+            showSnackbar(message, "error");
+    
+            // se elimina la imagen si hubo un error en el post
+            if (fileRef) {
+                await deleteImage(fileRef);
+            }
+    
+        } finally {
+            setLoading(false);
+        }
     };
+    
+
 
     return (
         <Box sx={{ padding: 2 }}>
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Typography variant="h4" gutterBottom>
                 Editar Perfil
             </Typography>
@@ -95,7 +159,7 @@ const SettingsPage = () => {
 
                     <div className="flex justify-center w-full mt-3">
 
-                        <ButtonAtom>
+                        <ButtonAtom onClick={handleSubmit} >
                             Guardar Cambios
                         </ButtonAtom>
                     </div>

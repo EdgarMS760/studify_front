@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+let externalLoadSession = () => { };
 export const useSessionAuth = () => {
   const [session, setSession] = useState(null);
 
@@ -21,9 +21,17 @@ export const useSessionAuth = () => {
     }
   };
 
-  useEffect(() => {
-    loadSession();
-  }, []);
+
+
+  const updateSessionFromUser = (user) => {
+    setSession({
+      user: {
+        name: user.nombre,
+        email: user.email,
+        image: user.foto_perfil || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre)}`,
+      },
+    });
+  };
 
   const signIn = (userData, token) => {
     localStorage.setItem('user_studify', JSON.stringify(userData));
@@ -38,11 +46,17 @@ export const useSessionAuth = () => {
     window.location.reload();
   };
 
+  useEffect(() => {
+    loadSession();
+    externalLoadSession = loadSession;
+  }, []);
   return {
     session,
+    updateSessionFromUser,
     authentication: {
       signIn,
       signOut
     }
   };
 };
+export { externalLoadSession };

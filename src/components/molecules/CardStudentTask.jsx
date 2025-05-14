@@ -1,9 +1,9 @@
 import React from 'react'
 import MiniImg from '@components/atoms/MiniImg'
-import TextCardAtom from '../atoms/TextCardAtom'
+import TextCardAtom from '@components/atoms/TextCardAtom'
 import clsx from 'clsx'
 import { useTheme } from '@emotion/react'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 const CardStudentTask = ({ data, onSelect, isSelected }) => {
     const theme = useTheme();
@@ -21,17 +21,35 @@ const CardStudentTask = ({ data, onSelect, isSelected }) => {
         }
     };
     return (
-        <div
+        <Box
             onClick={onSelect}
             className={clsx(
-                'cursor-pointer m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4 transition-colors',
-                {
-                    'bg-primary text-white': isSelected && theme.palette.mode === 'light',
-                    'bg-neutral-700 text-white': isSelected && theme.palette.mode === 'dark',
-                    'bg-white hover:bg-primary': !isSelected && theme.palette.mode === 'light',
-                    'bg-neutral-800 hover:bg-neutral-700': !isSelected && theme.palette.mode === 'dark',
-                }
+                'cursor-pointer m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4 transition-colors'
             )}
+
+            sx={[
+                (theme) => ({
+                    color: isSelected ? theme.vars.palette.common.white : theme.vars.palette.text.primary,
+                    backgroundColor: isSelected
+                        ? theme.vars.palette.primary.main
+                        : theme.vars.palette.common.white,
+                    '&:hover': {
+                        backgroundColor: theme.vars.palette.primary.main,
+                        color: !isSelected ? theme.vars.palette.common.white : undefined,
+                    },
+                }),
+                (theme) =>
+                    theme.applyStyles('dark', {
+                        backgroundColor: isSelected
+                            ? theme.vars.palette.neutral?.[700] ?? theme.vars.palette.grey[800]
+                            : theme.vars.palette.neutral?.[800] ?? theme.vars.palette.grey[900],
+                        color: theme.vars.palette.common.white,
+                        '&:hover': {
+                            backgroundColor:
+                                theme.vars.palette.neutral?.[700] ?? theme.vars.palette.grey[800],
+                        },
+                    }),
+            ]}
         >
             <MiniImg src="https://placeholder.co/60" />
             <TextCardAtom text={data.name} className="text-lg truncate" />
@@ -50,7 +68,7 @@ const CardStudentTask = ({ data, onSelect, isSelected }) => {
                     </IconButton>
                 </Tooltip>
             </div>
-        </div>
+        </Box>
     );
 };
 
