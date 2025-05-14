@@ -151,14 +151,20 @@ const MainLayout = () => {
                 icon: <ManageAccountsIcon />,
             },
         ] : [{
-            segment: 'group/1',
+            segment: 'groups',
             title: 'Grupo',
             icon: <GroupsIcon />,
         }, {
             segment: 'calendar',
             title: 'Calendario',
             icon: <CalendarMonthIcon />,
-        }, {
+        },
+        {
+            segment: 'homework',
+            title: 'Tareas',
+            icon: <HomeWorkIcon />,
+        },
+        {
             kind: 'header',
             title: 'Configuración',
         },

@@ -9,8 +9,10 @@ import { useSnackbar } from '@libs/store/SnackbarContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { createEmptyPostsCollection, deleteImage, deleteImageByUrl, uploadImageAndGetUrl } from '@libs/helpers/firebaseUtils';
 import { archiveGroup, dearchiveGroup, getGroups, postGroup, updateGroup } from '@services/groupService';
-
+import { useAuth } from '@libs/store/AuthProvider';
 const GroupsPage = () => {
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
     const [gruposActivos, setGruposActivos] = useState([
     ]);
     const [gruposArchivados, setGruposArchivados] = useState([
@@ -47,7 +49,7 @@ const GroupsPage = () => {
         if (groupData.mode === "edit") {
             console.log("Actualizar grupo:", groupToEdit);
 
-            const oldImageURL =groupToEdit.foto || null;
+            const oldImageURL = groupToEdit.foto || null;
             try {
                 setLoading(true);
 
@@ -238,41 +240,45 @@ const GroupsPage = () => {
                                             ))}
 
                                             {/* Botón para crear nuevo grupo*/}
-                                            <div className="flex flex-col items-center justify-center">
-                                                <Grid2>
-                                                    <Box
-                                                        onClick={handleAddGroup}
-                                                        sx={{
-                                                            height: '100%',
-                                                            minHeight: 50,
-                                                            minWidth: 50,
-                                                            borderRadius: 2,
-                                                            bgcolor: '#FD841F',
-                                                            color: 'white',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            cursor: 'pointer',
-                                                            boxShadow: 2,
-                                                            transition: 'all 0.3s',
-                                                            '&:hover': {
-                                                                boxShadow: 4,
-                                                                opacity: 0.9,
-                                                            }
-                                                        }}
-                                                    >
-                                                        <AddIcon className="w-6 h-6" sx={[
-                                                            (theme) => ({
-                                                                color: "white",
-                                                            }),
-                                                            (theme) =>
-                                                                theme.applyStyles('dark', {
-                                                                    color: "black",
+                                            {isTeacher && (
+
+
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <Grid2>
+                                                        <Box
+                                                            onClick={handleAddGroup}
+                                                            sx={{
+                                                                height: '100%',
+                                                                minHeight: 50,
+                                                                minWidth: 50,
+                                                                borderRadius: 2,
+                                                                bgcolor: '#FD841F',
+                                                                color: 'white',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                cursor: 'pointer',
+                                                                boxShadow: 2,
+                                                                transition: 'all 0.3s',
+                                                                '&:hover': {
+                                                                    boxShadow: 4,
+                                                                    opacity: 0.9,
+                                                                }
+                                                            }}
+                                                        >
+                                                            <AddIcon className="w-6 h-6" sx={[
+                                                                (theme) => ({
+                                                                    color: "white",
                                                                 }),
-                                                        ]} />
-                                                    </Box>
-                                                </Grid2>
-                                            </div>
+                                                                (theme) =>
+                                                                    theme.applyStyles('dark', {
+                                                                        color: "black",
+                                                                    }),
+                                                            ]} />
+                                                        </Box>
+                                                    </Grid2>
+                                                </div>
+                                            )}
                                         </>
                                     );
                                 })()}
@@ -280,54 +286,58 @@ const GroupsPage = () => {
 
                         </>
                     )}
-                <Box className="" sx={{ mt: 4 }}>
-                    <Accordion expanded={expandedArchived === 'panel1'} onChange={handleChangeAccordionArchived('panel1')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header"
-                        >
-                            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
-                                Grupos Archivados
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Grid2 container spacing={2} sx={{ padding: 2 }}>
-                                {(() => {
+                {isTeacher && (
+                    <Box className="" sx={{ mt: 4 }}>
+                        <Accordion expanded={expandedArchived === 'panel1'} onChange={handleChangeAccordionArchived('panel1')}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1bh-content"
+                                id="panel1bh-header"
+                            >
+                                <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+                                    Grupos Archivados
+                                </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid2 container spacing={2} sx={{ padding: 2 }}>
+                                    {(() => {
 
 
-                                    if (gruposArchivados.length === 0) {
-                                        return (
-                                            <Typography variant="body1" sx={{ padding: 2 }}>
-                                                No hay grupos archivados.
-                                            </Typography>
-                                        );
-                                    }
+                                        if (gruposArchivados.length === 0) {
+                                            return (
+                                                <Typography variant="body1" sx={{ padding: 2 }}>
+                                                    No hay grupos archivados.
+                                                </Typography>
+                                            );
+                                        }
 
-                                    return gruposArchivados.map((grupo) => (
-                                        <Grid2 key={grupo._id}>
-                                            <CardGroup
-                                                grupo={grupo}
-                                                onEdit={() => handleEditGroup(grupo)}
-                                                onArchive={handleDearchiveGroup}
-                                                isArchived={true}
-                                            />
-                                        </Grid2>
-                                    ));
-                                })()}
-                            </Grid2>
+                                        return gruposArchivados.map((grupo) => (
+                                            <Grid2 key={grupo._id}>
+                                                <CardGroup
+                                                    grupo={grupo}
+                                                    onEdit={() => handleEditGroup(grupo)}
+                                                    onArchive={handleDearchiveGroup}
+                                                    isArchived={true}
+                                                />
+                                            </Grid2>
+                                        ));
+                                    })()}
+                                </Grid2>
 
-                        </AccordionDetails>
-                    </Accordion>
-                </Box>
+                            </AccordionDetails>
+                        </Accordion>
+                    </Box>)}
             </Box>
-            <ModalManageGroups
-                open={openModal}
-                onClose={handleCloseModal}
-                onSave={handleSaveGroup}
-                initialGroup={groupToEdit || { nombre: "", foto: null, descripcion: "" }}
-                mode={groupToEdit ? "edit" : "create"}
-            />
+            {isTeacher && (
+
+                <ModalManageGroups
+                    open={openModal}
+                    onClose={handleCloseModal}
+                    onSave={handleSaveGroup}
+                    initialGroup={groupToEdit || { nombre: "", foto: null, descripcion: "" }}
+                    mode={groupToEdit ? "edit" : "create"}
+                />
+            )}
 
 
         </>

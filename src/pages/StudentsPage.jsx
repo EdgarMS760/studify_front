@@ -1,74 +1,132 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import clsx from "clsx";
-import { Box, IconButton, InputAdornment, useTheme } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment } from "@mui/material";
+import { TextField } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
-import CardStudent from "../components/molecules/CardStudent";
+import { getGroupStudents } from "@services/studentService";
+import { useParams } from "react-router";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import RemoveStudentsGroupDialog from "@components/molecules/RemoveStudentsGroupDialog";
+import AddStudentsGroupDialog from "@components/molecules/AddStudentsGroupDialog";
+import { getAttendance } from "@services/attendanceService";
+import { postAttendance } from "@services/attendanceService";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const StudentsPage = () => {
-  const theme = useTheme();
-  const [search, setSearch] = useState("");
+  const { id } = useParams();
 
-  const existingStudents = [
-    { id: 101, fullName: "Luis García", email: "luis@example.com" },
-    { id: 102, fullName: "María Torres", email: "maria@example.com" },
-    { id: 103, fullName: "Pedro Sánchez lopez lopez", email: "pedro@example.com" },
-
-  ];
-
-  // busqueda
-  const filteredStudents = useMemo(() => {
-    const term = search.toLowerCase();
-    return existingStudents.filter(
-      (s) =>
-        s.fullName.toLowerCase().includes(term) ||
-        s.email.toLowerCase().includes(term)
-    );
-  }, [search]);
 
   const [students, setStudents] = useState([
-    { id: 1, listNumber: 1, fullName: "Juan Pérez" },
-    { id: 2, listNumber: 2, fullName: "Ana López" },
-    { id: 3, listNumber: 3, fullName: "Carlos Ruiz" },
-    { id: 4, listNumber: 4, fullName: "María García" },
-    { id: 5, listNumber: 5, fullName: "Luis Fernández" },
-    { id: 6, listNumber: 6, fullName: "Laura Martínez" },
-    { id: 7, listNumber: 7, fullName: "Pedro Sánchez" },
-    { id: 8, listNumber: 8, fullName: "Sofía Gómez" },
-    { id: 9, listNumber: 9, fullName: "Javier Torres" },
-    { id: 10, listNumber: 10, fullName: "Lucía Morales" },
   ]);
 
   const [attendanceTaken, setAttendanceTaken] = useState(false);
-  const [attendance, setAttendance] = useState(() =>
-    Object.fromEntries(students.map((s) => [s.id, false]))
-  );
+  const [attendance, setAttendance] = useState({});
 
   const [open, setOpen] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
 
   const handleToggle = (id) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setAttendance((prev) =>
+      prev.map((item) =>
+        item.alumno_id === id
+          ? { ...item, presente: !item.presente }
+          : item
+      )
+    );
   };
 
-  const handleGenerateAttendance = () => {
+  const handleGenerateAttendance = async () => {
     const confirmed = window.confirm("¿Estás seguro de generar la asistencia?");
     if (confirmed) {
+      const attendanceData = {
+        grupo_id: id,
+        fecha: new Date().toISOString(),
+        asistencias: attendance,
+      };
+      await postAttendance(attendanceData);
       setAttendanceTaken(true);
       console.log("Asistencia generada:", attendance);
     }
   };
 
+  const fetchGroupStudents = async () => {
+
+    try {
+      const { alumnos } = await getGroupStudents(id);
+      const alumnosOrdenados = alumnos.sort((a, b) => a.numero_lista - b.numero_lista);
+
+      setStudents(alumnosOrdenados);
+    } catch (error) {
+      console.error("Error fetching group students:", error);
+    }
+  }
+
+  const fetchAttendance = async () => {
+    try {
+      const userTimezone = dayjs.tz.guess();
+      const now = dayjs().tz(userTimezone);
+
+      const fechaLocal = now.format('YYYY-MM-DD'); 
+      const timezoneOffset = now.utcOffset();
+
+      const response = await getAttendance(id, fechaLocal, timezoneOffset);
+
+      if (response.notFound) {
+        console.log("No hay asistencia registrada aún:", response.message);
+        setAttendance({});
+        setAttendanceTaken(false);
+        return;
+      }
+
+      const asistencia = response.attendance.asistencias;
+
+      const mappedAttendance = {};
+      asistencia.forEach(({ alumno_id, presente }) => {
+        mappedAttendance[alumno_id] = presente;
+      });
+
+      console.log("Asistencia:", mappedAttendance);
+      setAttendance(mappedAttendance);
+      setAttendanceTaken(true);
+    } catch (error) {
+      console.error("Error crítico al obtener la asistencia:", error);
+
+    }
+  };
 
 
+  useEffect(() => {
+    fetchGroupStudents();
+    fetchAttendance();
+  }, []);
+
+  useEffect(() => {
+    if (students.length > 0) {
+      const initialAttendance = students.map((student) => ({
+        alumno_id: student._id,
+        presente: false,
+      }));
+      setAttendance(initialAttendance);
+    }
+  }, [students]);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleRemoveStudent = (id) => {
+    fetchGroupStudents();
+  };
+
+  const handleAddStudent = (student) => {
+    fetchGroupStudents();
+  }
   return (
     <Box
       className={clsx(
@@ -86,12 +144,17 @@ const StudentsPage = () => {
     >
 
       <div className="flex flex-wrap justify-between items-center gap-4">
-        <IconButton onClick={() => setOpen(true)} aria-label="addStudent" color="primary" size="large">
-          <PersonAddIcon fontSize="inherit" />
-        </IconButton>
+        <div>
+          <IconButton onClick={() => setOpen(true)} aria-label="addStudent" color="primary" size="large">
+            <PersonAddIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton onClick={() => setDialogOpen(true)} aria-label="removeStudent" color="primary" size="large">
+            <PersonRemoveIcon fontSize="inherit" />
+          </IconButton>
+        </div>
 
         <TextCardAtom
-          text="07/06/2025"
+          text={dayjs().format("DD/MM/YYYY")}
           className="text-2xl"
           isHighlighted={true}
         />
@@ -120,7 +183,7 @@ const StudentsPage = () => {
             isHighlighted={true}
           />
           {!attendanceTaken ? (
-            <ButtonAtom onClick={handleGenerateAttendance}>
+            <ButtonAtom disabled={students.length === 0} onClick={handleGenerateAttendance}>
               Generar Asistencia
             </ButtonAtom>
           ) : (
@@ -129,45 +192,32 @@ const StudentsPage = () => {
             </span>
           )}
         </div>
+        {students.length === 0 ? (
+          <div className="flex justify-center items-center h-32">
 
-        <AttendanceList
-          students={students}
-          attendance={attendance}
-          onToggle={handleToggle}
-          disabled={attendanceTaken}
-        />
+            No hay alumnos en este grupo.
+          </div>
+        ) : (
+          <AttendanceList
+            students={students}
+            attendance={attendance}
+            onToggle={handleToggle}
+            disabled={attendanceTaken}
+          />)}
       </div>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Agregar Alumno</DialogTitle>
-        <DialogContent className="space-y-4">
-          <div className="mt-2">
+      <AddStudentsGroupDialog
+        onSelect={handleAddStudent}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
 
-            <TextField
-              label="Buscar por nombre o email"
-              fullWidth
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          {search.trim() !== "" && (
-            <div className="space-y-2 mt-4">
-              {filteredStudents.length > 0 ? (
-                filteredStudents.map((student) => (
-                  <CardStudent key={student.id} student={student} />
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">No se encontraron resultados</span>
-              )}
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <ButtonAtom onClick={() => setOpen(false)}>Cerrar</ButtonAtom>
-        </DialogActions>
-      </Dialog>
-
+      <RemoveStudentsGroupDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        students={students}
+        onRemove={handleRemoveStudent}
+      />
     </Box>
   );
 };

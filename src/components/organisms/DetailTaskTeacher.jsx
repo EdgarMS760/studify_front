@@ -1,24 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
-import CardStudentTask from '../molecules/CardStudentTask';
-import FullscreenFileModal from './FullscreenFileModal';
+import CardStudentTask from '@components/molecules/CardStudentTask';
+import { useSnackbar } from '@libs/store/SnackbarContext';
 import FilePreview from './FilePreview';
-import SliderGrades from '../atoms/SliderGrades';
-import ButtonAtom from '../atoms/ButtonAtom';
+import SliderGrades from '@components/atoms/SliderGrades';
+import ButtonAtom from '@components/atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, useTheme } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams } from 'react-router';
-import { ROUTES } from '../../libs/constants/routes';
+import { ROUTES } from '@libs/constants/routes';
+import { getDetailTask, updateTask } from '@services/taskService';
+import { formatToISOString } from '@libs/helpers/dateUtils';
+import { setGradeToTask } from '../../services/taskService';
 const DetailTaskTeacher = () => {
+    const { showSnackbar } = useSnackbar();
     const [selected, setSelected] = useState('');
     const options = [
         { value: "asc", label: 'Mas Recientes primero' },
         { value: "desc", label: 'Mas Antiguos primero' }
     ];
+    const [errors, setErrors] = useState({});
 
 
     const students = [
@@ -76,21 +81,50 @@ const DetailTaskTeacher = () => {
     const [fileType, setFileType] = useState(null);
 
     const [title, setTitle] = useState("");
+    const [titleEdit, setTitleEdit] = useState("");
     const [description, setDescription] = useState("");
+    const [valueTaskEdit, setValueTaskEdit] = useState(0);
+    const [valueTask, setValueTask] = useState(0);
+    const [submissions, setSubmissions] = useState([]);
+    const [isGraded, setIsGraded] = useState(false);
 
-    const handleSelect = (student) => {
-        setSelectedStudentId(student.id);
-        setSelectedFile(student.fileUrl);
-        setFileType(student.fileType);
-        console.log('files', student.fileUrl, student.fileType)
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!titleEdit.trim()) newErrors.titleEdit = 'El título es obligatorio';
+        if (!description.trim()) newErrors.description = 'La descripción es obligatoria';
+        if (!valueCalendar) newErrors.valueCalendar = 'La fecha es obligatoria';
+        if (!valueTime) newErrors.valueTime = 'La hora es obligatoria';
+        if (!valueTaskEdit || isNaN(valueTaskEdit) || Number(valueTaskEdit) <= 0) {
+            newErrors.valueTask = 'El valor debe ser un número mayor a 0';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSelect = (submission) => {
+        setSelectedStudentId(submission.id);
+        setSelectedFile(submission.archivo_entregado);
+        setFileType(submission.tipo_archivo);
+        setValueTask(submission.calificacion || 0);
+        setIsGraded(submission.calificacion != null);
+        console.log('submission', submission);
     };
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false);
-        setTitle("");
-        setDescription("");
     };
-    const handleEditTask = () => {
-        console.log("Tarea editada:", { title, description });
+    const handleEditTask = async () => {
+        if (!validateForm()) return;
+        const finalTimestamp = formatToISOString(valueCalendar, valueTime);
+        console.log("Tarea editada:", { titleEdit, description, valueTaskEdit, finalTimestamp });
+        const taskData = {
+            titulo: titleEdit, descripcion: description,
+            fecha_vencimiento: finalTimestamp,
+            puntos_totales: valueTaskEdit
+        }
+        const response = await updateTask(taskId, taskData);
+        showSnackbar(response.message, "success");
         handleCloseModalEdit();
     };
 
@@ -99,13 +133,57 @@ const DetailTaskTeacher = () => {
     const theme = useTheme()
     const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
     const navigate = useNavigate();
-    const {id} = useParams()
-    const returnToTask = () =>{
+    const { id, taskId } = useParams()
+    const returnToTask = () => {
         navigate(ROUTES.GROUP_TASKS(id))
+    }
+
+    const fetchDetailTask = async () => {
+        try {
+            const { titulo, descripcion, fecha_vencimiento, puntos_totales, entregas } = await getDetailTask(taskId);
+            setTitle(titulo);
+            setTitleEdit(titulo);
+            setDescription(descripcion);
+            setValueCalendar(dayjs(fecha_vencimiento));
+            setValueTime(dayjs(fecha_vencimiento));
+            setValueTaskEdit(puntos_totales);
+            setSubmissions(entregas);
+        } catch (error) {
+            console.error("Error fetching task details:", error);
+        }
+    }
+
+    const handleSetGrade = async () => {
+        if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
+            showSnackbar("La calificación debe ser mayor a 0", "error");
+            return;
+        }
+
+        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId);
+
+        showSnackbar(message, "success");
+
+        setSubmissions((prev) =>
+            prev.map((item) =>
+                item.id === entrega.alumno_id
+                    ? { ...item, ...entrega }
+                    : item
+            )
+        );
+    };
+
+
+    useEffect(() => {
+        fetchDetailTask();
+    }, []);
+
+    const handleopenModalEdit = () => {
+        setOpenModalEdit(true);
+        setErrors({});
     }
     return (
         <>
-            <Box  sx={[
+            <Box sx={[
                 (theme) => ({
                     backgroundColor: "white",
                 }),
@@ -118,8 +196,8 @@ const DetailTaskTeacher = () => {
                     <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
                         <KeyboardReturnIcon fontSize="inherit" />
                     </IconButton>
-                    <TextCardAtom text="nombre tarea" className="text-2xl" isHighlighted={true} />
-                    <IconButton onClick={() => setOpenModalEdit(true)} aria-label="editTask" color="primary" size="large">
+                    <TextCardAtom text={title || "sin nombre"} className="text-2xl" isHighlighted={true} />
+                    <IconButton onClick={() => handleopenModalEdit()} aria-label="editTask" color="primary" size="large">
                         <EditIcon fontSize="inherit" />
                     </IconButton>
                 </div>
@@ -133,30 +211,33 @@ const DetailTaskTeacher = () => {
 
             <div className="flex flex-col lg:flex-row">
                 <div className="w-full lg:w-2/3">
-                    {students.map((student) => (
-                        <CardStudentTask
-                            key={student.id}
-                            data={student}
-                            isSelected={selectedStudentId === student.id}
-                            onSelect={() => handleSelect(student)}
-                        />
-                    ))}
+                    {Array.isArray(submissions) ? (
+                        submissions.map((submission) => (
+                            <CardStudentTask
+                                key={submission.id}
+                                data={submission}
+                                isSelected={selectedStudentId === submission.id}
+                                onSelect={() => handleSelect(submission)}
+                            />
+                        ))
+                    ) : (
+                        <p>No hay entregas disponibles.</p>
+                    )}
+
                 </div>
 
                 <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
+                    {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType.toLowerCase()} />
 
-                    {selectedFile && <FilePreview fileUrl={selectedFile} fileType={fileType} />}
-                    <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
-                    <SliderGrades />
+                        <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
+                        <SliderGrades onValGrade={setValueTask} grade={valueTask} />
+                        <div className='flex justify-center mt-4'>
 
-                    <div className='flex justify-center mt-4'>
+                            <ButtonAtom onClick={handleSetGrade}>
+                                {isGraded ? "Actualizar calificación" : "Calificar"}
+                            </ButtonAtom>
 
-                        <ButtonAtom
-                            onClick={() => alert("Calificado")}
-                        >
-                            Calificar
-                        </ButtonAtom>
-                    </div>
+                        </div></>}
                 </div>
             </div>
             {/* <FullscreenFileModal
@@ -171,16 +252,15 @@ const DetailTaskTeacher = () => {
                     <div className='flex flex-col gap-4 mt-2'>
 
                         <TextField
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            value={titleEdit}
+                            onChange={(e) => setTitleEdit(e.target.value)}
                             fullWidth
-                            id="filled-basic"
-                            label="Titulo de la tarea..."
-                            multiline
-                            maxRows={4}
+                            label="Título de la tarea..."
                             variant="outlined"
-
+                            error={!!errors.titleEdit}
+                            helperText={errors.titleEdit}
                         />
+
                         <TextField
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -189,9 +269,9 @@ const DetailTaskTeacher = () => {
                             label="Descripción de la tarea..."
                             multiline
                             rows={4}
-                            maxRows={4}
                             variant="outlined"
-
+                            error={!!errors.description}
+                            helperText={errors.description}
                         />
 
                         <TextCardAtom text="Fecha de entrega" className="text-lg" />
@@ -199,19 +279,45 @@ const DetailTaskTeacher = () => {
                             label="Selecciona una fecha"
                             value={valueCalendar}
                             onChange={(newValue) => setValueCalendar(newValue)}
+                            slotProps={{
+                                textField: {
+                                    error: !!errors.valueCalendar,
+                                    helperText: errors.valueCalendar,
+                                },
+                            }}
                         />
                         <TimePicker
                             label="Selecciona una hora"
                             value={valueTime}
                             onChange={(newValue) => setValueTime(newValue)}
+                            slotProps={{
+                                textField: {
+                                    error: !!errors.valueTime,
+                                    helperText: errors.valueTime,
+                                },
+                            }}
                         />
                         <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                        <SliderGrades />
+                        <FormControl className='sm:w-[15ch]' variant="outlined">
+
+                            <OutlinedInput
+                                value={valueTaskEdit}
+                                onChange={(e) => setValueTaskEdit(e.target.value)}
+                                error={!!errors.valueTaskEdit}
+                                endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
+                                aria-describedby="outlined-weight-helper-text"
+                                inputProps={{ 'aria-label': 'puntos' }}
+                            />
+                            {errors.valueTaskEdit && (
+                                <p className="text-red-500 text-sm mt-1">{errors.valueTaskEdit}</p>
+                            )}
+
+                        </FormControl>
                     </div>
                 </DialogContent>
 
                 <DialogActions>
-                    <ButtonAtom onClick={handleEditTask}>Crear</ButtonAtom>
+                    <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
                     <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
                 </DialogActions>
             </Dialog>
