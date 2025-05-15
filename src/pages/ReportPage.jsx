@@ -72,7 +72,7 @@ const ReportPage = () => {
                             backgroundColor: theme.vars.palette.secondary.main,
                         }),
                 ]}>
-                <h1 className="text-3xl font-bold font-mono mb-10 text-center">Reportees</h1>
+                <h1 className="text-3xl font-bold font-mono mb-10 text-center">Reportes</h1>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                     <div className="space-y-6">
