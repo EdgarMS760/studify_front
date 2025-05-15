@@ -106,7 +106,7 @@ const DetailTaskStudent = () => {
     };
     const handleDeleteDelivery = async () => {
         let fileRef;
-        const oldFile = taskData.fileUrl; // Guarda foto anterior
+        const oldFile = taskData.fileUrl; 
         try {
             const response = await deleteUploadTask(taskId);
             showSnackbar(response.message, "success");

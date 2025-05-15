@@ -11,12 +11,11 @@ import MaterialPage from "@pages/MaterialPage";
 import StudentsPage from "@pages/StudentsPage";
 import DetailTaskPage from "@pages/DetailTaskPage";
 import CalendarPage from "@pages/CalendarPage";
-import FormGroups from "@components/organisms/FormGroups";
-import FormReports from "@components/organisms/FormReports";
 import ProtectedRoute from "@routes/ProtectedRoute";
 import PublicOnlyRoute from "@routes/PublicOnlyRoute";
 import SettingsPage from "@pages/SettingsPage";
 import GroupsPage from "@pages/GroupsPage";
+import ReportPage from "@pages/ReportPage";
 
 export default function Router() {
     return (
@@ -31,7 +30,7 @@ export default function Router() {
             >
                 <Route index element={<CalendarPage />} />
                 <Route path="groups" index element={<GroupsPage />} />
-                <Route path="reports" index element={<FormReports />} />
+                <Route path="reports" index element={<ReportPage />} />
                 <Route path="group/:id" element={<GroupLayout />}>
                     <Route index element={<FeedGroupPage />} />
                     <Route path="tasks">
