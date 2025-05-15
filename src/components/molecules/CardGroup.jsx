@@ -39,7 +39,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     };
 
     const handleGroupClick = () => {
-        navigate(ROUTES.GROUP_DETAIL(grupo.id));
+        navigate(ROUTES.GROUP_DETAIL(grupo._id));
     };
     const handleUnarchiveClick = (event) => {
         event.stopPropagation();
@@ -48,10 +48,6 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
         console.log("Desarchivar grupo", grupo);
     };
 
-    //TODO:
-    //implementar funcionaliad de fotos de grupos
-    //implementar funcionalidad del sidebar de grupos
-    //crear una coleccion en firebase para los post de los grupos, usar id de grupo como id de la coleccion y el id del post como id del documento.
     const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
 
         const [anchorEl, setAnchorEl] = useState(null);
