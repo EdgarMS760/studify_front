@@ -20,7 +20,7 @@ const FilePreview = ({ fileUrl, fileType }) => {
 
 
   // Si el tipo de archivo es imagen
-  if (fileType === 'image') {
+  if (fileType === 'imagen') {
     return (
       <PhotoProvider>
 

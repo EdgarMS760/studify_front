@@ -8,6 +8,15 @@ import dayjs from 'dayjs';
  */
 export function formatDateToLocal(utcDate, format = 'DD/MM/YYYY HH:mm') {
   if (!utcDate) return '';
-  
+
   return dayjs(utcDate).local().format(format);
+}
+
+export function formatToISOString(valueCalendar, valueTime) {
+  return valueCalendar
+      .set('hour', valueTime.hour())
+      .set('minute', valueTime.minute())
+      .set('second', 0)
+      .set('millisecond', 0)
+      .toISOString();
 }

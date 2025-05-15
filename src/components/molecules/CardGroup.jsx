@@ -9,12 +9,13 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router';
+import { useAuth } from '@libs/store/AuthProvider';
 import { ROUTES } from '@libs/constants/routes';
-
 const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
-
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
     const handleMenuClick = (event) => {
         event.stopPropagation();
         setAnchorEl(event.currentTarget);
@@ -38,7 +39,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     };
 
     const handleGroupClick = () => {
-        navigate(ROUTES.GROUP_DETAIL(grupo.id));
+        navigate(ROUTES.GROUP_DETAIL(grupo._id));
     };
     const handleUnarchiveClick = (event) => {
         event.stopPropagation();
@@ -47,10 +48,6 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
         console.log("Desarchivar grupo", grupo);
     };
 
-    //TODO:
-    //implementar funcionaliad de fotos de grupos
-    //implementar funcionalidad del sidebar de grupos
-    //crear una coleccion en firebase para los post de los grupos, usar id de grupo como id de la coleccion y el id del post como id del documento.
     const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
 
         const [anchorEl, setAnchorEl] = useState(null);
@@ -77,32 +74,7 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                         cursor: 'pointer'
                     }}
                 >
-                    <IconButton
-                        onClick={handleMenuClick}
-                        sx={{
-                            position: 'absolute',
-                            width: {
-                                xs: 7,
-                                sm: 20,
-                                md: 30,
-                                xl: 40,
-                            },
-                            height: {
-                                xs: 7,
-                                sm: 20,
-                                md: 30,
-                                xl: 40,
-                            },
-                            top: 4,
-                            right: 4,
-                            zIndex: 2,
-                            backgroundColor: 'gray',
-                            opacity: 0.33,
-                            '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
-                        }}
-                    >
-                        <MoreHorizIcon fontSize="small" />
-                    </IconButton>
+
 
                     <Box
                         component="img"
@@ -135,17 +107,45 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                             {grupo.nombre}
                         </Typography>
                     </Box>
+                    {isTeacher && (<>
+                        <IconButton
+                            onClick={handleMenuClick}
+                            sx={{
+                                position: 'absolute',
+                                width: {
+                                    xs: 7,
+                                    sm: 20,
+                                    md: 30,
+                                    xl: 40,
+                                },
+                                height: {
+                                    xs: 7,
+                                    sm: 20,
+                                    md: 30,
+                                    xl: 40,
+                                },
+                                top: 4,
+                                right: 4,
+                                zIndex: 2,
+                                backgroundColor: 'gray',
+                                opacity: 0.33,
+                                '&:hover': { backgroundColor: 'rgba(255,255,255,1)' }
+                            }}
+                        >
+                            <MoreHorizIcon fontSize="small" />
+                        </IconButton>
 
-                    <Popover
-                        open={Boolean(anchorEl)}
-                        anchorEl={anchorEl}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    >
-                        <MenuItem onClick={onEdit}>Editar</MenuItem>
-                        <MenuItem onClick={onArchive}>Archivar</MenuItem>
-                    </Popover>
+                        <Popover
+                            open={Boolean(anchorEl)}
+                            anchorEl={anchorEl}
+                            onClose={handleMenuClose}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        >
+                            <MenuItem onClick={onEdit}>Editar</MenuItem>
+                            <MenuItem onClick={onArchive}>Archivar</MenuItem>
+                        </Popover></>
+                    )}
                 </Box>
             </Tooltip>
         );

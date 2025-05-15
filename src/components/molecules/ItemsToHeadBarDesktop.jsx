@@ -18,15 +18,16 @@ const ItemsToHeadBarDesktop = () => {
         ROUTES.GROUP_DETAIL(id),
         ROUTES.GROUP_TASKS(id),
         ROUTES.GROUP_MATERIAL(id),
-        ROUTES.GROUP_STUDENTS(id),
+        ...(isTeacher ? [ROUTES.GROUP_STUDENTS(id)] : []),
     ];
-
+    
     const patterns = [
         new RegExp(`^${ROUTES.GROUP_DETAIL(id)}$`),
         new RegExp(`^${ROUTES.GROUP_TASKS(id)}$`),
         new RegExp(`^${ROUTES.GROUP_MATERIAL(id)}$`),
-        new RegExp(`^${ROUTES.GROUP_STUDENTS(id)}$`),
+        ...(isTeacher ? [new RegExp(`^${ROUTES.GROUP_STUDENTS(id)}$`)] : []),
     ];
+    
 
     const currentTab = patterns.findIndex((regex) => regex.test(location.pathname));
 

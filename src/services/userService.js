@@ -5,10 +5,15 @@ export const editUser = async (updatedData) => {
     try {
         const storedUser = JSON.parse(localStorage.getItem('user_studify'));
         const id = storedUser?._id;
-
+        const token = localStorage.getItem('token_studify');
+        if (!token) throw new Error("Falta token");
         if (!id) throw new Error("No se encontró el ID del usuario en localStorage");
 
-        const res = await axiosInstance.put(`/users/${id}`, updatedData);
+        const res = await axiosInstance.put(`/users/${id}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         const { usuario } = res.data;
 
         const userToStore = {
