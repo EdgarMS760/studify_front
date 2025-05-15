@@ -17,7 +17,7 @@ const reportes = [
 ];
 
 
-const FormReports = () => {
+const ReportPage = () => {
     const navigate = useNavigate();
     const [modalAbierto, setModalAbierto] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -147,4 +147,4 @@ const FormReports = () => {
 };
 
 
-export default FormReports;
+export default ReportPage;
