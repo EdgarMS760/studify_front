@@ -7,7 +7,7 @@ import FilePreview from './FilePreview';
 import SliderGrades from '@components/atoms/SliderGrades';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
+import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -19,6 +19,7 @@ import { setGradeToTask } from '../../services/taskService';
 const DetailTaskTeacher = () => {
     const { showSnackbar } = useSnackbar();
     const [selected, setSelected] = useState('');
+    const [loading, setLoading] = useState(false);
     const options = [
         { value: "asc", label: 'Mas Recientes primero' },
         { value: "desc", label: 'Mas Antiguos primero' }
@@ -140,6 +141,7 @@ const DetailTaskTeacher = () => {
 
     const fetchDetailTask = async () => {
         try {
+            setLoading(true);
             const { titulo, descripcion, fecha_vencimiento, puntos_totales, entregas } = await getDetailTask(taskId);
             setTitle(titulo);
             setTitleEdit(titulo);
@@ -150,6 +152,9 @@ const DetailTaskTeacher = () => {
             setSubmissions(entregas);
         } catch (error) {
             console.error("Error fetching task details:", error);
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -183,144 +188,150 @@ const DetailTaskTeacher = () => {
     }
     return (
         <>
-            <Box sx={[
-                (theme) => ({
-                    backgroundColor: "white",
-                }),
-                (theme) =>
-                    theme.applyStyles('dark', {
-                        backgroundColor: theme.vars.palette.secondary.main,
-                    }),
-            ]} className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
-                <div className='flex items-center justify-between'>
-                    <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
-                        <KeyboardReturnIcon fontSize="inherit" />
-                    </IconButton>
-                    <TextCardAtom text={title || "sin nombre"} className="text-2xl" isHighlighted={true} />
-                    <IconButton onClick={() => handleopenModalEdit()} aria-label="editTask" color="primary" size="large">
-                        <EditIcon fontSize="inherit" />
-                    </IconButton>
-                </div>
-                <SelectAtom
-                    items={options}
-                    placeholder="Ordenar"
-                    value={selected}
-                    onChange={handleSelectChange}
-                />
-            </Box>
+            {loading ? (<div className='flex justify-center items-center'> <CircularProgress /></div>) : (
 
-            <div className="flex flex-col lg:flex-row">
-                <div className="w-full lg:w-2/3">
-                    {Array.isArray(submissions) ? (
-                        submissions.map((submission) => (
-                            <CardStudentTask
-                                key={submission.id}
-                                data={submission}
-                                isSelected={selectedStudentId === submission.id}
-                                onSelect={() => handleSelect(submission)}
-                            />
-                        ))
-                    ) : (
-                        <p>No hay entregas disponibles.</p>
-                    )}
 
-                </div>
+                <>
+                    <Box sx={[
+                        (theme) => ({
+                            backgroundColor: "white",
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                backgroundColor: theme.vars.palette.secondary.main,
+                            }),
+                    ]} className="m-3 flex flex-wrap items-center justify-between px-4 py-2 shadow-sm rounded-md border-b gap-y-4">
+                        <div className='flex items-center justify-between'>
+                            <IconButton onClick={returnToTask} aria-label="editTask" color="primary" size="large">
+                                <KeyboardReturnIcon fontSize="inherit" />
+                            </IconButton>
+                            <TextCardAtom text={title || "sin nombre"} className="text-2xl" isHighlighted={true} />
+                            <IconButton onClick={() => handleopenModalEdit()} aria-label="editTask" color="primary" size="large">
+                                <EditIcon fontSize="inherit" />
+                            </IconButton>
+                        </div>
+                        <SelectAtom
+                            items={options}
+                            placeholder="Ordenar"
+                            value={selected}
+                            onChange={handleSelectChange}
+                        />
+                    </Box>
 
-                <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
-                    {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType.toLowerCase()} />
+                    <div className="flex flex-col lg:flex-row">
+                        <div className="w-full lg:w-2/3">
+                            {Array.isArray(submissions) ? (
+                                submissions.map((submission) => (
+                                    <CardStudentTask
+                                        key={submission.id}
+                                        data={submission}
+                                        isSelected={selectedStudentId === submission.id}
+                                        onSelect={() => handleSelect(submission)}
+                                    />
+                                ))
+                            ) : (
+                                <p>No hay entregas disponibles.</p>
+                            )}
 
-                        <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
-                        <SliderGrades onValGrade={setValueTask} grade={valueTask} />
-                        <div className='flex justify-center mt-4'>
+                        </div>
 
-                            <ButtonAtom onClick={handleSetGrade}>
-                                {isGraded ? "Actualizar calificación" : "Calificar"}
-                            </ButtonAtom>
+                        <div className="w-full lg:w-1/3 px-4 mt-4 lg:mt-0">
+                            {selectedFile && <> <FilePreview fileUrl={selectedFile} fileType={fileType.toLowerCase()} />
 
-                        </div></>}
-                </div>
-            </div>
-            {/* <FullscreenFileModal
+                                <TextCardAtom text="Calificacion" className="text-2xl mt-3" isHighlighted={true} />
+                                <SliderGrades onValGrade={setValueTask} grade={valueTask} />
+                                <div className='flex justify-center mt-4'>
+
+                                    <ButtonAtom onClick={handleSetGrade}>
+                                        {isGraded ? "Actualizar calificación" : "Calificar"}
+                                    </ButtonAtom>
+
+                                </div></>}
+                        </div>
+                    </div>
+                    {/* <FullscreenFileModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 fileUrl={selectedStudent?.file}
             /> */}
-            <Dialog open={openModalEdit} onClose={handleCloseModalEdit} fullWidth maxWidth="sm">
-                <DialogTitle>Editar Tarea</DialogTitle>
+                    <Dialog open={openModalEdit} onClose={handleCloseModalEdit} fullWidth maxWidth="sm">
+                        <DialogTitle>Editar Tarea</DialogTitle>
 
-                <DialogContent>
-                    <div className='flex flex-col gap-4 mt-2'>
+                        <DialogContent>
+                            <div className='flex flex-col gap-4 mt-2'>
 
-                        <TextField
-                            value={titleEdit}
-                            onChange={(e) => setTitleEdit(e.target.value)}
-                            fullWidth
-                            label="Título de la tarea..."
-                            variant="outlined"
-                            error={!!errors.titleEdit}
-                            helperText={errors.titleEdit}
-                        />
+                                <TextField
+                                    value={titleEdit}
+                                    onChange={(e) => setTitleEdit(e.target.value)}
+                                    fullWidth
+                                    label="Título de la tarea..."
+                                    variant="outlined"
+                                    error={!!errors.titleEdit}
+                                    helperText={errors.titleEdit}
+                                />
 
-                        <TextField
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            fullWidth
-                            id="outlined-basic"
-                            label="Descripción de la tarea..."
-                            multiline
-                            rows={4}
-                            variant="outlined"
-                            error={!!errors.description}
-                            helperText={errors.description}
-                        />
+                                <TextField
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    fullWidth
+                                    id="outlined-basic"
+                                    label="Descripción de la tarea..."
+                                    multiline
+                                    rows={4}
+                                    variant="outlined"
+                                    error={!!errors.description}
+                                    helperText={errors.description}
+                                />
 
-                        <TextCardAtom text="Fecha de entrega" className="text-lg" />
-                        <DatePicker
-                            label="Selecciona una fecha"
-                            value={valueCalendar}
-                            onChange={(newValue) => setValueCalendar(newValue)}
-                            slotProps={{
-                                textField: {
-                                    error: !!errors.valueCalendar,
-                                    helperText: errors.valueCalendar,
-                                },
-                            }}
-                        />
-                        <TimePicker
-                            label="Selecciona una hora"
-                            value={valueTime}
-                            onChange={(newValue) => setValueTime(newValue)}
-                            slotProps={{
-                                textField: {
-                                    error: !!errors.valueTime,
-                                    helperText: errors.valueTime,
-                                },
-                            }}
-                        />
-                        <TextCardAtom text="Valor de la tarea" className="text-lg" />
-                        <FormControl className='sm:w-[15ch]' variant="outlined">
+                                <TextCardAtom text="Fecha de entrega" className="text-lg" />
+                                <DatePicker
+                                    label="Selecciona una fecha"
+                                    value={valueCalendar}
+                                    onChange={(newValue) => setValueCalendar(newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: !!errors.valueCalendar,
+                                            helperText: errors.valueCalendar,
+                                        },
+                                    }}
+                                />
+                                <TimePicker
+                                    label="Selecciona una hora"
+                                    value={valueTime}
+                                    onChange={(newValue) => setValueTime(newValue)}
+                                    slotProps={{
+                                        textField: {
+                                            error: !!errors.valueTime,
+                                            helperText: errors.valueTime,
+                                        },
+                                    }}
+                                />
+                                <TextCardAtom text="Valor de la tarea" className="text-lg" />
+                                <FormControl className='sm:w-[15ch]' variant="outlined">
 
-                            <OutlinedInput
-                                value={valueTaskEdit}
-                                onChange={(e) => setValueTaskEdit(e.target.value)}
-                                error={!!errors.valueTaskEdit}
-                                endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
-                                aria-describedby="outlined-weight-helper-text"
-                                inputProps={{ 'aria-label': 'puntos' }}
-                            />
-                            {errors.valueTaskEdit && (
-                                <p className="text-red-500 text-sm mt-1">{errors.valueTaskEdit}</p>
-                            )}
+                                    <OutlinedInput
+                                        value={valueTaskEdit}
+                                        onChange={(e) => setValueTaskEdit(e.target.value)}
+                                        error={!!errors.valueTaskEdit}
+                                        endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
+                                        aria-describedby="outlined-weight-helper-text"
+                                        inputProps={{ 'aria-label': 'puntos' }}
+                                    />
+                                    {errors.valueTaskEdit && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.valueTaskEdit}</p>
+                                    )}
 
-                        </FormControl>
-                    </div>
-                </DialogContent>
+                                </FormControl>
+                            </div>
+                        </DialogContent>
 
-                <DialogActions>
-                    <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
-                    <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
-                </DialogActions>
-            </Dialog>
+                        <DialogActions>
+                            <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
+                            <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
+                        </DialogActions>
+                    </Dialog>
+                </>
+            )}
         </>
     );
 }

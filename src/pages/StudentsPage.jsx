@@ -3,7 +3,7 @@ import AttendanceList from "@components/molecules/AttendanceList";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import clsx from "clsx";
-import { Box, IconButton, InputAdornment } from "@mui/material";
+import { Box, CircularProgress, IconButton, InputAdornment } from "@mui/material";
 import { TextField } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
@@ -23,7 +23,7 @@ dayjs.extend(timezone);
 
 const StudentsPage = () => {
   const { id } = useParams();
-
+  const [loading, setLoading] = useState(false);
 
   const [students, setStudents] = useState([
   ]);
@@ -74,9 +74,9 @@ const StudentsPage = () => {
       const userTimezone = dayjs.tz.guess();
       const now = dayjs().tz(userTimezone);
 
-      const fechaLocal = now.format('YYYY-MM-DD'); 
+      const fechaLocal = now.format('YYYY-MM-DD');
       const timezoneOffset = now.utcOffset();
-
+      setLoading(true);
       const response = await getAttendance(id, fechaLocal, timezoneOffset);
 
       if (response.notFound) {
@@ -99,6 +99,8 @@ const StudentsPage = () => {
     } catch (error) {
       console.error("Error crítico al obtener la asistencia:", error);
 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -174,37 +176,41 @@ const StudentsPage = () => {
         />
 
       </div>
+      {loading ? <div className="flex justify-center items-center h-32"><CircularProgress /></div> : (
 
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <TextCardAtom
-            text="Lista de Asistencia"
-            className="text-2xl"
-            isHighlighted={true}
-          />
-          {!attendanceTaken ? (
-            <ButtonAtom disabled={students.length === 0} onClick={handleGenerateAttendance}>
-              Generar Asistencia
-            </ButtonAtom>
-          ) : (
-            <span className="text-green-600 font-semibold text-sm">
-              Asistencia ya tomada
-            </span>
-          )}
-        </div>
-        {students.length === 0 ? (
-          <div className="flex justify-center items-center h-32">
 
-            No hay alumnos en este grupo.
+
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <TextCardAtom
+              text="Lista de Asistencia"
+              className="text-2xl"
+              isHighlighted={true}
+            />
+            {!attendanceTaken ? (
+              <ButtonAtom disabled={students.length === 0} onClick={handleGenerateAttendance}>
+                Generar Asistencia
+              </ButtonAtom>
+            ) : (
+              <span className="text-green-600 font-semibold text-sm">
+                Asistencia ya tomada
+              </span>
+            )}
           </div>
-        ) : (
-          <AttendanceList
-            students={students}
-            attendance={attendance}
-            onToggle={handleToggle}
-            disabled={attendanceTaken}
-          />)}
-      </div>
+          {students.length === 0 ? (
+            <div className="flex justify-center items-center h-32">
+
+              No hay alumnos en este grupo.
+            </div>
+          ) : (
+            <AttendanceList
+              students={students}
+              attendance={attendance}
+              onToggle={handleToggle}
+              disabled={attendanceTaken}
+            />)}
+        </div>
+      )}
 
       <AddStudentsGroupDialog
         onSelect={handleAddStudent}
