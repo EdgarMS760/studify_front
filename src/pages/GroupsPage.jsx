@@ -299,31 +299,26 @@ const GroupsPage = () => {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Grid2 container spacing={2} sx={{ padding: 2 }}>
-                                    {(() => {
-
-
-                                        if (gruposArchivados.length === 0) {
-                                            return (
-                                                <Typography variant="body1" sx={{ padding: 2 }}>
-                                                    No hay grupos archivados.
-                                                </Typography>
-                                            );
-                                        }
-
-                                        return gruposArchivados.map((grupo) => (
-                                            <Grid2 key={grupo._id}>
-                                                <CardGroup
-                                                    grupo={grupo}
-                                                    onEdit={() => handleEditGroup(grupo)}
-                                                    onArchive={handleDearchiveGroup}
-                                                    isArchived={true}
-                                                />
-                                            </Grid2>
-                                        ));
-                                    })()}
-                                </Grid2>
-
+                                <Box sx={{ maxHeight: 400, overflowY: 'auto' }}>
+                                    <Grid2 container spacing={2} sx={{ padding: 2 }}>
+                                        {gruposArchivados.length === 0 ? (
+                                            <Typography variant="body1" sx={{ padding: 2 }}>
+                                                No hay grupos archivados.
+                                            </Typography>
+                                        ) : (
+                                            gruposArchivados.map((grupo) => (
+                                                <Grid2 key={grupo._id}>
+                                                    <CardGroup
+                                                        grupo={grupo}
+                                                        onEdit={() => handleEditGroup(grupo)}
+                                                        onArchive={handleDearchiveGroup}
+                                                        isArchived={true}
+                                                    />
+                                                </Grid2>
+                                            ))
+                                        )}
+                                    </Grid2>
+                                </Box>
                             </AccordionDetails>
                         </Accordion>
                     </Box>)}

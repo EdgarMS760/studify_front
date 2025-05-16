@@ -23,7 +23,7 @@ export const getAttendance = async (grupo_id, fechaLocal, zonaHoraria) => {
     }
 };
 
-export const postAttendance = async ( asistencia) => {
+export const postAttendance = async (asistencia) => {
     try {
         const token = localStorage.getItem('token_studify');
 
@@ -31,7 +31,7 @@ export const postAttendance = async ( asistencia) => {
 
         const response = await axiosInstance.post(
             "/attendance",
-             asistencia ,
+            asistencia,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
