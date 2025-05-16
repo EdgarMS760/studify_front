@@ -41,12 +41,6 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
     const handleGroupClick = () => {
         navigate(ROUTES.GROUP_DETAIL(grupo._id));
     };
-    const handleUnarchiveClick = (event) => {
-        event.stopPropagation();
-        handleMenuClose(event);
-
-        console.log("Desarchivar grupo", grupo);
-    };
 
     const ActiveGroupCard = ({ grupo, onEdit, onArchive, onClick, }) => {
 
@@ -113,14 +107,14 @@ const CardGroup = ({ grupo, onEdit, onArchive, isArchived = false }) => {
                             sx={{
                                 position: 'absolute',
                                 width: {
-                                    xs: 7,
-                                    sm: 20,
+                                    xs: 25,
+                                    sm: 25,
                                     md: 30,
                                     xl: 40,
                                 },
                                 height: {
-                                    xs: 7,
-                                    sm: 20,
+                                    xs: 25,
+                                    sm: 25,
                                     md: 30,
                                     xl: 40,
                                 },
