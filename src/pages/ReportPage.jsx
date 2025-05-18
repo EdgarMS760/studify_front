@@ -9,6 +9,7 @@ import AttendanceReportDialog from '@components/organisms/AttendanceReportDialog
 import HomeworkReportDialog from '@components/organisms/HomeWorkReportDialog';
 import PerformanceReportDialog from '@components/organisms/PerformanceReportDialog';
 import { ROUTES } from '@libs/constants/routes';
+import AssesmentReportDialog from '../components/organisms/AssesmentReportDialog';
 
 const reportes = [
     { id: 1, nombre: 'Asistencia', color: 'bg-green-500', icono: '✅' },
@@ -133,7 +134,7 @@ const ReportPage = () => {
                 onClose={() => setOpenAsistenciaDialog(false)}
             />
 
-            <HomeworkReportDialog
+            <AssesmentReportDialog
                 open={openTareasDialog}
                 onClose={() => setOpenTareasDialog(false)}
             />
