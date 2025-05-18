@@ -220,9 +220,50 @@ const GroupsPage = () => {
 
                                     if (gruposActivos.length === 0) {
                                         return (
-                                            <Typography variant="body1" sx={{ padding: 2 }}>
-                                                No hay grupos activos.
-                                            </Typography>
+                                            <>
+                                                <Typography variant="body1" sx={{ padding: 2 }}>
+                                                    No hay grupos activos.
+                                                </Typography> 
+                                                {isTeacher && (
+
+
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <Grid2>
+                                                        <Box
+                                                            onClick={handleAddGroup}
+                                                            sx={{
+                                                                height: '100%',
+                                                                minHeight: 50,
+                                                                minWidth: 50,
+                                                                borderRadius: 2,
+                                                                bgcolor: '#FD841F',
+                                                                color: 'white',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                cursor: 'pointer',
+                                                                boxShadow: 2,
+                                                                transition: 'all 0.3s',
+                                                                '&:hover': {
+                                                                    boxShadow: 4,
+                                                                    opacity: 0.9,
+                                                                }
+                                                            }}
+                                                        >
+                                                            <AddIcon className="w-6 h-6" sx={[
+                                                                (theme) => ({
+                                                                    color: "white",
+                                                                }),
+                                                                (theme) =>
+                                                                    theme.applyStyles('dark', {
+                                                                        color: "black",
+                                                                    }),
+                                                            ]} />
+                                                        </Box>
+                                                    </Grid2>
+                                                </div>
+                                            )}
+                                            </>
                                         );
                                     }
 
