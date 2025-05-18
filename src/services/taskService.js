@@ -1,4 +1,5 @@
 import axiosInstance from "@libs/helpers/axiosInstance";
+import { TIMEZONE } from "@libs/constants/timezone";
 export const postTask = async (newTask) => {
     try {
         const token = localStorage.getItem('token_studify');
@@ -154,6 +155,30 @@ export const deleteUploadTask = async (taskId) => {
 
     } catch (error) {
         console.error("Error al eliminar la tarea:", error);
+        throw error;
+    }
+}
+
+export const getTasksToCalendar = async (mes, year) => {
+    try {
+        const token = localStorage.getItem('token_studify');
+
+        if (!token) throw new Error("Falta token");
+
+        const response = await axiosInstance.get("/tasks/calendar", {
+            params: {
+                mes,
+                year,
+                timezone: TIMEZONE
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al obtener las tareas:", error);
         throw error;
     }
 }
