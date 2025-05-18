@@ -12,28 +12,15 @@ const AuthGate = () => {
 
     return (
         <Box
-            className="w-screen h-screen flex justify-center"
-            sx={[
-                {
-                    backgroundColor: "white",
-                },
-                (theme) =>
-                    theme.applyStyles("dark", {
-                        backgroundColor: theme.vars.palette.secondary.main,
-                    }),
-            ]}
-        >
-            <div className="">
+            className="flex justify-center"
             
-                <Typography variant="h5" sx={{ mb: 2, color: (theme) => theme.vars.palette.text.primary }}>
-                    {isRegistering ? 'Registro' : 'Inicio de sesión'}
-                </Typography>
-
-            {isRegistering ? (
-                <FormRegister onToggle={() => setIsRegistering(false)} />
-            ) : (
-                <FormLogin onToggle={() => setIsRegistering(true)} />
-            )}
+        >
+            <div>
+                {isRegistering ? (
+                    <FormRegister onToggle={() => setIsRegistering(false)} />
+                ) : (
+                    <FormLogin onToggle={() => setIsRegistering(true)} />
+                )}
             </div>
         </Box>
 
