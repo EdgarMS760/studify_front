@@ -20,7 +20,6 @@ export const uploadImageAndGetUrl = async (file, folder = "uploads") => {
 export const deleteImage = async (fileRef) => {
     try {
         await deleteObject(fileRef);
-        console.log("Imagen eliminada de Firebase");
     } catch (error) {
         console.error("Error al eliminar la imagen:", error);
     }
@@ -38,7 +37,6 @@ export const deleteImageByUrl = async (url) => {
         const path = getStoragePathFromUrl(url);
         const fileRef = ref(storage, path);
         await deleteObject(fileRef);
-        console.log("Imagen anterior eliminada de Firebase");
     } catch (error) {
         console.error("Error al eliminar imagen por URL:", error);
     }
@@ -52,7 +50,6 @@ export const createEmptyPostsCollection = async (groupId) => {
             isPlaceholder: true,
         });
 
-        console.log(`Colección de posts creada con placeholder para el grupo ${groupId}`);
     } catch (error) {
         console.error("Error al crear la colección de posts:", error);
         throw error;

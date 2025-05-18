@@ -53,7 +53,6 @@ const StudentsPage = () => {
       };
       await postAttendance(attendanceData);
       setAttendanceTaken(true);
-      console.log("Asistencia generada:", attendance);
     }
   };
 
@@ -80,7 +79,6 @@ const StudentsPage = () => {
       const response = await getAttendance(id, fechaLocal, timezoneOffset);
 
       if (response.notFound) {
-        console.log("No hay asistencia registrada aún:", response.message);
         setAttendance({});
         setAttendanceTaken(false);
         return;
@@ -93,7 +91,6 @@ const StudentsPage = () => {
         mappedAttendance[alumno_id] = presente;
       });
 
-      console.log("Asistencia:", mappedAttendance);
       setAttendance(mappedAttendance);
       setAttendanceTaken(true);
     } catch (error) {

@@ -80,7 +80,6 @@ const AssesmentReportDialog = ({ open, onClose }) => {
         }
 
         if (student) {
-            console.log("Validando reporte detallado por alumno", startDate, endDate);
             if (!startDate) {
                 newErrors.startDate = "La fecha de inicio es requerida para el reporte detallado por alumno";
                 showSnackbar(newErrors.startDate, "error");
@@ -167,17 +166,10 @@ const AssesmentReportDialog = ({ open, onClose }) => {
         setReportRequested(true);
         if (student) {
             setIsAlumnoDetalle(true);
-            console.log("isAlumnoDetalle", true);
         } else {
             setIsAlumnoDetalle(false);
-            console.log("isAlumnoDetalle", false);
         }
-        console.log("Generando reporte...", {
-            group,
-            student,
-            startDate: startDate && dayjs(startDate).format("YYYY-MM-DD"),
-            endDate: endDate && dayjs(endDate).format("YYYY-MM-DD")
-        });
+
         try {
             const response = await assessmentReport(
                 group,
@@ -186,8 +178,6 @@ const AssesmentReportDialog = ({ open, onClose }) => {
                 student
             );
             setReportData(response);
-
-            console.log("Reporte generado:", response);
         } catch (error) {
             console.error("Error al generar el reporte:", error);
         } finally {
@@ -195,8 +185,6 @@ const AssesmentReportDialog = ({ open, onClose }) => {
         }
     };
 
-    const handleExportPDF = () => console.log("Exportar PDF");
-    const handleExportExcel = () => console.log("Exportar Excel");
 
     const resetFields = (onlyFilters) => {
         setGroup("");
@@ -210,7 +198,6 @@ const AssesmentReportDialog = ({ open, onClose }) => {
     };
 
     const handleClose = () => {
-        console.log("Cerrando dialogo");
         resetFields();
         onClose();
     };

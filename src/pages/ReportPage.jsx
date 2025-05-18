@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography, Box, IconButton, Select, MenuItem, useTheme } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {  Box} from '@mui/material';
 import clsx from 'clsx';
 import CardTask from '@components/molecules/CardTask';
 import { getTasks } from '@services/taskService';
 import AttendanceReportDialog from '@components/organisms/AttendanceReportDialog';
-import HomeworkReportDialog from '@components/organisms/HomeWorkReportDialog';
 import PerformanceReportDialog from '@components/organisms/PerformanceReportDialog';
 import { ROUTES } from '@libs/constants/routes';
-import AssesmentReportDialog from '../components/organisms/AssesmentReportDialog';
+import AssesmentReportDialog from '@components/organisms/AssesmentReportDialog';
 
 const reportes = [
     { id: 1, nombre: 'Asistencia', color: 'bg-green-500', icono: '✅' },
@@ -49,7 +47,6 @@ const ReportPage = () => {
         try {
             const { tasks } = await getTasks(undefined, undefined, undefined, 3);;
             setTasks(tasks);
-            console.log(tasks);
         } catch (error) {
             console.error("Error al obtener tareas:", error);
         } finally {

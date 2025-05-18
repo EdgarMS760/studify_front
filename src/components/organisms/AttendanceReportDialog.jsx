@@ -77,7 +77,6 @@ export default function AttendanceReportDialog({ open, onClose }) {
         }
 
         if (student) {
-            console.log("Validando reporte detallado por alumno", startDate, endDate);
             if (!startDate) {
                 newErrors.startDate = "La fecha de inicio es requerida para el reporte detallado por alumno";
                 showSnackbar(newErrors.startDate, "error");
@@ -104,12 +103,6 @@ export default function AttendanceReportDialog({ open, onClose }) {
         setLoading(true);
         setReportData([]);
 
-        console.log("Generando reporte...", {
-            group,
-            student,
-            startDate: startDate && dayjs(startDate).format("YYYY-MM-DD"),
-            endDate: endDate && dayjs(endDate).format("YYYY-MM-DD")
-        });
         try {
             const response = await attendanceReport(
                 startDate && dayjs(startDate).format("YYYY-MM-DD"),
@@ -118,7 +111,6 @@ export default function AttendanceReportDialog({ open, onClose }) {
                 student
             );
             setReportData(response);
-            console.log("Reporte generado:", response);
         } catch (error) {
             console.error("Error al generar el reporte:", error);
         } finally {

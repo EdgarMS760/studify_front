@@ -16,9 +16,6 @@ import CircularProgressWithLabel from "@components/atoms/CircularProgressWithLab
 import ReportExporter from "@components/organisms/ReportExporter";
 export default function PerformanceReportGeneralView({ reportData }) {
 
-    useEffect(() => {
-        console.log("reportData", reportData);
-    }, []);
     return (
         <>
             <div className="flex justify-between items-center my-4">

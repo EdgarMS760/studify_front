@@ -110,7 +110,6 @@ const DetailTaskTeacher = () => {
         setFileType(submission.tipo_archivo);
         setValueTask(submission.calificacion || 0);
         setIsGraded(submission.calificacion != null);
-        console.log('submission', submission);
     };
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false);
@@ -118,7 +117,6 @@ const DetailTaskTeacher = () => {
     const handleEditTask = async () => {
         if (!validateForm()) return;
         const finalTimestamp = formatToISOString(valueCalendar, valueTime);
-        console.log("Tarea editada:", { titleEdit, description, valueTaskEdit, finalTimestamp });
         const taskData = {
             titulo: titleEdit, descripcion: description,
             fecha_vencimiento: finalTimestamp,

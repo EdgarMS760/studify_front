@@ -47,7 +47,6 @@ const GroupsPage = () => {
     const handleSaveGroup = async (groupData) => {
         let fileRef;
         if (groupData.mode === "edit") {
-            console.log("Actualizar grupo:", groupToEdit);
 
             const oldImageURL = groupToEdit.foto || null;
             try {

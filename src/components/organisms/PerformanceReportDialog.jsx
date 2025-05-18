@@ -86,7 +86,6 @@ export default function PerformanceReportDialog({ open, onClose }) {
                 endDate && dayjs(endDate).format("YYYY-MM-DD")
             );
             setReportData(response);
-            console.log("Reporte generado:", response);
         } catch (error) {
             console.error("Error al generar el reporte:", error);
         } finally {
@@ -102,7 +101,6 @@ export default function PerformanceReportDialog({ open, onClose }) {
     };
 
     const handleClose = () => {
-        console.log("cerrar");
         resetFields();
         onClose();
     };
