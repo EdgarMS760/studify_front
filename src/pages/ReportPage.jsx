@@ -79,19 +79,25 @@ const ReportPage = () => {
                     <div className="space-y-6">
                         {reportes.map(({ id, nombre, color, icono }) => (
                             <Box
-                                key={id}
-                                onClick={() => abrirDialogReporte(nombre)}
-                                className={clsx(" shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
+                                className={clsx(
+                                    "shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 cursor-pointer"
+                                )}
                                 sx={[
                                     (theme) => ({
                                         backgroundColor: "white",
+                                        color: "inherit",
+                                        '&:hover': {
+                                            backgroundColor: '#F25019',
+                                            color: 'white',
+                                        },
                                     }),
                                     (theme) =>
-                                        theme.applyStyles('dark', {
+                                        theme.applyStyles?.('dark', {
                                             backgroundColor: 'black',
                                         }),
                                 ]}
                             >
+
                                 <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl ${color}`}>
                                     {icono}
                                 </div>
@@ -107,28 +113,20 @@ const ReportPage = () => {
                             }),
                             (theme) =>
                                 theme.applyStyles('dark', {
-                                    backgroundColor: ['black'],
+                                    backgroundColor: 'black',
                                 }),
                         ]}
                     >
                         <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
                         <div className="space-y-4 rounded-xl py-2">
                             {tasks.map((item) => (
-                                // <button
-                                //   key={id}
-                                //   onClick={() => irATarea(id)}
-                                //   className="w-full text-black hover:bg-[#F25019] hover:text-white text-left rounded-lg p-4 shadow transition-colors duration-200 bg-[#333]"
-                                // >
-                                //   <p className="text-lg font-medium">{titulo}</p>
-                                //   <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
-                                // </button>
-                                <CardTask taskData={item} onClickCard={irATarea} />
+                                <CardTask key={item.id} taskData={item} onClickCard={irATarea} />
                             ))}
                         </div>
                     </Box>
                 </div>
 
-            </Box>
+            </Box >
             <AttendanceReportDialog
                 open={openAsistenciaDialog}
                 onClose={() => setOpenAsistenciaDialog(false)}
