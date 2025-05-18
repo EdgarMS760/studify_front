@@ -5,9 +5,6 @@ import { useEffect } from 'react';
 import PdfViewer from '@components/organisms/PdfViewer';
 
 const FilePreview = ({ fileUrl, fileType }) => {
-  useEffect(() => {
-    console.log('first', fileType, fileUrl);
-  }, []);
 
   if (!fileUrl) return null;
 

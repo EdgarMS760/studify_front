@@ -12,33 +12,41 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const CardTask = ({ taskData, onClickCard, isGeneral = false }) => {
-    const theme = useTheme();
     const handleClick = () => {
-            if (onClickCard) {
-                onClickCard(taskData.grupo._id, taskData._id);
-            }
-        
+        if (onClickCard) {
+            onClickCard(taskData.grupo._id, taskData._id);
+        }
+
     }
     const fechaUTC = dayjs.utc(taskData.fecha_vencimiento);
     const fechaLocal = fechaUTC.tz('America/Monterrey');
-    
+
     const fechaGeneral = fechaLocal.locale('es').format('DD MMMM YYYY');
     const fechadetalle = fechaLocal.locale('es').format('DD [de] MMMM [a las] HH:mm');
-    
-    
+
+
 
     return (
-        <Box onClick={handleClick} className={clsx(
-            "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer"
-        )} sx={[
-            (theme) => ({
-                backgroundColor: theme.vars.palette.secondary.main,
-            }),
-            (theme) =>
-                theme.applyStyles('dark', {
+        <Box
+            onClick={handleClick}
+            className={clsx(
+                "p-4 rounded-lg shadow-sm mx-3 transition duration-300 ease-in-out cursor-pointer"
+            )}
+            sx={[
+                (theme) => ({
                     backgroundColor: theme.vars.palette.secondary.main,
+                    '&:hover': {
+                        backgroundColor: theme.vars.palette.secondary.dark || theme.palette.secondary.dark,
+                        transform: 'scale(1.02)',
+                    },
                 }),
-        ]}>
+                (theme) =>
+                    theme.applyStyles?.('dark', {
+                        backgroundColor: theme.vars.palette.secondary.main,
+                    }),
+            ]}
+        >
+
             <div className="grid grid-cols-3 items-center">
 
                 <div className="flex justify-start">
@@ -60,7 +68,7 @@ const CardTask = ({ taskData, onClickCard, isGeneral = false }) => {
                     />
                 </div>
             </div>
-        </Box>
+        </Box >
     );
 };
 

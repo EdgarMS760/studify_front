@@ -65,7 +65,6 @@ const DetailTaskStudent = () => {
     const isExpired = taskData.taskStatus === "Cerrada";
 
     const handleDelivery = async () => {
-        console.log(uploadedFile);
         let fileRef;
         try {
             let fileURL = uploadedFile || null;

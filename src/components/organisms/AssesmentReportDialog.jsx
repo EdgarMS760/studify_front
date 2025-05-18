@@ -1,20 +1,21 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
-    Button, TextField, IconButton, CircularProgress,
-    Autocomplete,
+    Button, TextField, MenuItem, CircularProgress, IconButton,
+    Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { Close } from "@mui/icons-material";
+import { Autocomplete } from "@mui/material";
+import { PictureAsPdf, Download, Close } from "@mui/icons-material";
+import { useSnackbar } from "@libs/store/SnackbarContext";
 import { getGroups } from '@services/groupService';
 import { getGroupStudents } from "@services/studentService";
-import { useSnackbar } from "@libs/store/SnackbarContext";
 import dayjs from "dayjs";
-import { attendanceReport } from "@services/reportService";
-import AttendanceReportTableGroup from "@components/molecules/AttendanceReportTableGroup";
-import AttendanceReportStudent from "@components/molecules/AttendanceReportStudent";
+import AssesmentReportStudentView from "@components/molecules/AssesmentReportStudentView";
+import AssesmentReportGroupView from "@components/molecules/AssesmentReportGroupView";
+import { assessmentReport } from "@services/reportService";
 
-export default function AttendanceReportDialog({ open, onClose }) {
+const AssesmentReportDialog = ({ open, onClose }) => {
     const { showSnackbar } = useSnackbar();
     const [group, setGroup] = useState("");
     const [groups, setGroups] = useState([]);
@@ -29,6 +30,8 @@ export default function AttendanceReportDialog({ open, onClose }) {
     const [pageGroup, setPageGroup] = useState(1);
     const [totalPagesGroup, setTotalPagesGroup] = useState(1);
     const [loadingStudents, setLoadingStudents] = useState(false);
+    const [isAlumnoDetalle, setIsAlumnoDetalle] = useState(false);
+    const [reportRequested, setReportRequested] = useState(false);
 
     const fetchGroupStudents = async (id) => {
         setLoadingStudents(true);
@@ -97,17 +100,81 @@ export default function AttendanceReportDialog({ open, onClose }) {
         return Object.keys(newErrors).length === 0;
     };
 
+    // const handleGenerate = async () => {
+    //     if (!validate()) return;
+    //     setLoading(true);
+    //     setReportRequested(true);
+    //     // Simular petición según si es por grupo o por alumno
+    //     if (student) {
+    //         setIsAlumnoDetalle(true);
+    //         setReportData({
+    //             nombre_alumno: student.nombre,
+    //             tareas: [
+    //                 {
+    //                     fecha_entrega: "2025-05-31",
+    //                     nombre_tarea: "nueva",
+    //                     estado: "Entregado",
+    //                     entregada_a_tiempo: true,
+    //                     calificacion: 15
+    //                 },
+    //                 {
+    //                     fecha_entrega: "2025-06-01",
+    //                     nombre_tarea: "nueva 2",
+    //                     estado: "Entregado",
+    //                     entregada_a_tiempo: true,
+    //                     calificacion: 15
+    //                 },
+    //                 {
+    //                     fecha_entrega: "2025-06-02",
+    //                     nombre_tarea: "nueva 3",
+    //                     estado: "Entregado",
+    //                     entregada_a_tiempo: true,
+    //                     calificacion: 15
+    //                 },
+    //                 {
+    //                     fecha_entrega: "2025-06-03",
+    //                     nombre_tarea: "nueva 4",
+    //                     estado: "Entregado",
+    //                     entregada_a_tiempo: true,
+    //                     calificacion: 15
+    //                 },
+    //             ]
+    //         });
+    //     } else {
+    //         setIsAlumnoDetalle(false);
+    //         setReportData([
+    //             {
+    //                 nombre_alumno: "alumnillo",
+    //                 porcentaje_entregadas_a_tiempo: "80.00%",
+    //                 promedio_calificacion: "49.00"
+    //             },
+    //             {
+    //                 nombre_alumno: "estudiante 1",
+    //                 porcentaje_entregadas_a_tiempo: "0.00%",
+    //                 promedio_calificacion: "N/A"
+    //             }
+    //         ]);
+    //     }
+    //     setLoading(false);
+    // };
+
     const handleGenerate = async () => {
         if (!validate()) return;
 
         setLoading(true);
         setReportData([]);
+        setReportRequested(true);
+        if (student) {
+            setIsAlumnoDetalle(true);
+        } else {
+            setIsAlumnoDetalle(false);
+        }
 
         try {
-            const response = await attendanceReport(
+            const response = await assessmentReport(
+                group,
                 startDate && dayjs(startDate).format("YYYY-MM-DD"),
                 endDate && dayjs(endDate).format("YYYY-MM-DD"),
-                group,
                 student
             );
             setReportData(response);
@@ -118,6 +185,7 @@ export default function AttendanceReportDialog({ open, onClose }) {
         }
     };
 
+
     const resetFields = (onlyFilters) => {
         setGroup("");
         setStudent("");
@@ -125,7 +193,8 @@ export default function AttendanceReportDialog({ open, onClose }) {
         setStartDate(null);
         setEndDate(null);
         setErrors({});
-        if (!onlyFilters) { setReportData([]); }
+
+        if (!onlyFilters) { setReportData([]); setReportRequested(false); }
     };
 
     const handleClose = () => {
@@ -136,10 +205,8 @@ export default function AttendanceReportDialog({ open, onClose }) {
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle className="flex justify-between items-center">
-                Asistencia
-                <IconButton onClick={handleClose}>
-                    <Close />
-                </IconButton>
+                Reporte de Tareas y Evaluaciones
+                <IconButton onClick={handleClose}><Close /></IconButton>
             </DialogTitle>
 
             <DialogContent className="space-y-4">
@@ -255,40 +322,34 @@ export default function AttendanceReportDialog({ open, onClose }) {
                     <div className="flex justify-center py-6">
                         <CircularProgress />
                     </div>
-                ) : (
-                    <>
-
-                        {reportData && (Array.isArray(reportData) ? (
-                            reportData.length > 0 && (
-                                //vista general de asistencia por grupo
-                                <AttendanceReportTableGroup
-                                    reportData={reportData}
-                                />
-                            )
+                ) : reportRequested ? (
+                    reportData && reportData.length > 0 ? (
+                        isAlumnoDetalle ? (
+                            <AssesmentReportStudentView reportData={reportData} />
                         ) : (
-                            //vista detallada de asistencia por alumno
-                            <AttendanceReportStudent
-                                reportData={reportData}
-                            />
-                        ))}
-
-                    </>
-                )}
+                            <AssesmentReportGroupView reportData={reportData} />
+                        )
+                    ) : (
+                        <div className="text-center text-gray-500 mt-6">
+                            No se encontraron resultados para los filtros seleccionados.
+                        </div>
+                    )
+                ) : null}
 
             </DialogContent>
 
             <DialogActions className="px-6 pb-4">
-                <Button onClick={handleClose} color="inherit">
-                    Cancelar
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={handleGenerate}
-                    disabled={loading}
-                >
-                    Generar Reporte
-                </Button>
+                {/* <ExportButtons
+                    disabled={!reportData}
+                    data={reportData}
+                    filename={`reporte_evaluaciones_${isAlumnoDetalle ? "alumno" : "grupo"}`}
+                    type={isAlumnoDetalle ? "detalle_alumno" : "grupo"}
+                /> */}
+                <Button onClick={handleClose}>Cancelar</Button>
+                <Button variant="contained" onClick={handleGenerate}>Generar Reporte</Button>
             </DialogActions>
         </Dialog>
     );
-}
+};
+
+export default AssesmentReportDialog;

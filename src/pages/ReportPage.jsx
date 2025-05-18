@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Grid, Typography, Box, IconButton, Select, MenuItem, useTheme } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {  Box} from '@mui/material';
 import clsx from 'clsx';
 import CardTask from '@components/molecules/CardTask';
 import { getTasks } from '@services/taskService';
 import AttendanceReportDialog from '@components/organisms/AttendanceReportDialog';
-import HomeworkReportDialog from '@components/organisms/HomeWorkReportDialog';
 import PerformanceReportDialog from '@components/organisms/PerformanceReportDialog';
 import { ROUTES } from '@libs/constants/routes';
+import AssesmentReportDialog from '@components/organisms/AssesmentReportDialog';
 
 const reportes = [
     { id: 1, nombre: 'Asistencia', color: 'bg-green-500', icono: '✅' },
@@ -48,7 +47,6 @@ const ReportPage = () => {
         try {
             const { tasks } = await getTasks(undefined, undefined, undefined, 3);;
             setTasks(tasks);
-            console.log(tasks);
         } catch (error) {
             console.error("Error al obtener tareas:", error);
         } finally {
@@ -80,13 +78,20 @@ const ReportPage = () => {
                             <Box
                                 key={id}
                                 onClick={() => abrirDialogReporte(nombre)}
-                                className={clsx(" shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 hover:bg-[#F25019] hover:text-white cursor-pointer")}
+                                className={clsx(
+                                    "shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 cursor-pointer"
+                                )}
                                 sx={[
                                     (theme) => ({
                                         backgroundColor: "white",
+                                        color: "inherit",
+                                        '&:hover': {
+                                            backgroundColor: '#F25019',
+                                            color: 'white',
+                                        },
                                     }),
                                     (theme) =>
-                                        theme.applyStyles('dark', {
+                                        theme.applyStyles?.('dark', {
                                             backgroundColor: 'black',
                                         }),
                                 ]}
@@ -106,22 +111,14 @@ const ReportPage = () => {
                             }),
                             (theme) =>
                                 theme.applyStyles('dark', {
-                                    backgroundColor: ['black'],
+                                    backgroundColor: 'black',
                                 }),
                         ]}
                     >
                         <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
                         <div className="space-y-4 rounded-xl py-2">
                             {tasks.map((item) => (
-                                // <button
-                                //   key={id}
-                                //   onClick={() => irATarea(id)}
-                                //   className="w-full text-black hover:bg-[#F25019] hover:text-white text-left rounded-lg p-4 shadow transition-colors duration-200 bg-[#333]"
-                                // >
-                                //   <p className="text-lg font-medium">{titulo}</p>
-                                //   <p className="text-sm">{new Date(fecha).toLocaleDateString()}</p>
-                                // </button>
-                                <CardTask taskData={item} onClickCard={irATarea} />
+                                <CardTask key={item._id} taskData={item} onClickCard={irATarea} />
                             ))}
                         </div>
                     </Box>
@@ -133,7 +130,7 @@ const ReportPage = () => {
                 onClose={() => setOpenAsistenciaDialog(false)}
             />
 
-            <HomeworkReportDialog
+            <AssesmentReportDialog
                 open={openTareasDialog}
                 onClose={() => setOpenTareasDialog(false)}
             />
