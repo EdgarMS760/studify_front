@@ -79,6 +79,8 @@ const ReportPage = () => {
                     <div className="space-y-6">
                         {reportes.map(({ id, nombre, color, icono }) => (
                             <Box
+                                key={id}
+                                onClick={() => abrirDialogReporte(nombre)}
                                 className={clsx(
                                     "shadow-lg rounded-2xl p-6 flex items-center gap-4 transition-colors duration-200 cursor-pointer"
                                 )}
@@ -97,7 +99,6 @@ const ReportPage = () => {
                                         }),
                                 ]}
                             >
-
                                 <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl ${color}`}>
                                     {icono}
                                 </div>
@@ -120,13 +121,13 @@ const ReportPage = () => {
                         <h2 className={"text-xl font-semibold mb-4"}>Últimas Tareas</h2>
                         <div className="space-y-4 rounded-xl py-2">
                             {tasks.map((item) => (
-                                <CardTask key={item.id} taskData={item} onClickCard={irATarea} />
+                                <CardTask key={item._id} taskData={item} onClickCard={irATarea} />
                             ))}
                         </div>
                     </Box>
                 </div>
 
-            </Box >
+            </Box>
             <AttendanceReportDialog
                 open={openAsistenciaDialog}
                 onClose={() => setOpenAsistenciaDialog(false)}
