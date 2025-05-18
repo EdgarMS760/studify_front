@@ -1,19 +1,17 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Box, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
-import { getTasksToCalendar } from "../services/taskService";
+import { getTasksToCalendar } from "@services/taskService";
 
 const CalendarPage = () => {
     const navigate = useNavigate();
-    const theme = useTheme();
     const [tasks, setTasks] = useState([]);
     const calendarRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const fetchTasks = async (month, year) => {
-        console.log("Fetching tasks for month:", month, "year:", year);
         //setLoading(true);
         try {
             const response = await getTasksToCalendar(month, year);
@@ -31,7 +29,6 @@ const CalendarPage = () => {
             const currentDate = calendarApi.getDate(); // Fecha central de la vista
             const month = currentDate.getMonth() + 1;
             const year = currentDate.getFullYear();
-            console.log("Mes visible:", month, "Año:", year);
             fetchTasks(month, year);
         }
     };
