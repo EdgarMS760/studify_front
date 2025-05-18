@@ -33,3 +33,20 @@ export const assessmentReport = async (grupo_id, fecha_inicio = null, fecha_fin 
     throw error;
   }
 }
+
+export const performanceReport = async (grupo_id=null, fecha_inicio = null, fecha_fin = null) => {
+  try {
+    const token = localStorage.getItem('token_studify');
+    if (!token) throw new Error("Falta token");
+    const response = await axiosInstance.get(`reports/desempeno`, {
+      params: { fecha_inicio, fecha_fin, grupo_id },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching performance report:", error);
+    throw error;
+  }
+}

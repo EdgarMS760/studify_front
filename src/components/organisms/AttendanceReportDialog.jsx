@@ -126,9 +126,6 @@ export default function AttendanceReportDialog({ open, onClose }) {
         }
     };
 
-    const handleExportPDF = () => console.log("Exportar PDF");
-    const handleExportExcel = () => console.log("Exportar Excel");
-
     const resetFields = (onlyFilters) => {
         setGroup("");
         setStudent("");
@@ -256,19 +253,19 @@ export default function AttendanceReportDialog({ open, onClose }) {
 
                     />
                 </div>
+                <div className="flex justify-center items-center mb-2">
 
+                    <div className="flex gap-2 mb-2">
+                        <Button variant="contained" onClick={() => resetFields(true)}>Borrar Filtros</Button>
+                    </div>
+                </div>
                 {loading ? (
                     <div className="flex justify-center py-6">
                         <CircularProgress />
                     </div>
                 ) : (
                     <>
-                        <div className="flex justify-center items-center mb-2">
 
-                            <div className="flex gap-2 mb-2">
-                                <Button variant="contained" onClick={() => resetFields(true)}>Borrar Filtros</Button>
-                            </div>
-                        </div>
                         {reportData && (Array.isArray(reportData) ? (
                             reportData.length > 0 && (
                                 //vista general de asistencia por grupo
