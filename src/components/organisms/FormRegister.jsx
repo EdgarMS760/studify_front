@@ -5,7 +5,7 @@ import { useSnackbar } from '@libs/store/SnackbarContext';
 import { fileToBase64 } from '@libs/helpers/fileToBase64';
 import { storage } from '@services/firebaseConfig';
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
-import { uploadImageAndGetUrl,deleteImage } from '@libs/helpers/firebaseUtils';
+import { uploadImageAndGetUrl, deleteImage } from '@libs/helpers/firebaseUtils';
 
 const FormRegister = ({ onToggle }) => {
 
@@ -106,6 +106,7 @@ const FormRegister = ({ onToggle }) => {
         const fetchAvatars = async () => {
             const cached = localStorage.getItem('avatarsStudify');
             if (cached) {
+                console.log("Avatares desde cache", JSON.parse(cached));
                 setAvatars(JSON.parse(cached));
                 return;
             }
@@ -129,8 +130,14 @@ const FormRegister = ({ onToggle }) => {
     return (
         <Box
             component="form"
-
-
+            sx={{
+                maxWidth: 900,
+                margin: '0 auto',
+                padding: 2,
+                height: '100vh',
+                overflowY: 'auto', 
+                boxSizing: 'border-box',
+            }}
         >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

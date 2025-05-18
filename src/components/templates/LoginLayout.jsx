@@ -9,7 +9,7 @@ const LoginLayout = () => {
   const bgColor = theme.palette.mode === 'dark' ? 'bg-neutral-800' : 'bg-white';
   return (
     <div className={clsx("flex flex-col overflow-hidden min-h-full", bgColor)}>
-      <div className={clsx("p-6 rounded-lg shadow-md text-center", bgColor)}>
+      <div className={clsx("mt-6 rounded-lg shadow-md text-center", bgColor)}>
         <img
           src="/Logo.png"
           alt="Studify Logo"
