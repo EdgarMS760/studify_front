@@ -15,7 +15,7 @@ import theme from '@styles/Theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useSessionAuth } from '@libs/hooks/useSessionAuth';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Avatar, Typography, Tooltip, Popover, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Avatar, Typography, Tooltip, Popover, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, useMediaQuery } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuth } from '@libs/store/AuthProvider';
@@ -178,24 +178,23 @@ const MainLayout = () => {
 
     function userSessionLayout() {
         const { mode, setMode } = useColorScheme();
+        const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-        const handleThemeChange = useCallback(
-            (event) => {
-                setMode(event.target.value);
-            },
-            [setMode],
-        );
+        const getEffectiveMode = () => {
+            if (mode === 'system') {
+                return prefersDarkMode ? 'dark' : 'light';
+            }
+            return mode;
+        };
+        const [isDarkMode, setIsDarkMode] = useState(getEffectiveMode() === 'dark');
 
-        const [isDarkMode, setIsDarkMode] = useState(mode === 'dark');
-        
         useEffect(() => {
-            setIsDarkMode(mode === 'dark');
-        }, [mode]);
+            setIsDarkMode(getEffectiveMode() === 'dark');
+        }, [mode, prefersDarkMode]);
 
         const handleToggle = useCallback((event) => {
             const newMode = event.target.checked ? 'dark' : 'light';
             setMode(newMode);
-            setIsDarkMode(event.target.checked);
         }, [setMode]);
 
         const [anchorEl, setAnchorEl] = useState(null);
@@ -229,8 +228,8 @@ const MainLayout = () => {
                         (theme) =>
                             theme.applyStyles('dark', {
                                 '&:hover': {
-                                backgroundColor: theme.vars.palette.secondary.main,
-                            },
+                                    backgroundColor: theme.vars.palette.secondary.main,
+                                },
                             }),
                     ]}
                 >
