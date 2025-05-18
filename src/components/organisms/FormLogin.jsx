@@ -40,10 +40,11 @@ const FormLogin = ({ onToggle }) => {
 
 
     return (
-        <Box className=" flex flex-col overflow-hidden min-h-full"
+        <Box className="p-3"
             sx={[
                 (theme) => ({
                     backgroundColor: "white",
+                    height: '100vh',
                 }),
                 (theme) =>
                     theme.applyStyles('dark', {
@@ -57,7 +58,9 @@ const FormLogin = ({ onToggle }) => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <form onSubmit={handleSubmit}>
+            <Box component="form"
+                onSubmit={handleSubmit}
+            >
                 <TextField
                     margin='normal'
                     required
@@ -128,7 +131,7 @@ const FormLogin = ({ onToggle }) => {
                 >
                     Iniciar Sesion
                 </Button>
-            </form>
+            </Box>
 
             <Typography variant="body2" sx={[
                 (theme) => ({
