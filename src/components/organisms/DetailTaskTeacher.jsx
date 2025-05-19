@@ -87,7 +87,6 @@ const DetailTaskTeacher = () => {
     };
     const handleCloseModalEdit = () => {
         if (originalTask) {
-            console.log("Restaurando tarea original:", originalTask);
             setTaskEdit(originalTask);
         }
 
@@ -108,7 +107,6 @@ const DetailTaskTeacher = () => {
         try {
             const response = await updateTask(taskId, taskData);
             const updatedTask = response.task;
-            console.log("Updated task:", updatedTask);
             setOriginalTask({
                 titulo: updatedTask.titulo,
                 descripcion: updatedTask.descripcion,
@@ -126,7 +124,6 @@ const DetailTaskTeacher = () => {
 
     useEffect(() => {
         if (openModalEdit) {
-            console.log("originalTask", originalTask);
             handleCloseModalEdit();
         }
     }, [originalTask]);
