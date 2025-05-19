@@ -9,11 +9,11 @@ const UserPreview = ({ user }) => {
   //const { name, image } = user;
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-end space-x-2">
       <MiniImg src={user.image} alt="test"/>
       <TextCardAtom text={user.name} className="text-secondaryHover text-sm"/>
 
-    </>
+    </div>
   );
 }
 
