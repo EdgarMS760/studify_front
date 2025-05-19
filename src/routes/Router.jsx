@@ -15,6 +15,7 @@ import SettingsPage from "@pages/SettingsPage";
 import GroupsPage from "@pages/GroupsPage";
 import ReportPage from "@pages/ReportPage";
 import NotFoundPage from "@pages/NotFoundPage";
+import ChatBotPage from "@pages/ChatBotPage";
 
 export default function Router() {
     return (
@@ -42,6 +43,7 @@ export default function Router() {
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="homework" element={<TasksPage />} />
                 <Route path="settings" element={<SettingsPage />} />
+                <Route path="studimate" element={<ChatBotPage />} />
             </Route>
 
             <Route
