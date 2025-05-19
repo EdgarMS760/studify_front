@@ -1,12 +1,53 @@
-# React + Vite
+# 📚 Studify
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Studify es una plataforma educativa interactiva diseñada especialmente para niños. Su objetivo principal es acompañar y guiar el aprendizaje de forma personalizada mediante un asistente virtual que fomenta el pensamiento crítico, el descubrimiento y la autonomía.
 
-Currently, two official plugins are available:
+## ✨ Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 👩‍🏫 **Chatbot educativo** con personalidad de maestro que guía paso a paso sin dar respuestas directas.
+- 🧠 **Aprendizaje guiado y motivador**, enfocado en habilidades cognitivas y resolución de problemas.
+- 📊 **Reportes de desempeño** por grupo y por estudiante.
+- 📁 **Gestión de tareas y entregas** con seguimiento de entregas a tiempo y calificaciones.
+- 🗂️ **Sesiones de conversación activas e inactivas** para llevar el registro del aprendizaje.
+- 🔮 Futuro: análisis de conversaciones para generar **recomendaciones personalizadas** y alertas.
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologías
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+ **Firebase Storage** para carga y gestión de imágenes
+ 
+### Frontend
+- **React** con Vite
+- **Material UI** para la interfaz
+- **Context API** y **Hooks** para el manejo de estado
+- **Axios** para peticiones HTTP
+
+### Backend [Link a repositorio](https://github.com/Ponche03/Studify)
+- **Node.js** + **Express**
+- **MongoDB** con Mongoose
+- **JWT** para autenticación
+
+### IA
+- **OpenAI GPT-3.5** para el asistente educativo.
+
+
+## 🧑‍💻 Créditos
+
+Este proyecto está siendo desarrollado por **Edgar Martinez, Roberto Ponce, Jose De La Cruz, Angel Jordan** como parte de un portafolio educativo, con enfoque en diseño centrado en el usuario, accesibilidad y herramientas tecnológicas modernas.
+
+
+---
+
+## 🚀 Próximos Pasos
+
+- [X] Integrar autenticación con Google.
+- [ ] Implementar recomendaciones inteligentes basadas en conversaciones.
+- [ ] Añadir panel para docentes y administradores.
+
+---
+
+## 📬 Contacto
+
+Si deseas saber más sobre el proyecto o colaborar, puedes escribirme a **edgarsandoval685@gmail**.
+
+
+
