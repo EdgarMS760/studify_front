@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import HeadBarGroup from "@components/organisms/HeadBarGroup";
 import clsx from "clsx";
 import { Box, useMediaQuery } from "@mui/material";
@@ -13,6 +13,7 @@ const GroupLayout = () => {
     const [infoGrupo, setInfoGrupo] = useState({});
     const isLargeScreen = useMediaQuery('(min-width:1348px)');
     const [showSideBar, setShowSideBar] = useState(true);
+    const navigate = useNavigate();
     const fetchGroups = async () => {
         setLoading(true);
         try {
@@ -34,6 +35,9 @@ const GroupLayout = () => {
             setInfoGrupo(group);
         } catch (error) {
             console.error("Error al obtener grupos:", error);
+            if (error.status === 403) {
+                navigate("/notfound");
+            }
         }
         finally {
             setLoading(false);
@@ -44,10 +48,10 @@ const GroupLayout = () => {
             setGrupos([]);
         }
     }, [isLargeScreen]);
-    
+
 
     useEffect(() => {
-        if (isLargeScreen ) {
+        if (isLargeScreen) {
             fetchGroups();
         }
     }, [isLargeScreen, id]);
@@ -59,7 +63,7 @@ const GroupLayout = () => {
             setShowSideBar(false);
         }
     }, [grupos, isLargeScreen]);
-    
+
     useEffect(() => {
         fetchGroupById();
     }, [id]);
@@ -84,12 +88,12 @@ const GroupLayout = () => {
                 {showSideBar && (
 
                     <div className="hidden [@media(min-width:1348px)]:block h-full">
-                    <SideBarGroup items={grupos} />
-                </div>
+                        <SideBarGroup items={grupos} />
+                    </div>
                 )}
 
                 <div className="flex flex-col h-full w-full">
-                    <HeadBarGroup info={infoGrupo}  />
+                    <HeadBarGroup info={infoGrupo} />
 
                     <div className="flex-1 overflow-y-auto">
                         <Outlet />

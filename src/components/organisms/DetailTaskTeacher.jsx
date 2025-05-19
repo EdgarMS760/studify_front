@@ -3,19 +3,20 @@ import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
 import CardStudentTask from '@components/molecules/CardStudentTask';
 import { useSnackbar } from '@libs/store/SnackbarContext';
-import FilePreview from './FilePreview';
+import FilePreview from '@components/organisms/FilePreview';
 import SliderGrades from '@components/atoms/SliderGrades';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams } from 'react-router';
 import { ROUTES } from '@libs/constants/routes';
 import { getDetailTask, updateTask } from '@services/taskService';
-import { formatToISOString } from '@libs/helpers/dateUtils';
-import { setGradeToTask } from '../../services/taskService';
+import { setGradeToTask } from '@services/taskService';
+import { deleteTask } from '@services/taskService';
+
 const DetailTaskTeacher = () => {
     const { showSnackbar } = useSnackbar();
     const [selected, setSelected] = useState('');
@@ -25,66 +26,24 @@ const DetailTaskTeacher = () => {
         { value: "desc", label: 'Mas Antiguos primero' }
     ];
     const [errors, setErrors] = useState({});
-
-
-    const students = [
-        {
-            id: 1, name: "Juan perez perez", status: "notDelivered", fileUrl: '/imageTest.jpg',
-            fileType: 'image'
-        },
-        {
-            id: 2, name: "Pedro perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 3, name: "Maria perez perez", status: "reviewed", fileUrl: '/example.pdf',
-            fileType: 'pdf'
-        },
-        {
-            id: 4, name: "Jose perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 5, name: "Ana perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 6, name: "Luis perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 7, name: "Laura perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 8, name: "Carlos perez perez", status: "delivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 9, name: "Sofia perez perez", status: "reviewed", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-        {
-            id: 10, name: "Andres perez perez", status: "notDelivered", fileUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
-            fileType: 'video'
-        },
-    ];
+    const [taskEdit, setTaskEdit] = useState({
+        titulo: '',
+        descripcion: '',
+        fecha: dayjs(),
+        puntos: 0,
+    });
+    const [originalTask, setOriginalTask] = useState(null);
+const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const handleSelectChange = (event) => {
         setSelected(event.target.value);
     };
 
     const [selectedStudentId, setSelectedStudentId] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
-    const selectedStudent = students.find((s) => s.id === selectedStudentId);
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileType, setFileType] = useState(null);
 
     const [title, setTitle] = useState("");
-    const [titleEdit, setTitleEdit] = useState("");
-    const [description, setDescription] = useState("");
-    const [valueTaskEdit, setValueTaskEdit] = useState(0);
     const [valueTask, setValueTask] = useState(0);
     const [submissions, setSubmissions] = useState([]);
     const [isGraded, setIsGraded] = useState(false);
@@ -92,17 +51,32 @@ const DetailTaskTeacher = () => {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!titleEdit.trim()) newErrors.titleEdit = 'El título es obligatorio';
-        if (!description.trim()) newErrors.description = 'La descripción es obligatoria';
-        if (!valueCalendar) newErrors.valueCalendar = 'La fecha es obligatoria';
-        if (!valueTime) newErrors.valueTime = 'La hora es obligatoria';
-        if (!valueTaskEdit || isNaN(valueTaskEdit) || Number(valueTaskEdit) <= 0) {
-            newErrors.valueTask = 'El valor debe ser un número mayor a 0';
+        if (!taskEdit.titulo.trim()) newErrors.titulo = 'El título es obligatorio';
+        if (!taskEdit.descripcion.trim()) newErrors.descripcion = 'La descripción es obligatoria';
+        if (!taskEdit.puntos || isNaN(taskEdit.puntos) || Number(taskEdit.puntos) <= 0) {
+            newErrors.puntos = 'Debe ser un número mayor a 0';
+        }
+
+        const now = dayjs();
+        if (!taskEdit.fecha) {
+            newErrors.fecha = 'La fecha es obligatoria';
+        } else if (taskEdit.fecha.isBefore(now, 'day')) {
+            newErrors.fecha = 'La fecha no puede ser anterior a hoy';
+        }
+
+        if (!taskEdit.fecha) {
+            newErrors.time = 'La hora es obligatoria';
+        } else if (
+            taskEdit.fecha.isSame(now, 'day') &&
+            taskEdit.fecha.isBefore(now.add(1, 'hour'))
+        ) {
+            newErrors.time = 'La hora debe ser al menos 1 hora después de la actual';
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
 
     const handleSelect = (submission) => {
         setSelectedStudentId(submission.id);
@@ -112,23 +86,49 @@ const DetailTaskTeacher = () => {
         setIsGraded(submission.calificacion != null);
     };
     const handleCloseModalEdit = () => {
+        if (originalTask) {
+            setTaskEdit(originalTask);
+        }
+
         setOpenModalEdit(false);
     };
     const handleEditTask = async () => {
         if (!validateForm()) return;
-        const finalTimestamp = formatToISOString(valueCalendar, valueTime);
+
+        const finalTimestamp = taskEdit.fecha.toISOString(); // `taskEdit.fecha` ya es un `dayjs`
+
         const taskData = {
-            titulo: titleEdit, descripcion: description,
+            titulo: taskEdit.titulo,
+            descripcion: taskEdit.descripcion,
             fecha_vencimiento: finalTimestamp,
-            puntos_totales: valueTaskEdit
+            puntos_totales: taskEdit.puntos,
+            group_id: id,
+        };
+
+        try {
+            const response = await updateTask(taskId, taskData);
+            const updatedTask = response.task;
+            setOriginalTask({
+                titulo: updatedTask.titulo,
+                descripcion: updatedTask.descripcion,
+                fecha: dayjs(updatedTask.fecha_vencimiento),
+                puntos: updatedTask.puntos_totales,
+            });
+            setTitle(updatedTask.titulo);
+            showSnackbar(response.message, "success");
+        } catch (error) {
+            console.error("Error al actualizar tarea:", error);
+            showSnackbar("Error al actualizar tarea", "error");
         }
-        const response = await updateTask(taskId, taskData);
-        showSnackbar(response.message, "success");
-        handleCloseModalEdit();
+
     };
 
-    const [valueCalendar, setValueCalendar] = useState(dayjs('2022-04-17'));
-    const [valueTime, setValueTime] = useState(dayjs('2022-04-17T23:59'));
+    useEffect(() => {
+        if (openModalEdit) {
+            handleCloseModalEdit();
+        }
+    }, [originalTask]);
+
     const theme = useTheme()
     const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
     const navigate = useNavigate();
@@ -141,12 +141,16 @@ const DetailTaskTeacher = () => {
         try {
             setLoading(true);
             const { titulo, descripcion, fecha_vencimiento, puntos_totales, entregas } = await getDetailTask(taskId);
+
+            const task = {
+                titulo,
+                descripcion,
+                fecha: dayjs(fecha_vencimiento),
+                puntos: puntos_totales,
+            };
+            setTaskEdit(task);
+            setOriginalTask(task);
             setTitle(titulo);
-            setTitleEdit(titulo);
-            setDescription(descripcion);
-            setValueCalendar(dayjs(fecha_vencimiento));
-            setValueTime(dayjs(fecha_vencimiento));
-            setValueTaskEdit(puntos_totales);
             setSubmissions(entregas);
         } catch (error) {
             console.error("Error fetching task details:", error);
@@ -155,14 +159,23 @@ const DetailTaskTeacher = () => {
             setLoading(false);
         }
     }
-
+    const handleDeleteTask = async () => {
+        try {
+            const response = await deleteTask(id, taskId);
+            showSnackbar(response.message, "success");
+            navigate(ROUTES.GROUP_TASKS(id));
+            setConfirmDeleteOpen(false);
+        } catch (error) {
+            console.error("Error al eliminar la tarea:", error);
+            showSnackbar("Error al eliminar la tarea", "error");
+        }
+    }
     const handleSetGrade = async () => {
         if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
             showSnackbar("La calificación debe ser mayor a 0", "error");
             return;
         }
-
-        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId);
+        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId,id);
 
         showSnackbar(message, "success");
 
@@ -174,7 +187,7 @@ const DetailTaskTeacher = () => {
             )
         );
     };
-
+    
 
     useEffect(() => {
         fetchDetailTask();
@@ -247,11 +260,7 @@ const DetailTaskTeacher = () => {
                                 </div></>}
                         </div>
                     </div>
-                    {/* <FullscreenFileModal
-                open={modalOpen}
-                onClose={() => setModalOpen(false)}
-                fileUrl={selectedStudent?.file}
-            /> */}
+
                     <Dialog open={openModalEdit} onClose={handleCloseModalEdit} fullWidth maxWidth="sm">
                         <DialogTitle>Editar Tarea</DialogTitle>
 
@@ -259,64 +268,79 @@ const DetailTaskTeacher = () => {
                             <div className='flex flex-col gap-4 mt-2'>
 
                                 <TextField
-                                    value={titleEdit}
-                                    onChange={(e) => setTitleEdit(e.target.value)}
+                                    value={taskEdit.titulo}
+                                    onChange={(e) => setTaskEdit({ ...taskEdit, titulo: e.target.value })}
                                     fullWidth
                                     label="Título de la tarea..."
                                     variant="outlined"
-                                    error={!!errors.titleEdit}
-                                    helperText={errors.titleEdit}
+                                    error={!!errors.titulo}
+                                    helperText={errors.titulo}
                                 />
 
                                 <TextField
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    value={taskEdit.descripcion}
+                                    onChange={(e) => setTaskEdit({ ...taskEdit, descripcion: e.target.value })}
                                     fullWidth
-                                    id="outlined-basic"
                                     label="Descripción de la tarea..."
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    error={!!errors.description}
-                                    helperText={errors.description}
+                                    error={!!errors.descripcion}
+                                    helperText={errors.descripcion}
                                 />
 
                                 <TextCardAtom text="Fecha de entrega" className="text-lg" />
                                 <DatePicker
                                     label="Selecciona una fecha"
-                                    value={valueCalendar}
-                                    onChange={(newValue) => setValueCalendar(newValue)}
+                                    value={taskEdit.fecha}
+                                    onChange={(newValue) => setTaskEdit({ ...taskEdit, fecha: newValue })}
                                     slotProps={{
                                         textField: {
-                                            error: !!errors.valueCalendar,
-                                            helperText: errors.valueCalendar,
+                                            error: !!errors.fecha,
+                                            helperText: errors.fecha,
                                         },
                                     }}
                                 />
                                 <TimePicker
                                     label="Selecciona una hora"
-                                    value={valueTime}
-                                    onChange={(newValue) => setValueTime(newValue)}
+                                    value={taskEdit.fecha}
+                                    onChange={(newTime) => {
+                                        setTaskEdit((prev) => {
+                                            if (!newTime) {
+                                                return { ...prev, fecha: null };
+                                            }
+
+                                            if (prev.fecha) {
+                                                return {
+                                                    ...prev,
+                                                    fecha: prev.fecha.hour(newTime.hour()).minute(newTime.minute())
+                                                };
+                                            }
+                                            return {
+                                                ...prev,
+                                                fecha: newTime
+                                            };
+                                        });
+                                    }}
                                     slotProps={{
                                         textField: {
-                                            error: !!errors.valueTime,
-                                            helperText: errors.valueTime,
+                                            error: !!errors.time,
+                                            helperText: errors.time,
                                         },
                                     }}
                                 />
+
                                 <TextCardAtom text="Valor de la tarea" className="text-lg" />
                                 <FormControl className='sm:w-[15ch]' variant="outlined">
 
                                     <OutlinedInput
-                                        value={valueTaskEdit}
-                                        onChange={(e) => setValueTaskEdit(e.target.value)}
-                                        error={!!errors.valueTaskEdit}
+                                        value={taskEdit.puntos}
+                                        onChange={(e) => setTaskEdit({ ...taskEdit, puntos: e.target.value })}
+                                        error={!!errors.puntos}
                                         endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
-                                        aria-describedby="outlined-weight-helper-text"
-                                        inputProps={{ 'aria-label': 'puntos' }}
                                     />
-                                    {errors.valueTaskEdit && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.valueTaskEdit}</p>
+                                    {errors.puntos && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.puntos}</p>
                                     )}
 
                                 </FormControl>
@@ -324,12 +348,36 @@ const DetailTaskTeacher = () => {
                         </DialogContent>
 
                         <DialogActions>
-                            <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
-                            <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
+                            <div className="flex justify-between w-full">
+                                <div>
+                                    <ButtonAtom className='!bg-red-500 hover:!bg-red-800' onClick={() => setConfirmDeleteOpen(true)}>Eliminar</ButtonAtom>
+                                </div>
+                                <div className='flex gap-2'>
+                                    <ButtonAtom className='!bg-primary hover:!bg-primaryHover !font-bold' onClick={handleEditTask}>Actualizar</ButtonAtom>
+                                    <ButtonAtom onClick={handleCloseModalEdit} className="!bg-gray-500 hover:!bg-gray-600 !font-bold">Cancelar</ButtonAtom>
+                                </div>
+                            </div>
                         </DialogActions>
                     </Dialog>
                 </>
             )}
+            {/* Confirmation Dialog */}
+            <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)}>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Estás seguro de que deseas eliminar la tarea? Esta acción no se puede deshacer.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmDeleteOpen(false)} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleDeleteTask} color="error" variant="contained">
+                        Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

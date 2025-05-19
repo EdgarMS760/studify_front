@@ -18,21 +18,21 @@ import { useParams } from "react-router";
 export default function RemoveStudentsGroupDialog({ open, onClose, students, onRemove }) {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
-    const {id} = useParams();
+    const { id } = useParams();
     const handleDeleteClick = (student) => {
         setSelectedStudent(student);
         setConfirmOpen(true);
     };
 
-    const handleConfirmDelete =  async() => {
+    const handleConfirmDelete = async () => {
         if (selectedStudent) {
 
-             try {
-                   await deleteGroupStudent(id,selectedStudent._id);
-                  onRemove(selectedStudent._id);
-                } catch (error) {
-                  console.error("Error deleting student:", error);
-                }
+            try {
+                await deleteGroupStudent(id, selectedStudent._id);
+                onRemove(selectedStudent._id);
+            } catch (error) {
+                console.error("Error deleting student:", error);
+            }
         }
         setConfirmOpen(false);
         setSelectedStudent(null);

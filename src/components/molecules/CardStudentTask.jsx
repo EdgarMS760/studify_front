@@ -70,14 +70,14 @@ const CardStudentTask = ({ data, onSelect, isSelected }) => {
                 })}
                 isHighlighted={true}
             />
-            <div className='lg:hidden '>
+            {/* <div className='lg:hidden '>
 
                 <Tooltip title="Ver Archivo">
                     <IconButton aria-label="viewFile" color="secondary">
                         <VisibilityIcon />
                     </IconButton>
                 </Tooltip>
-            </div>
+            </div> */}
         </Box>
     );
 };

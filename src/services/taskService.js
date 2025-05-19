@@ -24,7 +24,7 @@ export const postTask = async (newTask) => {
     }
 };
 
-export const getTasks = async (group_id, status="Abierta", pagina = 1, limit = 10) => {
+export const getTasks = async (group_id, titulo, status="Abierta", orden = "desc", pagina = 1, limit = 10) => {
     try {
         const token = localStorage.getItem('token_studify');
 
@@ -34,7 +34,10 @@ export const getTasks = async (group_id, status="Abierta", pagina = 1, limit = 1
             params: {
                 pagina,
                 status,
-                group_id
+                group_id,
+                orden,
+                limit,
+                titulo
             },
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -47,7 +50,27 @@ export const getTasks = async (group_id, status="Abierta", pagina = 1, limit = 1
         throw error;
     }
 }
+export const deleteTask = async (group_id,taskId) => {
+    try {
+        const token = localStorage.getItem('token_studify');
 
+        if ( !token) throw new Error("Falta token");
+
+        const response = await axiosInstance.delete(
+            `/tasks/${group_id}/delete/${taskId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error("Error al eliminar la tarea:", error);
+        throw error;
+    }
+}
 export const getDetailTask = async (taskId) => {
     try {
         const token = localStorage.getItem('token_studify');
@@ -89,7 +112,7 @@ export const updateTask = async (taskId, updatedTask) => {
     }
 }
 
-export const setGradeToTask = async (taskId, newGrades, alumno_id) => {
+export const setGradeToTask = async (taskId, newGrades, alumno_id,group_id) => {
     try {
         const token = localStorage.getItem('token_studify');
 
@@ -99,7 +122,8 @@ export const setGradeToTask = async (taskId, newGrades, alumno_id) => {
             `/tasks/${taskId}/gradeTask`,
             {
                 alumno_id,
-                calificacion: newGrades
+                calificacion: newGrades,
+                group_id
             },
             {
                 headers: {
@@ -154,8 +178,14 @@ export const deleteUploadTask = async (taskId) => {
         return response.data;
 
     } catch (error) {
-        console.error("Error al eliminar la tarea:", error);
-        throw error;
+        const status = error?.response?.status;
+        const backendMessage = error?.response?.data?.message;
+
+        if ([400, 403, 404, 409].includes(status)) {
+            throw { critical: false, message: backendMessage || "Error de validación" };
+        } else {
+            throw { critical: true, message: "Error inesperado al registrar la asistencia" };
+        }
     }
 }
 

@@ -13,20 +13,18 @@ const TasksPage = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [taskStatus, setTaskStatus] = useState('');
+const [taskStatus, setTaskStatus] = useState('Abierta');
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 400);
+  const [orden, setOrden] = useState('');
   const handlePageChange = (event, value) => {
     setPage(value);
-    fetchTasks(taskStatus, value);
+    fetchTasks(taskStatus, orden, value);
   };
 
   const [tasks, setTasks] = useState([]);
 
-  const handleStatusTask = (status) => {
-    fetchTasks(status);
 
-  }
   const navigate = useNavigate();
   const { id: groupId } = useParams();
   const location = useLocation();
@@ -35,14 +33,16 @@ const TasksPage = () => {
   };
   const isGeneralPage = location.pathname === ROUTES.HOMEWORK;
 
-  const fetchTasks = async (status, pagina = 1) => {
+
+  const fetchTasks = async (status = taskStatus, ordenValue = orden, pagina = 1,query='',) => {
     setLoading(true);
     try {
-      const { tasks, totalPages, page } = await getTasks(groupId, status, pagina);
+      const { tasks, totalPages, page } = await getTasks(groupId,query, status, ordenValue, pagina);
       setTasks(tasks);
       setTotalPages(totalPages || 1);
       setPage(page || 1);
-      setTaskStatus(status || '');
+      setTaskStatus(status);
+      setOrden(ordenValue);
     } catch (error) {
       console.error("Error al obtener tareas:", error);
     } finally {
@@ -50,13 +50,26 @@ const TasksPage = () => {
     }
   };
 
+  const handleStatusTask = (newStatus) => {
+    fetchTasks(newStatus, orden, 1); // Siempre pasar ambos valores
+  };
+
+  const handleOrderChange = (newOrder) => {
+    fetchTasks(taskStatus, newOrder, 1);
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
 
+const handleSearchChange = (query) => {
+  fetchTasks(taskStatus, orden, 1, query);
+};
+
+
   return (
     <Box>
-      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} isGeneralPage={isGeneralPage} />
+      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} onCreateTask={() => fetchTasks()} onSearchChange={handleSearchChange} onOrderChange={handleOrderChange} isGeneralPage={isGeneralPage} />
       <Box className="p-5" sx={[
         (theme) => ({
           backgroundColor: "white",

@@ -12,7 +12,7 @@ import { getFileType } from '@libs/helpers/filesUtils';
 import { uploadImageAndGetUrl, deleteImage,deleteImageByUrl } from '@libs/helpers/firebaseUtils';
 import { uploadTask } from "@services/taskService";
 import { useSnackbar } from '@libs/store/SnackbarContext';
-import { deleteUploadTask } from "../../services/taskService";
+import { deleteUploadTask } from "@services/taskService";
 const DetailTaskStudent = () => {
     const { showSnackbar } = useSnackbar();
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -118,8 +118,7 @@ const DetailTaskStudent = () => {
             fetchDetailTask();
         } catch (error) {
             console.error("Error deleting task delivery:", error);
-            const message = error.response?.data?.error || "Error al deshacer la entrega.";
-            showSnackbar(message, "error");
+            showSnackbar(error.message, "error");
         }
     };
     return (

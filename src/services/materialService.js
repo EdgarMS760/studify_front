@@ -51,13 +51,13 @@ export const getMaterials = async (group_id, search = "", page = 1, limit = 10) 
     }
 }
 
-export const deleteMaterial = async (materialId) => {
+export const deleteMaterial = async (grupo_id,materialId) => {
     try {
         const token = localStorage.getItem('token_studify');
 
         if (!token) throw new Error("Falta token");
 
-        const response = await axiosInstance.delete(`/classmat/${materialId}`, {
+        const response = await axiosInstance.delete(`/classmat/${grupo_id}/delete/${materialId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
