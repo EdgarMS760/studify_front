@@ -5,6 +5,8 @@ import Router from '@routes/Router';
 import { SnackbarProvider } from '@libs/store/SnackbarContext';
 import { AuthProvider } from '@libs/store/AuthProvider';
 import { NavigationProvider } from '@libs/store/NavigationContext';
+import 'react-photo-view/dist/react-photo-view.css';
+
 function App() {
   return (
     <AuthProvider>

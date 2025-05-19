@@ -6,12 +6,15 @@ import { useSessionAuth } from "@libs/hooks/useSessionAuth";
 import SendIcon from '@mui/icons-material/Send';
 import { createGroupPost } from "@libs/helpers/firebaseUtils";
 import { useParams } from "react-router";
+import { useAuth } from '@libs/store/AuthProvider';
 
 const FeedGroupPage = () => {
     const theme = useTheme();
     const [text, setText] = useState("");
     const { id } = useParams();
-const { session} = useSessionAuth();
+    const { session } = useSessionAuth();
+    const { user } = useAuth();
+    const isTeacher = user?.rol === "maestro";
     const handleSend = async () => {
         if (!text.trim()) return;
         try {
@@ -50,61 +53,65 @@ const { session} = useSessionAuth();
                 <MessagesFeed groupId={id} />
             </div>
 
-            <Box className={clsx(
-                "p-3"
-            )}
-                sx={[
-                    (theme) => ({
-                        backgroundColor: theme.vars.palette.secondary.main,
-                    }),
-                    (theme) =>
-                        theme.applyStyles('dark', {
-                            backgroundColor: "black",
+
+            {isTeacher && (
+
+
+                <Box className={clsx(
+                    "p-3"
+                )}
+                    sx={[
+                        (theme) => ({
+                            backgroundColor: theme.vars.palette.secondary.main,
                         }),
-                ]}
-            >
-                <TextField
-                    fullWidth
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    label="Escribe un mensaje..."
-                    multiline
-                    maxRows={4}
-                    variant="filled"
-                    sx={
-                        [
-                            (theme) => ({
-                                "& .MuiFilledInput-root": {
-                                    backgroundColor: "#FFFFFF",
-                                    "&:hover": {
-                                        backgroundColor: "#e5e7eb",
-                                    }
-                                }
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                backgroundColor: "black",
                             }),
-                            (theme) =>
-                                theme.applyStyles('dark', {
+                    ]}
+                >
+                    <TextField
+                        fullWidth
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        label="Escribe un mensaje..."
+                        multiline
+                        maxRows={4}
+                        variant="filled"
+                        sx={
+                            [
+                                (theme) => ({
                                     "& .MuiFilledInput-root": {
-                                        backgroundColor: "#262626",
+                                        backgroundColor: "#FFFFFF",
                                         "&:hover": {
-                                            backgroundColor: "#334155",
+                                            backgroundColor: "#e5e7eb",
                                         }
-                                    },
+                                    }
                                 }),
-                        ]
-                    }
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Enviar" arrow>
-                                <SendIcon
-                                    onClick={handleSend}
-                                    className="cursor-pointer mb-5 text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-150"
-                                />
-                            </Tooltip>
-                        )
-                    }}
-                />
-            </Box>
+                                (theme) =>
+                                    theme.applyStyles('dark', {
+                                        "& .MuiFilledInput-root": {
+                                            backgroundColor: "#262626",
+                                            "&:hover": {
+                                                backgroundColor: "#334155",
+                                            }
+                                        },
+                                    }),
+                            ]
+                        }
+                        InputProps={{
+                            endAdornment: (
+                                <Tooltip title="Enviar" arrow>
+                                    <SendIcon
+                                        onClick={handleSend}
+                                        className="cursor-pointer mb-5 text-gray-500 hover:text-black transition-transform duration-300 ease-in-out hover:scale-150"
+                                    />
+                                </Tooltip>
+                            )
+                        }}
+                    />
+                </Box>)}
         </Box>
     );
 };

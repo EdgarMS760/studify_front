@@ -32,7 +32,7 @@ const AssesmentReportDialog = ({ open, onClose }) => {
     const [loadingStudents, setLoadingStudents] = useState(false);
     const [isAlumnoDetalle, setIsAlumnoDetalle] = useState(false);
     const [reportRequested, setReportRequested] = useState(false);
-
+    const [studentName, setStudentName] = useState("");
     const fetchGroupStudents = async (id) => {
         setLoadingStudents(true);
         try {
@@ -166,9 +166,14 @@ const AssesmentReportDialog = ({ open, onClose }) => {
         setReportRequested(true);
         if (student) {
             setIsAlumnoDetalle(true);
+            const alumno = students.find(a => a._id === student);
+            const nombre = alumno?.nombre || "Alumnooo";
+            setStudentName(nombre);
         } else {
             setIsAlumnoDetalle(false);
         }
+
+        console.log("Student", student);
 
         try {
             const response = await assessmentReport(
@@ -325,7 +330,7 @@ const AssesmentReportDialog = ({ open, onClose }) => {
                 ) : reportRequested ? (
                     reportData && reportData.length > 0 ? (
                         isAlumnoDetalle ? (
-                            <AssesmentReportStudentView reportData={reportData} />
+                            <AssesmentReportStudentView reportData={reportData} nameStudent={studentName} />
                         ) : (
                             <AssesmentReportGroupView reportData={reportData} />
                         )
