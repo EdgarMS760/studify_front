@@ -129,15 +129,8 @@ const FormRegister = ({ onToggle }) => {
 
     return (
         <Box
+            className='p-3'
             component="form"
-            sx={{
-                maxWidth: 900,
-                margin: '0 auto',
-                padding: 2,
-                height: '100vh',
-                overflowY: 'auto', 
-                boxSizing: 'border-box',
-            }}
         >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

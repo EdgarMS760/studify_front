@@ -40,17 +40,8 @@ const FormLogin = ({ onToggle }) => {
 
 
     return (
-        <Box className="p-3"
-            sx={[
-                (theme) => ({
-                    backgroundColor: "white",
-                    height: '100vh',
-                }),
-                (theme) =>
-                    theme.applyStyles('dark', {
-                        backgroundColor: theme.vars.palette.secondary.main,
-                    }),
-            ]}
+        <Box className=" flex flex-col overflow-hidden min-h-full p-2"
+            
         >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -58,9 +49,7 @@ const FormLogin = ({ onToggle }) => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <Box component="form"
-                onSubmit={handleSubmit}
-            >
+            <form onSubmit={handleSubmit}>
                 <TextField
                     margin='normal'
                     required
@@ -131,7 +120,7 @@ const FormLogin = ({ onToggle }) => {
                 >
                     Iniciar Sesion
                 </Button>
-            </Box>
+            </form>
 
             <Typography variant="body2" sx={[
                 (theme) => ({

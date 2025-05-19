@@ -68,32 +68,36 @@ export default function AttendanceReportDialog({ open, onClose }) {
         const newErrors = {};
 
         if (!group) newErrors.group = "El grupo es obligatorio";
-
+        setErrors(newErrors);
 
         if (startDate > endDate) {
             newErrors.startDate = "La fecha de inicio no puede ser mayor a la fecha de fin";
             newErrors.endDate = "La fecha de inicio no puede ser mayor a la fecha de fin";
             showSnackbar("La fecha de inicio no puede ser mayor a la fecha de fin", "error");
+            return false;
         }
 
         if (student) {
             if (!startDate) {
                 newErrors.startDate = "La fecha de inicio es requerida para el reporte detallado por alumno";
                 showSnackbar(newErrors.startDate, "error");
+                return false;
             }
             if (!endDate) {
                 newErrors.endDate = "La fecha de fin es requerida para el reporte detallado por alumno";
                 showSnackbar(newErrors.endDate, "error");
+                return false;
             }
 
             if (startDate && endDate && dayjs(startDate).isAfter(dayjs(endDate))) {
                 newErrors.startDate = "La fecha de inicio no puede ser mayor que la fecha de fin";
                 showSnackbar(newErrors.startDate, "error");
+                return false;
             }
         }
 
 
-        setErrors(newErrors);
+        
         return Object.keys(newErrors).length === 0;
     };
 
@@ -143,7 +147,7 @@ export default function AttendanceReportDialog({ open, onClose }) {
             </DialogTitle>
 
             <DialogContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Autocomplete
                         fullWidth
                         options={groups}
@@ -267,9 +271,14 @@ export default function AttendanceReportDialog({ open, onClose }) {
                             )
                         ) : (
                             //vista detallada de asistencia por alumno
+                            reportData.detalle_asistencia.length > 0 ? (
                             <AttendanceReportStudent
                                 reportData={reportData}
-                            />
+                            />):(
+                                <div className="flex justify-center py-6">
+                                    <p>No hay datos para mostrar</p>
+                                </div>
+                            )
                         ))}
 
                     </>

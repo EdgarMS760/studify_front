@@ -27,7 +27,7 @@ const CardMaterial = ({ data, isTeacher, onDelete }) => {
       };
     const handleDelete = async () => {
         try {
-            const response = await deleteMaterial(data._id);
+            const response = await deleteMaterial(data.grupo_id,data._id);
             if (response.message === "Material eliminado exitosamente") {
                 await deleteImageByUrl(data.archivo);
 
