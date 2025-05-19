@@ -5,7 +5,8 @@ import { Google, GitHub, Facebook } from '@mui/icons-material';
 import { loginUser } from '@services/authService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { useAuth } from '@libs/store/AuthProvider';
-
+import { socialLogin } from '@services/authService';
+import { loginWithGoogle, loginWithFacebook } from "@services/socialAuth";
 const FormLogin = ({ onToggle }) => {
     const navigate = useNavigate();
     const { login } = useAuth();
@@ -37,11 +38,20 @@ const FormLogin = ({ onToggle }) => {
             setLoading(false);
         }
     };
-
+    const handleLogin = async (providerFn) => {
+        try {
+            const { user, token } = await providerFn();
+            await socialLogin(user, token);
+            navigate('/');
+            showSnackbar("Login exitoso", 'success');
+        } catch (err) {
+            console.error("Login social fallido:", err);
+        }
+    };
 
     return (
         <Box className=" flex flex-col overflow-hidden min-h-full p-2"
-            
+
         >
             <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -89,7 +99,7 @@ const FormLogin = ({ onToggle }) => {
                     onChange={handleChange}
                 />
                 <div className="flex justify-end mt-2">
-                    <Button variant='text' sx={[
+                    {/* <Button variant='text' sx={[
                         (theme) => ({
                             color: 'blue',
                             fontWeight: 'bold',
@@ -99,7 +109,7 @@ const FormLogin = ({ onToggle }) => {
                                 color: theme.vars.palette.text.primary,
                                 fontWeight: 'bold',
                             }),
-                    ]} >¿Olvidaste tu contraseña?</Button>
+                    ]} >¿Olvidaste tu contraseña?</Button> */}
                 </div>
                 <Button
                     type="submit"
@@ -135,9 +145,8 @@ const FormLogin = ({ onToggle }) => {
                 O puedes iniciar con
             </Typography>
             <div className="flex justify-center mt-2">
-                <IconButton><Google /></IconButton>
-                <IconButton><GitHub /></IconButton>
-                <IconButton><Facebook /></IconButton>
+                <IconButton onClick={() => handleLogin(loginWithGoogle)}><Google /></IconButton>
+                {/* <IconButton onClick={() => handleLogin(loginWithFacebook)}><Facebook /></IconButton> */}
             </div>
 
             <Typography variant="body2"

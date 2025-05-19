@@ -221,12 +221,6 @@ const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
                                 <EditIcon fontSize="inherit" />
                             </IconButton>
                         </div>
-                        <SelectAtom
-                            items={options}
-                            placeholder="Ordenar"
-                            value={selected}
-                            onChange={handleSelectChange}
-                        />
                     </Box>
 
                     <div className="flex flex-col lg:flex-row">

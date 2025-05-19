@@ -85,12 +85,16 @@ const MainLayout = () => {
     const { user } = useAuth();
     const isTeacher = user?.rol === "maestro";
 
-    const userData = {
-        name: session?.user?.name || 'Usuario',
-        avatar: session?.user?.image || '',
-        email: session?.user?.email || '',
-    };
+const fullName = session?.user?.name || 'Usuario';
+const firstWord = fullName.split(" ")[0];
+const shortName = firstWord.length > 10 ? firstWord.slice(0, 10) : firstWord;
 
+const userData = {
+    name: fullName,
+    shortName,
+    avatar: session?.user?.image || '',
+    email: session?.user?.email || '',
+};
 
     const NAVIGATION = isTeacher ?
         [
@@ -245,7 +249,7 @@ const MainLayout = () => {
                 >
                     <Avatar src={userData.avatar} alt={userData.name} sx={{ width: 32, height: 32 }} />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        {userData.name}
+                        {userData.shortName}
                     </Typography>
                 </Box>
 
