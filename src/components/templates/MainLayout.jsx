@@ -15,14 +15,14 @@ import theme from '@styles/Theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useSessionAuth } from '@libs/hooks/useSessionAuth';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Avatar, Typography, Tooltip, Popover, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, useMediaQuery } from '@mui/material';
+import { Button, Avatar, Typography, Popover, Box, FormControlLabel, useMediaQuery } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuth } from '@libs/store/AuthProvider';
 import { createTheme, styled, useColorScheme } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useNavigationMUI } from '@libs/store/NavigationContext';
-
+import AssistantIcon from '@mui/icons-material/Assistant';
 const MainLayout = () => {
     const MaterialUISwitch = styled(Switch)(({ theme }) => ({
         width: 62,
@@ -142,6 +142,11 @@ const MainLayout = () => {
                 icon: <HomeWorkIcon />,
             },
             {
+                segment: 'studimate',
+                title: 'Studimate',
+                icon: <AssistantIcon />,
+            },
+            {
                 kind: 'header',
                 title: 'Configuración',
             },
@@ -163,6 +168,11 @@ const MainLayout = () => {
             segment: 'homework',
             title: 'Tareas',
             icon: <HomeWorkIcon />,
+        },
+        {
+            segment: 'studimate',
+            title: 'Studimate',
+            icon: <AssistantIcon />,
         },
         {
             kind: 'header',
