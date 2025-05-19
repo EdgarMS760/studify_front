@@ -3,19 +3,19 @@ import TextCardAtom from '@components/atoms/TextCardAtom'
 import SelectAtom from '@components/atoms/SelectAtom'
 import CardStudentTask from '@components/molecules/CardStudentTask';
 import { useSnackbar } from '@libs/store/SnackbarContext';
-import FilePreview from './FilePreview';
+import FilePreview from '@components/organisms/FilePreview';
 import SliderGrades from '@components/atoms/SliderGrades';
 import ButtonAtom from '@components/atoms/ButtonAtom';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputAdornment, OutlinedInput, TextField, useTheme } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { useNavigate, useParams } from 'react-router';
 import { ROUTES } from '@libs/constants/routes';
 import { getDetailTask, updateTask } from '@services/taskService';
-import { formatToISOString } from '@libs/helpers/dateUtils';
 import { setGradeToTask } from '@services/taskService';
+import { deleteTask } from '@services/taskService';
 
 const DetailTaskTeacher = () => {
     const { showSnackbar } = useSnackbar();
@@ -33,7 +33,7 @@ const DetailTaskTeacher = () => {
         puntos: 0,
     });
     const [originalTask, setOriginalTask] = useState(null);
-
+const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const handleSelectChange = (event) => {
         setSelected(event.target.value);
     };
@@ -102,6 +102,7 @@ const DetailTaskTeacher = () => {
             descripcion: taskEdit.descripcion,
             fecha_vencimiento: finalTimestamp,
             puntos_totales: taskEdit.puntos,
+            group_id: id,
         };
 
         try {
@@ -158,14 +159,23 @@ const DetailTaskTeacher = () => {
             setLoading(false);
         }
     }
-
+    const handleDeleteTask = async () => {
+        try {
+            const response = await deleteTask(id, taskId);
+            showSnackbar(response.message, "success");
+            navigate(ROUTES.GROUP_TASKS(id));
+            setConfirmDeleteOpen(false);
+        } catch (error) {
+            console.error("Error al eliminar la tarea:", error);
+            showSnackbar("Error al eliminar la tarea", "error");
+        }
+    }
     const handleSetGrade = async () => {
         if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
             showSnackbar("La calificación debe ser mayor a 0", "error");
             return;
         }
-
-        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId);
+        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId,id);
 
         showSnackbar(message, "success");
 
@@ -177,7 +187,7 @@ const DetailTaskTeacher = () => {
             )
         );
     };
-
+    
 
     useEffect(() => {
         fetchDetailTask();
@@ -338,12 +348,36 @@ const DetailTaskTeacher = () => {
                         </DialogContent>
 
                         <DialogActions>
-                            <ButtonAtom onClick={handleEditTask}>Actualizar</ButtonAtom>
-                            <ButtonAtom onClick={handleCloseModalEdit} className={bgButtonDarkMode}>Cancelar</ButtonAtom>
+                            <div className="flex justify-between w-full">
+                                <div>
+                                    <ButtonAtom className='!bg-red-500 hover:!bg-red-800' onClick={() => setConfirmDeleteOpen(true)}>Eliminar</ButtonAtom>
+                                </div>
+                                <div className='flex gap-2'>
+                                    <ButtonAtom className='!bg-primary hover:!bg-primaryHover !font-bold' onClick={handleEditTask}>Actualizar</ButtonAtom>
+                                    <ButtonAtom onClick={handleCloseModalEdit} className="!bg-gray-500 hover:!bg-gray-600 !font-bold">Cancelar</ButtonAtom>
+                                </div>
+                            </div>
                         </DialogActions>
                     </Dialog>
                 </>
             )}
+            {/* Confirmation Dialog */}
+            <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)}>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Estás seguro de que deseas eliminar la tarea? Esta acción no se puede deshacer.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmDeleteOpen(false)} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleDeleteTask} color="error" variant="contained">
+                        Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

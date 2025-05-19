@@ -181,7 +181,7 @@ const GroupsPage = () => {
             console.error("Error al obtener grupos:", error);
         }
         try {
-            const { groups, total, page } = await getGroups(1, 10, "archivado");
+            const { groups, total, page } = await getGroups(1, 1000, "archivado");
             setGruposArchivados(groups);
         } catch (error) {
             console.error("Error al obtener grupos:", error);

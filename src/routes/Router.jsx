@@ -27,7 +27,7 @@ export default function Router() {
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<CalendarPage />} />
+                <Route index element={<GroupsPage />} />
                 <Route path="groups" index element={<GroupsPage />} />
                 <Route path="reports" index element={<ReportPage />} />
                 <Route path="group/:id" element={<GroupLayout />}>

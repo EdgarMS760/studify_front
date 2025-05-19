@@ -27,7 +27,7 @@ export const postGroup = async (newGroup) => {
         throw error;
     }
 };
-export const getGroups = async (page = 1, limit = 10, estado="activo") => {
+export const getGroups = async (page = 1, limit = 10, estado = "activo") => {
     try {
         const storedUser = JSON.parse(localStorage.getItem('user_studify'));
         const token = localStorage.getItem('token_studify');
@@ -55,7 +55,7 @@ export const getGroups = async (page = 1, limit = 10, estado="activo") => {
 
 export const archiveGroup = async (idGroup) => {
     try {
-       
+
         const token = localStorage.getItem('token_studify');
 
         if (!token) throw new Error("Falta token");
@@ -79,7 +79,7 @@ export const archiveGroup = async (idGroup) => {
 };
 export const dearchiveGroup = async (idGroup) => {
     try {
-       
+
         const token = localStorage.getItem('token_studify');
 
         if (!token) throw new Error("Falta token");
@@ -120,8 +120,14 @@ export const getGroupById = async (idGroup) => {
         return response.data;
 
     } catch (error) {
-        console.error("Error al obtener el grupo:", error);
-        throw error;
+        const status = error?.response?.status;
+        const backendMessage = error?.response?.data?.message;
+
+        throw {
+            status: status || 500,
+            message: backendMessage || "Error inesperado al registrar la asistencia",
+            critical: ![400, 403, 404, 409].includes(status),
+        };
     }
 };
 export const updateGroup = async (idGroup, newGroup) => {

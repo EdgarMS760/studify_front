@@ -271,9 +271,14 @@ export default function AttendanceReportDialog({ open, onClose }) {
                             )
                         ) : (
                             //vista detallada de asistencia por alumno
+                            reportData.detalle_asistencia.length > 0 ? (
                             <AttendanceReportStudent
                                 reportData={reportData}
-                            />
+                            />):(
+                                <div className="flex justify-center py-6">
+                                    <p>No hay datos para mostrar</p>
+                                </div>
+                            )
                         ))}
 
                     </>

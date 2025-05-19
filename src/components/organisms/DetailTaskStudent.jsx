@@ -118,8 +118,7 @@ const DetailTaskStudent = () => {
             fetchDetailTask();
         } catch (error) {
             console.error("Error deleting task delivery:", error);
-            const message = error.response?.data?.error || "Error al deshacer la entrega.";
-            showSnackbar(message, "error");
+            showSnackbar(error.message, "error");
         }
     };
     return (
