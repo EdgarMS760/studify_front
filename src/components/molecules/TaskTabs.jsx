@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SelectAtom from '@components/atoms/SelectAtom'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, OutlinedInput, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,15 +12,19 @@ import { useParams } from 'react-router';
 import { postTask } from '@services/taskService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { formatToISOString } from '@libs/helpers/dateUtils';
-const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, isGeneralPage = true }) => {
+import { useDebounce } from '@libs/hooks/Debounce';
+const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, onOrderChange,onSearchChange, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day')); // Día de mañana
   const [valueTime, setValueTime] = useState(dayjs());
   const [valueTask, setValueTask] = useState(0);
   const [loading, setLoading] = useState(false);
   const { showSnackbar } = useSnackbar();
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 400);
   const handleSelectChange = (event) => {
     setSelected(event.target.value);
+    onOrderChange(event.target.value);
   };
   const [value, setValue] = useState(0);
 
@@ -31,8 +35,8 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, isGeneralPa
     onStatusChange(status);
   };
   const options = [
-    { value: "asc", label: 'Mas Recientes primero' },
-    { value: "desc", label: 'Mas Antiguos primero' }
+    { value: "asc", label: 'Expiracion mas cercana' },
+    { value: "desc", label: 'Expiracion mas lejana' },
   ];
   const theme = useTheme()
   const bgButtonDarkMode = theme.palette.mode === 'dark' ? '!bg-secondaryHover hover:!bg-black !font-bold' : '!bg-secondary hover:!bg-secondaryHover !font-bold';
@@ -110,7 +114,9 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, isGeneralPa
     }
     handleClose();
   };
-
+  useEffect(() => {
+    onSearchChange(debouncedQuery);
+  }, [debouncedQuery]);
   return (
     <Box
       className={clsx(
@@ -185,6 +191,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, isGeneralPa
         <div className="flex justify-center my-4">
           <TextField
             id="search-task"
+            onChange={e => setQuery(e.target.value)}
             variant="standard"
             placeholder="Buscar..."
             InputProps={{
