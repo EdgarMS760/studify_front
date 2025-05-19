@@ -11,8 +11,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigationMUI } from '@libs/store/NavigationContext';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
+import Divider from '@mui/material/Divider';
 
 
 const PdfViewer = ({ fileUrl }) => {
@@ -34,6 +35,7 @@ const PdfViewer = ({ fileUrl }) => {
     const pageNumber = usePDFSlickStore((s) => s.pageNumber);
     const numPages = usePDFSlickStore((s) => s.numPages);
     const pagesOverview = pdfSlick?.getPagesOverview();
+    const scale = usePDFSlickStore((s) => s.scale);
     const { setHideNavigation } = useNavigationMUI();
     const onPageOpen = (pageNumber) => {
         pdfSlick?.gotoPage(pageNumber);
@@ -41,27 +43,27 @@ const PdfViewer = ({ fileUrl }) => {
         setHideNavigation(true);
     };
 
-useEffect(() => {
-    const validatePdf = async () => {
-        try {
-            // tiempo a que PDFSlick cargue
-            await new Promise((resolve) => setTimeout(resolve, 500)); 
+    useEffect(() => {
+        const validatePdf = async () => {
+            try {
+                // tiempo a que PDFSlick cargue
+                await new Promise((resolve) => setTimeout(resolve, 500));
 
-            const overview = pdfSlick?.getPagesOverview();
-            if (!overview || overview.length === 0) {
-                throw new Error("Archivo no válido");
+                const overview = pdfSlick?.getPagesOverview();
+                if (!overview || overview.length === 0) {
+                    throw new Error("Archivo no válido");
+                }
+                setError(false);
+            } catch (e) {
+                console.error("Error al validar el PDF:", e);
+                setError(true);
             }
-            setError(false);
-        } catch (e) {
-            console.error("Error al validar el PDF:", e);
-            setError(true);
-        }
-    };
+        };
 
-    if (pdfSlick) {
-        validatePdf();
-    }
-}, [pdfSlick]);
+        if (pdfSlick) {
+            validatePdf();
+        }
+    }, [pdfSlick]);
 
 
     useEffect(() => {
@@ -171,62 +173,107 @@ useEffect(() => {
                                     <DownloadIcon className="w-6 h-6" sx={{ color: 'black' }} />
                                 </a>
                             </div>
-                            <nav
-                                className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mx-auto"
-                                aria-label="Pagination"
-                            >
-
-                                <IconButton onClick={() => pdfSlick?.gotoPage(1)} disabled={pageNumber <= 1} aria-label="first" color="primary" size="large"
-                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
-                                >
-                                    <FirstPageIcon fontSize="inherit" />
+                            <nav className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mx-auto" aria-label="Pagination">
+                                <IconButton onClick={() => pdfSlick?.gotoPage(1)} disabled={pageNumber <= 1} color="primary">
+                                    <FirstPageIcon />
                                 </IconButton>
 
-
-                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber - 1)} disabled={pageNumber <= 1} aria-label="Previous" color="primary" size="large"
-                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
-                                >
-                                    <NavigateBeforeIcon className="h-5 w-5" aria-hidden="true" />
+                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber - 1)} disabled={pageNumber <= 1} color="primary">
+                                    <NavigateBeforeIcon />
                                 </IconButton>
 
-
-                                <Box sx={[
-                                    (theme) => ({
-                                        color: "black",
-                                    }),
-                                    (theme) =>
-                                        theme.applyStyles('dark', {
-                                            color: "white",
-                                        }),
-                                ]} className="px-4 py-2 text-sm ring-1 ring-inset ring-gray-300 rounded-md">
-                                    <p className="text-sm  text-center">
-                                        Mostrando pagina <span className="font-medium">{pageNumber}</span> de <span className="font-medium">{numPages}</span>
-                                    </p>
+                                <Box
+                                    sx={{
+                                        px: 2,
+                                        py: 1,
+                                        fontSize: "0.875rem",
+                                        borderRadius: 1,
+                                        border: "1px solid #ccc",
+                                        color: "text.primary",
+                                    }}
+                                >
+                                    Página <span className="font-medium">{pageNumber}</span> de <span className="font-medium">{numPages}</span>
                                 </Box>
 
-                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber + 1)} disabled={pageNumber >= numPages} aria-label="Next" color="primary" size="large"
-                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
-                                >
-                                    <NavigateNextIcon className="h-5 w-5" aria-hidden="true" />
+                                <IconButton onClick={() => pdfSlick?.gotoPage(pageNumber + 1)} disabled={pageNumber >= numPages} color="primary">
+                                    <NavigateNextIcon />
                                 </IconButton>
 
-                                <IconButton onClick={() => pdfSlick?.gotoPage(numPages)} disabled={pageNumber >= numPages} aria-label="Last" color="primary" size="large"
-                                    className="inline-flex items-center px-2.5 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 enabled:hover:bg-gray-50 focus:outline-none disabled:text-gray-300"
-                                >
-                                    <LastPageIcon className="h-5 w-5" aria-hidden="true" />
+                                <IconButton onClick={() => pdfSlick?.gotoPage(numPages)} disabled={pageNumber >= numPages} color="primary">
+                                    <LastPageIcon />
                                 </IconButton>
+
+                                <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+
+                                <Tooltip title="Zoom Out">
+                                    <span>
+                                        <IconButton
+                                            onClick={() => pdfSlick?.viewer?.decreaseScale()}
+                                            disabled={!pdfSlick || scale <= 0.25}
+                                            sx={{
+                                                px: 1,
+                                                py: 1,
+                                                color: "text.secondary",
+                                                transition: "all 0.2s",
+                                                "&:hover": {
+                                                    backgroundColor: "action.hover",
+                                                    color: "text.primary",
+                                                },
+                                                opacity: !pdfSlick || scale <= 0.25 ? 0.7 : 1,
+                                            }}
+                                        >
+                                            <ZoomOutIcon fontSize="small" />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
+
+                                <Tooltip title="Zoom In">
+                                    <span>
+                                        <IconButton
+                                            onClick={() => pdfSlick?.viewer?.increaseScale()}
+                                            disabled={!pdfSlick || scale >= 5}
+                                            sx={{
+                                                px: 1,
+                                                py: 1,
+                                                color: "text.secondary",
+                                                transition: "all 0.2s",
+                                                "&:hover": {
+                                                    backgroundColor: "action.hover",
+                                                    color: "text.primary",
+                                                },
+                                                opacity: !pdfSlick || scale >= 5 ? 0.7 : 1,
+                                            }}
+                                        >
+                                            <ZoomInIcon fontSize="small" />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
                             </nav>
-                            <div className="flex justify-center items-center sm:justify-end">
 
-                                <button
-                                    onClick={() => { setOpen(false); setHideNavigation(false) }}
-                                    type="button"
-                                    className="shadow-sm text-primary rounded-md p-2"
+                            <Box
+                                display="flex"
+                                justifyContent={{ xs: 'center', sm: 'flex-end' }}
+                                alignItems="center"
+                            >
+                                <IconButton
+                                    onClick={() => {
+                                        setOpen(false);
+                                        setHideNavigation(false);
+                                    }}
+                                    aria-label="Close"
+                                    sx={[
+                                        (theme) => ({
+                                            backgroundColor: theme.vars.palette.secondary.main,
+                                        }),
+                                        (theme) =>
+                                            theme.applyStyles('dark', {
+                                                backgroundColor: theme.vars.palette.primary.main,
+                                            }),
+                                    ]}
                                 >
-                                    <span className="sr-only">Close</span>
-                                    <CloseIcon className="w-6 h-6" sx={{ color: 'black' }} />
-                                </button>
-                            </div>
+                                    <CloseIcon sx={{ color: 'black' }} />
+                                </IconButton>
+                            </Box>
                         </div>
 
 

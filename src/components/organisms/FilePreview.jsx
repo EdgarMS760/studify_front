@@ -20,11 +20,11 @@ const FilePreview = ({ fileUrl, fileType }) => {
   if (fileType === 'imagen') {
     return (
       <PhotoProvider>
-
         <PhotoView src={fileUrl}>
-          <img src={fileUrl} style={{ objectFit: 'cover' }} alt="" />
+          <img src={fileUrl} style={{ objectFit: 'cover', cursor: 'zoom-in' }} alt="" />
         </PhotoView>
       </PhotoProvider>
+
     );
   }
 
