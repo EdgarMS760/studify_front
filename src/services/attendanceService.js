@@ -15,11 +15,14 @@ export const getAttendance = async (grupo_id, fecha) => {
 
         return response.data;
     } catch (error) {
-        if (error.response && error.response.status === 404) {
-            return { notFound: true, message: error.response.data.message };
-        }
+        const status = error?.response?.status;
+        const backendMessage = error?.response?.data?.message;
 
-        throw error;
+        if ([400, 403, 404, 409].includes(status)) {
+            throw { critical: false, message: backendMessage || "Error de validación" };
+        } else {
+            throw { critical: true, message: "Error inesperado al registrar la asistencia" };
+        }
     }
 };
 

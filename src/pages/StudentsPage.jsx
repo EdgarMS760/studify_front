@@ -85,11 +85,6 @@ const StudentsPage = () => {
       setLoading(true);
       const response = await getAttendance(id, fechaLocal);
 
-      if (response.notFound) {
-        setAttendance({});
-        setAttendanceTaken(false);
-        return;
-      }
 
       const asistencia = response.attendance.asistencias;
 
@@ -101,8 +96,13 @@ const StudentsPage = () => {
       setAttendance(mappedAttendance);
       setAttendanceTaken(true);
     } catch (error) {
-      console.error("Error crítico al obtener la asistencia:", error);
-
+      if (error.critical) {
+        console.error("Error fetching attendance:", error);
+        showSnackbar("Error del servidor", "error");
+      } else {
+        setAttendanceTaken(false);
+        setAttendance({});
+      }
     } finally {
       setLoading(false);
     }
@@ -167,19 +167,15 @@ const StudentsPage = () => {
             isHighlighted={true}
           />
 
-          <TextField
-            id="search-task"
-            variant="standard"
-            placeholder="Buscar..."
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon className="text-gray-400" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 180 }}
-          />
+          {!attendanceTaken ? (
+            <ButtonAtom disabled={students.length === 0} onClick={() => setConfirmOpen(true)} variant="contained" color="primary">
+              Generar Asistencia
+            </ButtonAtom>
+          ) : (
+            <span className="text-green-600 font-semibold text-sm">
+              Asistencia ya tomada
+            </span>
+          )}
 
         </div>
         {loading ? <div className="flex justify-center items-center h-32"><CircularProgress /></div> : (
@@ -193,15 +189,7 @@ const StudentsPage = () => {
                 className="text-2xl"
                 isHighlighted={true}
               />
-              {!attendanceTaken ? (
-                <ButtonAtom disabled={students.length === 0} onClick={() => setConfirmOpen(true)} variant="contained" color="primary">
-                  Generar Asistencia
-                </ButtonAtom>
-              ) : (
-                <span className="text-green-600 font-semibold text-sm">
-                  Asistencia ya tomada
-                </span>
-              )}
+
             </div>
             {students.length === 0 ? (
               <div className="flex justify-center items-center h-32">
