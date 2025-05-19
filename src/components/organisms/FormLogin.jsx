@@ -39,6 +39,7 @@ const FormLogin = ({ onToggle }) => {
         }
     };
     const handleLogin = async (providerFn) => {
+        setLoading(true);
         try {
             const { user, token } = await providerFn();
             await socialLogin(user, token);
@@ -46,6 +47,8 @@ const FormLogin = ({ onToggle }) => {
             showSnackbar("Login exitoso", 'success');
         } catch (err) {
             console.error("Login social fallido:", err);
+        } finally {
+            setLoading(false);
         }
     };
 

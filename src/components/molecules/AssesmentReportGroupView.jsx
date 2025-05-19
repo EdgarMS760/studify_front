@@ -24,7 +24,7 @@ export default function AssesmentReportGroupView({ reportData }) {
                     data={reportData}
                     columns={[
                         { label: "Alumno", key: "nombre_alumno" },
-                        { label: "Entregas a Tiempo (%)", key: "porcentaje_entregadas_a_tiempo" },
+                        { label: "Entregas (%)", key: "porcentaje_entregadas_a_tiempo" },
                         { label: "Promedio Calificación", key: "promedio_calificacion" }
                     ]}
                     fileName="asistencia_grupo"
@@ -36,7 +36,7 @@ export default function AssesmentReportGroupView({ reportData }) {
                     <TableHead>
                         <TableRow>
                             <TableCell>Alumno</TableCell>
-                            <TableCell align="center">Entregas a Tiempo (%)</TableCell>
+                            <TableCell align="center">Entregas (%)</TableCell>
                             <TableCell align="center">Promedio Calificación</TableCell>
                         </TableRow>
                     </TableHead>
