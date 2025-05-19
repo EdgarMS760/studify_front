@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react'
+import { useState } from 'react'
 import SelectAtom from '@components/atoms/SelectAtom'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, OutlinedInput, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,7 +12,7 @@ import { useParams } from 'react-router';
 import { postTask } from '@services/taskService';
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { formatToISOString } from '@libs/helpers/dateUtils';
-const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) => {
+const TaskTabs = ({ visibleCreateTask, onStatusChange, onCreateTask, isGeneralPage = true }) => {
   const [selected, setSelected] = useState('');
   const [valueCalendar, setValueCalendar] = useState(dayjs().add(1, 'day')); // Día de mañana
   const [valueTime, setValueTime] = useState(dayjs());
@@ -40,6 +40,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -48,11 +49,39 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
     setDescription("");
   };
 
-  const handleCreate = async () => {
-    if (!valueCalendar || !valueTime) return;
+  const validateCreateForm = () => {
+    const newErrors = {};
+    const now = dayjs();
 
-    // Combinar fecha y hora
-  
+    if (!title.trim()) newErrors.title = "El título es obligatorio";
+    if (!description.trim()) newErrors.description = "La descripción es obligatoria";
+
+    if (!valueTask || isNaN(valueTask) || Number(valueTask) <= 0) {
+      newErrors.valueTask = "El valor debe ser un número mayor a 0";
+    }
+
+    if (!valueCalendar) {
+      newErrors.date = "La fecha es obligatoria";
+    } else if (valueCalendar.isBefore(now, "day")) {
+      newErrors.date = "La fecha debe ser hoy o posterior";
+    }
+
+    if (!valueTime) {
+      newErrors.time = "La hora es obligatoria";
+    } else if (
+      valueCalendar.isSame(now, "day") && valueTime.isBefore(now.add(1, "hour"))
+    ) {
+      newErrors.time = "La hora debe ser al menos una hora después de la hora actual";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCreate = async () => {
+    if (!validateCreateForm()) return;
+
+
 
     const finalTimestamp = formatToISOString(valueCalendar, valueTime);
     const taskData = {
@@ -68,7 +97,7 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
       const response = await postTask(taskData);
 
       showSnackbar(response.message, "success");
-
+      onCreateTask(true);
     } catch (err) {
       console.error("Error al registrar:", err);
       const message = err.response?.data?.error || "Error al registrar. Revisa los campos.";
@@ -206,52 +235,64 @@ const TaskTabs = ({ visibleCreateTask, onStatusChange, isGeneralPage = true }) =
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       fullWidth
-                      id="filled-basic"
                       label="Titulo de la tarea..."
                       variant="outlined"
-
+                      error={!!errors.title}
+                      helperText={errors.title}
                     />
+
                     <TextField
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       fullWidth
-                      id="outlined-basic"
                       label="Descripción de la tarea..."
                       multiline
                       maxRows={4}
                       variant="outlined"
-
+                      error={!!errors.description}
+                      helperText={errors.description}
                     />
 
                     <TextCardAtom text="Fecha de entrega" className="text-lg" />
                     <DatePicker
                       label="Selecciona una fecha"
                       value={valueCalendar}
-                      onChange={(newValue) => {
-                        setValueCalendar(newValue);
+                      onChange={(newValue) => setValueCalendar(newValue)}
+                      slotProps={{
+                        textField: {
+                          error: !!errors.date,
+                          helperText: errors.date,
+                        },
                       }}
-
                     />
+
                     <TimePicker
                       label="Selecciona una hora"
                       value={valueTime}
-                      onChange={(newValue) => {
-                        setValueTime(newValue);
+                      onChange={(newValue) => setValueTime(newValue)}
+                      slotProps={{
+                        textField: {
+                          error: !!errors.time,
+                          helperText: errors.time,
+                        },
                       }}
-
                     />
+
                     <TextCardAtom text="Valor de la tarea" className="text-lg" />
                     <FormControl className='sm:w-[15ch]' variant="outlined">
 
                       <OutlinedInput
                         value={valueTask}
                         onChange={(e) => setValueTask(e.target.value)}
+                        error={!!errors.valueTask}
                         endAdornment={<InputAdornment position="end">Puntos</InputAdornment>}
                         aria-describedby="outlined-weight-helper-text"
-                        inputProps={{
-                          'aria-label': 'puntos',
-                        }}
+                        inputProps={{ 'aria-label': 'puntos' }}
                       />
+                      {errors.valueTask && (
+                        <p className="text-red-500 text-sm mt-1">{errors.valueTask}</p>
+                      )}
+
                     </FormControl>
                   </div>
                 </DialogContent>

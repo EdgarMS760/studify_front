@@ -56,7 +56,7 @@ const TasksPage = () => {
 
   return (
     <Box>
-      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} isGeneralPage={isGeneralPage} />
+      <TaskTabs onStatusChange={handleStatusTask} visibleCreateTask={isTeacher} onCreateTask={() => fetchTasks()} isGeneralPage={isGeneralPage} />
       <Box className="p-5" sx={[
         (theme) => ({
           backgroundColor: "white",
