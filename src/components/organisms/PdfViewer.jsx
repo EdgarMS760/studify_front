@@ -82,7 +82,7 @@ const PdfViewer = ({ fileUrl }) => {
 
     return (
         <>
-            <div className="p-2 relative w-full h-1/2 [@media(min-width:1750px)]:h-3/4 [@media(min-width:2000px)]:h-7/8 z-10">
+            <div className="p-2 relative w-full [@media(min-width:1750px)]:h-3/4 [@media(min-width:2000px)]:h-7/8 z-10">
                 <PDFSlickThumbnails
                     {...{ thumbsRef, usePDFSlickStore }}
                 >

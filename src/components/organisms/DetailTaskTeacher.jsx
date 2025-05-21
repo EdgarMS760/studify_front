@@ -16,6 +16,7 @@ import { ROUTES } from '@libs/constants/routes';
 import { getDetailTask, updateTask } from '@services/taskService';
 import { setGradeToTask } from '@services/taskService';
 import { deleteTask } from '@services/taskService';
+import { detectarTipoArchivo } from '@libs/helpers/filesUtils';
 
 const DetailTaskTeacher = () => {
     const { showSnackbar } = useSnackbar();
@@ -33,7 +34,7 @@ const DetailTaskTeacher = () => {
         puntos: 0,
     });
     const [originalTask, setOriginalTask] = useState(null);
-const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const handleSelectChange = (event) => {
         setSelected(event.target.value);
     };
@@ -81,7 +82,9 @@ const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const handleSelect = (submission) => {
         setSelectedStudentId(submission.id);
         setSelectedFile(submission.archivo_entregado);
-        setFileType(submission.tipo_archivo);
+        const tipo = detectarTipoArchivo(submission.tipo_archivo);
+        setFileType(tipo);
+
         setValueTask(submission.calificacion || 0);
         setIsGraded(submission.calificacion != null);
     };
@@ -95,7 +98,7 @@ const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const handleEditTask = async () => {
         if (!validateForm()) return;
 
-        const finalTimestamp = taskEdit.fecha.toISOString(); // `taskEdit.fecha` ya es un `dayjs`
+        const finalTimestamp = taskEdit.fecha.toISOString(); 
 
         const taskData = {
             titulo: taskEdit.titulo,
@@ -175,7 +178,7 @@ const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
             showSnackbar("La calificación debe ser mayor a 0", "error");
             return;
         }
-        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId,id);
+        const { message, entrega } = await setGradeToTask(taskId, valueTask, selectedStudentId, id);
 
         showSnackbar(message, "success");
 
@@ -187,7 +190,7 @@ const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
             )
         );
     };
-    
+
 
     useEffect(() => {
         fetchDetailTask();
