@@ -23,25 +23,22 @@ export const socialLogin = async (firebaseUser, firebaseToken) => {
   };
 
   try {
-    // login
+    // Intentar login
     const res = await axiosInstance.post(`/logIn`, loginData);
     localStorage.setItem('user_studify', JSON.stringify(res.data.user));
     localStorage.setItem('token_studify', res.data.token);
-    return res.data;
-  } catch (err) {
-    // 2. Si falla, intentar registro 
-    const userData = {
-      nombre: displayName,
-      email,
-      rol: "alumno", //TODO: Cambiar a "alumno" o "maestro" 
-      password: firebaseToken,
-      foto_perfil: photoURL,
+    return { success: true, user: res.data.user, token: res.data.token };
+  } catch (loginError) {
+    // Si no existe, retornar los datos base para que se elija el rol antes de registrar
+    return {
+      success: false,
+      userData: {
+        nombre: displayName,
+        email,
+        foto_perfil: photoURL,
+        password: firebaseToken,
+      },
     };
-
-    const res = await axiosInstance.post(`/users`, userData);
-
-    localStorage.setItem('user_studify', JSON.stringify(res.data.user));
-    localStorage.setItem('token_studify', res.data.token);
-    return res.data;
   }
 };
+
