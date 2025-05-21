@@ -2,19 +2,20 @@ import { useEffect, useState } from "react";
 import TextCardAtom from "@components/atoms/TextCardAtom";
 import ButtonAtom from "@components/atoms/ButtonAtom";
 import clsx from "clsx";
-import { Box, IconButton } from "@mui/material";
+import { Box, CircularProgress, IconButton } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { ROUTES } from "@libs/constants/routes";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { getDetailTask } from "@services/taskService";
 import { formatDateToLocal } from "@libs/helpers/dateUtils";
 import { getFileType } from '@libs/helpers/filesUtils';
-import { uploadImageAndGetUrl, deleteImage,deleteImageByUrl } from '@libs/helpers/firebaseUtils';
+import { uploadImageAndGetUrl, deleteImage, deleteImageByUrl } from '@libs/helpers/firebaseUtils';
 import { uploadTask } from "@services/taskService";
 import { useSnackbar } from '@libs/store/SnackbarContext';
 import { deleteUploadTask } from "@services/taskService";
 const DetailTaskStudent = () => {
     const { showSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [taskData, setTaskData] = useState({
         title: "",
@@ -67,6 +68,7 @@ const DetailTaskStudent = () => {
     const handleDelivery = async () => {
         let fileRef;
         try {
+            setLoading(true);
             let fileURL = uploadedFile || null;
 
 
@@ -100,13 +102,16 @@ const DetailTaskStudent = () => {
             if (fileRef) {
                 await deleteImage(fileRef);
             }
+        } finally {
+            setLoading(false);
         }
 
     };
     const handleDeleteDelivery = async () => {
         let fileRef;
-        const oldFile = taskData.fileUrl; 
+        const oldFile = taskData.fileUrl;
         try {
+            setLoading(true);
             const response = await deleteUploadTask(taskId);
             showSnackbar(response.message, "success");
             if (
@@ -119,6 +124,8 @@ const DetailTaskStudent = () => {
         } catch (error) {
             console.error("Error deleting task delivery:", error);
             showSnackbar(error.message, "error");
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -172,96 +179,101 @@ const DetailTaskStudent = () => {
 
                 </div>
             </div>
+            {loading ? <div className="flex justify-center items-center"><CircularProgress /></div> : (<>
 
-            <TextCardAtom text="Descripción de la tarea" className="mb-0 ml-2" />
 
-            <Box
-                sx={[
-                    (theme) => ({
-                        backgroundColor: theme.vars.palette.secondary.main,
-                        borderRadius: "8px",
-                    }),
-                    (theme) =>
-                        theme.applyStyles("dark", {
-                            backgroundColor: "black",
-                        }),
-                ]}
-            >
-                <TextCardAtom
-                    text={taskData.description}
-                    className="text-lg p-3 rounded-md shadow-sm"
-                />
-            </Box>
+                <TextCardAtom text="Descripción de la tarea" className="mb-0 ml-2" />
 
-            {(uploadedFile || taskData.fileUrl) && (
                 <Box
-                    className="border p-3 rounded-md shadow-sm"
                     sx={[
-                        (theme) => ({ backgroundColor: "white" }),
+                        (theme) => ({
+                            backgroundColor: theme.vars.palette.secondary.main,
+                            borderRadius: "8px",
+                        }),
                         (theme) =>
                             theme.applyStyles("dark", {
-                                backgroundColor: theme.vars.palette.secondary.main,
+                                backgroundColor: "black",
                             }),
                     ]}
                 >
-                    <p className="text-sm font-medium">Archivo entregado:</p>
-                    {uploadedFile ? (
-                        <p className="text-sm text-blue-600 truncate">{uploadedFile.name}</p>
-                    ) : (
-                        <a
-                            href={taskData.fileUrl}
-                            download
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 underline"
-                        >
-                            Ver archivo
-                        </a>
-                    )}
-                </Box>
-            )}
-
-
-            {/* Estado: Revisado */}
-            {taskData.status === "Revisado" && (
-                <Box className="p-3 rounded-md bg-green-100 text-green-800">
-                    <p>
-                        Tu calificación es de <strong>{taskData.grade}</strong> puntos.
-                    </p>
-                </Box>
-            )}
-
-            {/* Estado: Entregado */}
-            {taskData.status === "Entregado" && !isExpired && (
-                <Box className="p-3 rounded-md bg-yellow-100 text-yellow-800">
-                    <p>Tu tarea ha sido entregada y está pendiente de revisión.</p>
-                </Box>
-            )}
-
-            {/* Estado: No entregado */}
-            {taskData.status === "No entregado" && !isExpired && (
-                <>
-                    <label
-                        htmlFor="fileUpload"
-                        className="bg-primary inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-primaryHover transition"
-                    >
-                        {uploadedFile ? "Cambiar archivo" : "Subir archivo"}
-                    </label>
-                    <input
-                        id="fileUpload"
-                        type="file"
-                        onChange={handleFileChange}
-                        className="hidden"
+                    <TextCardAtom
+                        text={taskData.description}
+                        className="text-lg p-3 rounded-md shadow-sm"
                     />
-                </>
-            )}
-
-            {/* Tarea expirada */}
-            {isExpired && (
-                <Box className="p-3 rounded-md bg-red-100 text-red-800">
-                    <p>La tarea ha expirado. Ya no se aceptan entregas.</p>
                 </Box>
-            )}
+
+                {(uploadedFile || taskData.fileUrl) && (
+                    <Box
+                        className="border p-3 rounded-md shadow-sm"
+                        sx={[
+                            (theme) => ({ backgroundColor: "white" }),
+                            (theme) =>
+                                theme.applyStyles("dark", {
+                                    backgroundColor: theme.vars.palette.secondary.main,
+                                }),
+                        ]}
+                    >
+                        <p className="text-sm font-medium">Archivo entregado:</p>
+                        {uploadedFile ? (
+                            <p className="text-sm text-blue-600 truncate">{uploadedFile.name}</p>
+                        ) : (
+                            <a
+                                href={taskData.fileUrl}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 underline"
+                            >
+                                Ver archivo
+                            </a>
+                        )}
+                    </Box>
+                )}
+
+
+                {/* Estado: Revisado */}
+                {taskData.status === "Revisado" && (
+                    <Box className="p-3 rounded-md bg-green-100 text-green-800">
+                        <p>
+                            Tu calificación es de <strong>{taskData.grade}</strong> puntos.
+                        </p>
+                    </Box>
+                )}
+
+                {/* Estado: Entregado */}
+                {taskData.status === "Entregado" && !isExpired && (
+                    <Box className="p-3 rounded-md bg-yellow-100 text-yellow-800">
+                        <p>Tu tarea ha sido entregada y está pendiente de revisión.</p>
+                    </Box>
+                )}
+
+                {/* Estado: No entregado */}
+                {taskData.status === "No entregado" && !isExpired && (
+                    <>
+                        <label
+                            htmlFor="fileUpload"
+                            className="bg-primary inline-block cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-primaryHover transition"
+                        >
+                            {uploadedFile ? "Cambiar archivo" : "Subir archivo"}
+                        </label>
+                        <input
+                            id="fileUpload"
+                            type="file"
+                            onChange={handleFileChange}
+                            className="hidden"
+                        />
+                    </>
+                )}
+
+                {/* Tarea expirada */}
+                {isExpired && (
+                    <Box className="p-3 rounded-md bg-red-100 text-red-800">
+                        <p>La tarea ha expirado. Ya no se aceptan entregas.</p>
+                    </Box>
+                )}
+
+            </>)}
+
         </Box>
     );
 };

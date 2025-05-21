@@ -44,6 +44,7 @@ const FormLogin = ({ onToggle }) => {
         }
     };
     const handleLogin = async (providerFn) => {
+        setLoading(true);
         try {
             const { user, token } = await providerFn(); 
             const result = await socialLogin(user, token);
@@ -52,11 +53,14 @@ const FormLogin = ({ onToggle }) => {
                 window.location.reload();
             } else {
                 setPendingSocialUser(result.userData); 
+                setLoading(false);
                 setOpenRoleDialog(true);             
             }
         } catch (err) {
             console.error("Login social fallido:", err);
             showSnackbar("Error al iniciar sesión", 'error');
+        } finally {
+            setLoading(false);
         }
     };
     const handleContinue = async () => {
@@ -64,7 +68,7 @@ const FormLogin = ({ onToggle }) => {
             showSnackbar("Selecciona un rol", "warning");
             return;
         }
-
+        setLoading(true);
         try {
             const finalUserData = {
                 ...pendingSocialUser,
