@@ -34,7 +34,6 @@ Studify es una plataforma educativa interactiva diseñada especialmente para ni�
 
 Este proyecto está siendo desarrollado por **Edgar Martinez, Roberto Ponce, Jose De La Cruz, Angel Jordan** como parte de un portafolio educativo, con enfoque en diseño centrado en el usuario, accesibilidad y herramientas tecnológicas modernas.
 
-
 ---
 
 ## 🚀 Próximos Pasos
@@ -47,7 +46,7 @@ Este proyecto está siendo desarrollado por **Edgar Martinez, Roberto Ponce, Jos
 
 ## 📬 Contacto
 
-Si deseas saber más sobre el proyecto o colaborar, puedes escribirme a **edgarsandoval685@gmail**.
+Si deseas saber más sobre el proyecto, puedes escribirme a **edgarsandoval685@gmail**.
 
 
 
