@@ -153,6 +153,7 @@ const SettingsPage = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             fullWidth
+                            disabled
                             required
                         />
                     </Grid>
